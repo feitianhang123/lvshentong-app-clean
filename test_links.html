@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>链接测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .link { display: block; margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px; }
+        .exists { color: green; }
+        .missing { color: red; }
+    </style>
+</head>
+<body>
+    <h1>文件链接测试</h1>
+    
+    <div id="links">
+        <div class="link" id="link1">检查 index_fixed.html...</div>
+        <div class="link" id="link2">检查 module2_current_standards.html...</div>
+        <div class="link" id="link3">检查 module3_final.html...</div>
+        <div class="link" id="link4">检查 module1_fixed_final_v4.html...</div>
+    </div>
+
+    <script>
+        // 检查文件是否存在
+        function checkFile(filename, elementId) {
+            fetch(filename)
+                .then(response => {
+                    const link = document.getElementById(elementId);
+                    if (response.status === 200) {
+                        link.innerHTML = `✅ <a href="${filename}" target="_blank">${filename}</a> - 文件存在`;
+                        link.classList.add('exists');
+                    } else {
+                        link.innerHTML = `❌ ${filename} - 文件不存在 (状态: ${response.status})`;
+                        link.classList.add('missing');
+                    }
+                })
+                .catch(error => {
+                    const link = document.getElementById(elementId);
+                    link.innerHTML = `❌ ${filename} - 检查失败: ${error.message}`;
+                    link.classList.add('missing');
+                });
+        }
+
+        // 检查所有链接
+        checkFile('index_fixed.html', 'link1');
+        checkFile('module2_current_standards.html', 'link2');
+        checkFile('module3_final.html', 'link3');
+        checkFile('module1_fixed_final_v4.html', 'link4');
+    </script>
+</body>
+</html>

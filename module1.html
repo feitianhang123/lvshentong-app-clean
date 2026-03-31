@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品目录 - 绿色食品申报通</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .module-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .search-section {
+            padding: 20px;
+            background: #f8fff8;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e8f5e8;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #4CAF50;
+        }
+        
+        .search-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #45a049;
+        }
+        
+        .standard-card {
+            background: white;
+            border: 2px solid #e8f5e8;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .standard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 8px;
+        }
+        
+        .card-desc {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .result-section {
+            padding: 20px;
+            display: none;
+        }
+        
+        .result-success {
+            background: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .result-error {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2e7d32;
+        }
+        
+        .result-desc {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .back-to-search {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="history.back()">←</button>
+            <div class="module-title">产品目录</div>
+        </div>
+        
+        <div class="search-section" id="searchSection">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="请输入产品名称...">
+                <button class="search-btn" onclick="searchProduct()">搜索</button>
+            </div>
+            
+            <div class="standard-card" onclick="showStandardContent()">
+                <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
+                <div class="card-desc">点击查看完整的标准目录内容</div>
+            </div>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div class="result-success" id="successResult">
+                <div class="result-title">✅ 找到匹配产品！</div>
+                <div class="result-desc" id="successDesc"></div>
+            </div>
+            
+            <div class="result-error" id="errorResult">
+                <div class="result-title">❌ 未找到产品</div>
+                <div class="result-desc">申报产品不在绿色食品使用标准目录内，暂时无法申报绿色食品。</div>
+            </div>
+            
+            <button class="back-to-search" onclick="backToSearch()">返回搜索</button>
+        </div>
+    </div>
+
+    <script>
+        async function searchProduct() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) {
+                alert('请输入产品名称');
+                return;
+            }
+
+            const searchSection = document.getElementById('searchSection');
+            const resultSection = document.getElementById('resultSection');
+            const successResult = document.getElementById('successResult');
+            const errorResult = document.getElementById('errorResult');
+            const successDesc = document.getElementById('successDesc');
+
+            // 显示加载中
+            searchSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            successResult.style.display = 'none';
+            errorResult.style.display = 'none';
+            successDesc.textContent = '搜索中...';
+
+            try {
+                // 调用后端API进行搜索
+                const response = await fetch(`http://localhost:5001/api/search?q=${encodeURIComponent(searchTerm)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    successResult.style.display = 'block';
+                    errorResult.style.display = 'none';
+                    
+                    if (data.count === 1) {
+                        const result = data.results[0];
+                        successDesc.innerHTML = `
+                            <div style="margin-bottom: 10px;">
+                                <strong>找到产品：</strong>${result.product}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>标准名称：</strong>${result.standard}
+                            </div>
+                            <div>
+                                <strong>位置：</strong>第${result.row}行
+                            </div>
+                        `;
+                    } else {
+                        successDesc.innerHTML = `<div style="margin-bottom: 10px;"><strong>找到${data.count}个匹配产品：</strong></div>`;
+                        data.results.forEach((result, index) => {
+                            successDesc.innerHTML += `
+                                <div style="margin-bottom: 8px; padding-left: 10px; border-left: 3px solid #4CAF50;">
+                                    <strong>${index + 1}. ${result.product}</strong><br>
+                                    <small>标准：${result.standard}</small><br>
+                                    <small>行号：${result.row}</small>
+                                </div>
+                            `;
+                        });
+                    }
+                } else {
+                    successResult.style.display = 'none';
+                    errorResult.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('搜索出错:', error);
+                successResult.style.display = 'none';
+                errorResult.style.display = 'block';
+                document.querySelector('.result-desc').textContent = '网络连接错误，请检查后端服务器是否正常运行。';
+            }
+        }
+
+        async function showStandardContent() {
+            try {
+                const response = await fetch('http://localhost:5001/api/excel-info');
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('无法加载标准目录内容：' + data.error);
+                    return;
+                }
+                
+                // 创建模态框显示Excel内容
+                const modal = document.createElement('div');
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+                modal.style.zIndex = '1000';
+                modal.style.display = 'flex';
+                modal.style.justifyContent = 'center';
+                modal.style.alignItems = 'center';
+                
+                const content = document.createElement('div');
+                content.style.background = 'white';
+                content.style.padding = '20px';
+                content.style.borderRadius = '10px';
+                content.style.maxWidth = '90%';
+                content.style.maxHeight = '80%';
+                content.style.overflow = 'auto';
+                
+                content.innerHTML = `
+                    <h2 style="color: #2e7d32; margin-bottom: 15px;">绿色食品产品适用标准目录（2023版）</h2>
+                    <p><strong>总行数：</strong>${data.row_count}</p>
+                    <p><strong>列名：</strong>${data.columns.join(', ')}</p>
+                    <div style="margin-top: 20px;">
+                        <h3>前5行数据：</h3>
+                        <pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; overflow: auto;">
+${JSON.stringify(data.first_few_rows, null, 2)}
+                        </pre>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="margin-top: 15px; padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        关闭
+                    </button>
+                `;
+                
+                modal.appendChild(content);
+                document.body.appendChild(modal);
+                
+            } catch (error) {
+                console.error('加载标准目录失败:', error);
+                alert('加载标准目录内容失败，请检查服务器连接');
+            }
+        }
+
+        function backToSearch() {
+            document.getElementById('searchSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+        }
+    </script>
+</body>
+</html>

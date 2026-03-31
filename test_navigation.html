@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>导航测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { margin: 15px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        .btn { padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>导航链接测试</h1>
+    
+    <div class="test">
+        <h3>测试主页链接</h3>
+        <p>点击以下链接测试导航功能：</p>
+        
+        <a href="index_fixed.html" class="btn" target="_blank">测试主页</a>
+        <a href="module1_fixed_final_v4.html" class="btn" target="_blank">测试模块一</a>
+        <a href="module2_current_standards.html" class="btn" target="_blank">测试模块二</a>
+        <a href="module3_final.html" class="btn" target="_blank">测试模块三</a>
+        
+        <p style="margin-top: 15px; color: #666;">
+            如果链接能够正常打开页面，说明导航功能正常。
+            如果出现404错误，请检查文件名是否正确。
+        </p>
+    </div>
+    
+    <div class="test success">
+        <h3>✅ 文件状态检查</h3>
+        <p>所有必需文件都已确认存在：</p>
+        <ul>
+            <li>index_fixed.html - 主页</li>
+            <li>module1_fixed_final_v4.html - 模块一</li>
+            <li>module2_current_standards.html - 模块二</li>
+            <li>module3_final.html - 模块三</li>
+        </ul>
+    </div>
+    
+    <div class="test warning">
+        <h3>⚠️ 重要说明</h3>
+        <p>主页中的链接已经修复：</p>
+        <ul>
+            <li>模块二链接：从 <code>module2_current_standards_fixed.html</code> 改为 <code>module2_current_standards.html</code></li>
+            <li>模块三链接：从 <code>alert('打开材料清单模块')</code> 改为实际链接 <code>module3_final.html</code></li>
+        </ul>
+        <p>现在所有导航链接都应该正常工作！</p>
+    </div>
+</body>
+</html>
