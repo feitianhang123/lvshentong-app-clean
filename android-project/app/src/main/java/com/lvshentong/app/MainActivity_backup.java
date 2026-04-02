@@ -2,14 +2,19 @@ package com.lvshentong.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.U极ri;
+import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebViewAssetLoader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends Activity {
     
@@ -28,27 +33,30 @@ public class MainActivity extends Activity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
+        webSettings.setAllowFileAccessFromFileURLs(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
         webSettings.setDatabaseEnabled(true);
+        
+        // 重要：Android 10+ 需要额外权限
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            webSettings.setAllowFileAccess(true);
+            webSettings.setAllowContentAccess(true);
+        }
         
         // 重要：启用混合内容模式，允许HTTPS页面加载HTTP资源
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         
-        // 使用WebViewAssetLoader安全地加载assets内容
-        final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
-                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
-                .build();
-        
-        // Set WebView client with asset loader
-        webView.setWebViewClient(new WebView极Client() {
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                return assetLoader.shouldInterceptRequest(request.getUrl());
-            }
-            
+        // Set WebView client
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // Handle internal links
+                if (url.startsWith("file:///")) {
+                    view.loadUrl(url);
+                    return true;
+                }
                 // Handle download links
                 if (url.endsWith(".doc") || url.endsWith(".docx") || url.endsWith(".pdf") || url.endsWith(".xlsx")) {
                     // Use browser to handle downloads
@@ -60,8 +68,28 @@ public class MainActivity extends Activity {
             }
         });
         
-        // Load local HTML file using asset loader
-        webView.loadUrl("https://appassets.androidplatform.net/assets/www/index_fixed.html");
+        // 添加JavaScript接口用于加载JSON数据
+        webView.addJavascriptInterface(new Object() {
+            @JavascriptInterface
+            public String loadExcelData() {
+                try {
+                    InputStream is = getAssets().open("www/complete_excel.json");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    reader.close();
+                    return stringBuilder.toString();
+                } catch (IOException e) {
+                    return "ERROR: " + e.getMessage();
+                }
+            }
+        }, "Android");
+        
+        // Load local HTML file
+        webView.loadUrl("file:///android_asset/www/index_fixed.html");
     }
     
     @Override
