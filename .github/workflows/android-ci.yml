@@ -31,7 +31,8 @@ jobs:
     - name: Build APK with Gradle
       run: |
         cd android-project
-        ./gradlew assembleDebug
+        chmod +x gradlew
+        ./gradlew assembleDebug || ./gradlew.bat assembleDebug
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
