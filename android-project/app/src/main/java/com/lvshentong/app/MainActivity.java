@@ -4,9 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends Activity {
     
@@ -46,7 +51,7 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 // Handle internal links
                 if (url.startsWith("file:///")) {
-                    view.loadUrl(url);
+                    view.load极Url(url);
                     return true;
                 }
                 // Handle download links
@@ -60,8 +65,28 @@ public class MainActivity extends Activity {
             }
         });
         
+        // 添加JavaScript接口用于加载JSON数据
+        webView.addJavascriptInterface(new Object() {
+            @JavascriptInterface
+            public String loadExcelData() {
+                try {
+                    InputStream is = getAssets().open("www/complete_excel.json");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+                    reader.close();
+                    return stringBuilder.toString();
+                } catch (IOException e) {
+                    return "ERROR: " + e.getMessage();
+                }
+            }
+        }, "Android");
+        
         // Load local HTML file
-        webView.loadUrl("file:///android_asset/www/module1_simple_test.html");
+        webView.loadUrl("file:///android_asset/www/index_fixed.html");
     }
     
     @Override

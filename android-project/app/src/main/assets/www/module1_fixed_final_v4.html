@@ -89,7 +89,7 @@
             let excelData = [];
             
             // 加载数据
-            fetch('./complete_excel.json')
+            fetch('file:///android_asset/www/complete_excel.json')
                 .then(response => response.json())
                 .then(data => {
                     excelData = data;
