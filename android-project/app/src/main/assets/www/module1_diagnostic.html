@@ -22,20 +22,20 @@
     </div>
     
     <div class="test-section">
-        <h2>2. DOM元素检查</h2>
+        <h2>2. DOM元素检�?/h2>
         <button onclick="checkDOMElements()">检查DOM元素</button>
         <div id="domResult" class="result"></div>
     </div>
     
     <div class="test-section">
-        <h2>3. 事件监听器测试</h2>
+        <h2>3. 事件监听器测�?/h2>
         <button onclick="testEventListeners()">测试事件监听</button>
         <div id="eventResult" class="result"></div>
     </div>
     
     <div class="test-section">
         <h2>4. 搜索功能测试</h2>
-        <input type="text" id="testSearchInput" placeholder="输入搜索关键词">
+        <input type="text" id="testSearchInput" placeholder="输入搜索关键�?>
         <button onclick="testSearch()">测试搜索</button>
         <div id="searchResult" class="result"></div>
     </div>
@@ -47,12 +47,12 @@
         function testJSONLoad() {
             console.log('开始测试JSON加载...');
             const resultDiv = document.getElementById('jsonResult');
-            resultDiv.innerHTML = '测试中...';
+            resultDiv.innerHTML = '测试�?..';
             
-            fetch('file:///android_asset/www/complete_excel.json')
+            fetch('./complete_excel.json')
                 .then(response => {
-                    console.log('响应状态:', response.status, response.statusText);
-                    console.log('响应头:', response.headers);
+                    console.log('响应状�?', response.status, response.statusText);
+                    console.log('响应�?', response.headers);
                     
                     if (!response.ok) {
                         throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
@@ -61,16 +61,16 @@
                 })
                 .then(data => {
                     excelData = data;
-                    console.log('JSON加载成功:', data.length, '行数据');
+                    console.log('JSON加载成功:', data.length, '行数�?);
                     resultDiv.innerHTML = 
-                        `<span class="success">✅ JSON加载成功!</span><br>` +
+                        `<span class="success">�?JSON加载成功!</span><br>` +
                         `数据行数: ${data.length}<br>` +
                         `文件预览: ${JSON.stringify(data[0])}...`;
                 })
                 .catch(error => {
                     console.error('JSON加载失败:', error);
                     resultDiv.innerHTML = 
-                        `<span class="error">❌ JSON加载失败</span><br>` +
+                        `<span class="error">�?JSON加载失败</span><br>` +
                         `错误信息: ${error.message}<br>` +
                         `请检查文件路径和权限`;
                 });
@@ -85,26 +85,24 @@
             
             elements.forEach(id => {
                 const element = document.getElementById(id);
-                results.push(`${id}: ${element ? '✅ 存在' : '❌ 不存在'}`);
+                results.push(`${id}: ${element ? '�?存在' : '�?不存�?}`);
                 console.log(`${id}:`, element);
             });
             
             resultDiv.innerHTML = results.join('<br>');
         }
         
-        // 测试事件监听器
-        function testEventListeners() {
-            console.log('测试事件监听器...');
+        // 测试事件监听�?        function testEventListeners() {
+            console.log('测试事件监听�?..');
             const resultDiv = document.getElementById('eventResult');
             
-            // 临时添加测试监听器
-            document.getElementById('searchBtn')?.addEventListener('click', function() {
+            // 临时添加测试监听�?            document.getElementById('searchBtn')?.addEventListener('click', function() {
                 console.log('搜索按钮点击事件触发');
-                resultDiv.innerHTML += '<br>搜索按钮点击事件已触发';
+                resultDiv.innerHTML += '<br>搜索按钮点击事件已触�?;
             });
             
             document.getElementById('dataCard')?.addEventListener('click', function() {
-                console.log('目录卡点击事件触发');
+                console.log('目录卡点击事件触�?);
                 resultDiv.innerHTML += '<br>目录卡点击事件已触发';
             });
             
@@ -134,10 +132,10 @@
                 (row.col4 && row.col4.includes(searchTerm))
             );
             
-            console.log('搜索结果:', foundRows.length, '条');
+            console.log('搜索结果:', foundRows.length, '�?);
             resultDiv.innerHTML = 
-                `<span class="success">✅ 搜索完成!</span><br>` +
-                `找到 ${foundRows.length} 条结果<br>` +
+                `<span class="success">�?搜索完成!</span><br>` +
+                `找到 ${foundRows.length} 条结�?br>` +
                 `预览: ${JSON.stringify(foundRows.slice(0, 2))}`;
         }
         
