@@ -1,13 +1,3 @@
 #!/bin/bash
-# Gradle wrapper script for Linux
-# If this fails, the build will use the gradle command directly
-
-echo "Using simplified gradle wrapper..."
-
-# Try to use local gradle if available
-if command -v gradle &> /dev/null; then
-    exec gradle "$@"
-else
-    # Fallback to direct java execution with gradle wrapper jar
-    exec java -cp "gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
-fi
+# Use system gradle command directly
+exec gradle "$@"
