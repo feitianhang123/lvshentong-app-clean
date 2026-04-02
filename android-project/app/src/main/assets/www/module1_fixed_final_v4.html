@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>产品目录 - 绿色食品申报�?/title>
+    <title>产品目录 - 绿色食品申报�?/title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; color: #333; }
@@ -41,34 +41,34 @@
 <body>
     <div class="container">
         <div class="header">
-            <button class="back-btn" onclick="window.history.back()">�?/button>
+            <button class="back-btn" onclick="window.history.back()">�?/button>
             <div class="module-title">产品目录</div>
         </div>
         <div class="search-section" id="searchSection">
             <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="请输入产品名�?..">
+                <input type="text" class="search-input" id="searchInput" placeholder="请输入产品名�?..">
                 <button class="search-btn" id="searchBtn">搜索</button>
             </div>
             <div class="standard-card" id="dataCard">
-                <div class="card-title">绿色食品产品适用标准目录�?023版）</div>
-                <div class="card-desc">点击查看完整的标准目录内�?/div>
+                <div class="card-title">绿色食品产品适用标准目录�?023版）</div>
+                <div class="card-desc">点击查看完整的标准目录内�?/div>
             </div>
         </div>
         <div class="result-section" id="resultSection">
             <div class="result-success" id="successResult" style="display: none;">
-                <div class="result-title">�?找到匹配产品�?/div>
+                <div class="result-title">�?找到匹配产品�?/div>
                 <div class="result-desc" id="successDesc"></div>
             </div>
             <div class="result-error" id="errorResult" style="display: none;">
-                <div class="result-title">�?未找到产�?/div>
-                <div class="result-desc">申报产品不在绿色食品使用标准目录内，暂时无法申报绿色食品�?/div>
+                <div class="result-title">�?未找到产�?/div>
+                <div class="result-desc">申报产品不在绿色食品使用标准目录内，暂时无法申报绿色食品�?/div>
             </div>
-            <button class="back-to-search" id="backBtn">返回主界�?/button>
+            <button class="back-to-search" id="backBtn">返回主界�?/button>
         </div>
     </div>
 
     <script>
-        console.log('模块一最终版本加�?..');
+        console.log('模块一最终版本加�?..');
         
         // 辅助函数：清理数据，去掉"nan"文字
         function cleanData(value) {
@@ -78,7 +78,7 @@
             return value;
         }
         
-        // 辅助函数：检查是否有实际内容（非空且不是nan�?
+        // 辅助函数：检查是否有实际内容（非空且不是nan�?
         function hasContent(value) {
             return value && value !== 'nan' && value !== 'NaN' && value.trim() !== '';
         }
@@ -93,9 +93,9 @@
                 .then(response => response.json())
                 .then(data => {
                     excelData = data;
-                    console.log('数据加载完成:', excelData.length, '�?);
+                    console.log('数据加载完成:', excelData.length, '�?);
                     
-                    // 预处理数据：清理所�?nan"�?
+                    // 预处理数据：清理所�?nan"�?
                     excelData.forEach(row => {
                         row.col1 = cleanData(row.col1);
                         row.col2 = cleanData(row.col2);
@@ -103,7 +103,7 @@
                         row.col4 = cleanData(row.col4);
                     });
                     
-                    // 设置事件监听�?
+                    // 设置事件监听�?
                     document.getElementById('searchBtn').addEventListener('click', searchProduct);
                     document.getElementById('dataCard').addEventListener('click', showFullExcelData);
                     document.getElementById('backBtn').addEventListener('click', backToSearch);
@@ -111,7 +111,7 @@
                         if (e.key === 'Enter') searchProduct();
                     });
                     
-                    console.log('事件监听器设置完�?);
+                    console.log('事件监听器设置完�?);
                 })
                 .catch(error => {
                     console.error('数据加载失败:', error);
@@ -119,10 +119,10 @@
                 });
             
             function searchProduct() {
-                console.log('搜索函数被调�?);
+                console.log('搜索函数被调�?);
                 const searchTerm = document.getElementById('searchInput').value.trim();
                 if (!searchTerm) { 
-                    alert('请输入产品名�?); 
+                    alert('请输入产品名�?); 
                     return; 
                 }
                 
@@ -149,7 +149,7 @@
                     foundRows.forEach((row, index) => {
                         if (index < 10) {
                             html += '<div style="margin: 8px 0; padding: 8px; border-left: 3px solid #4CAF50; background: #f9f9f9;">';
-                            html += '<strong>第' + row.row + '行：</strong><br>';
+                            html += '<strong>�? + row.row + '行：</strong><br>';
                             if (hasContent(row.col1)) html += 'A列：' + row.col1 + '<br>';
                             if (hasContent(row.col2)) html += 'B列：' + row.col2 + '<br>';
                             if (hasContent(row.col3)) html += 'C列：' + row.col3 + '<br>';
@@ -158,7 +158,7 @@
                         }
                     });
                     if (foundRows.length > 10) {
-                        html += '<div style="color: #666; margin-top: 10px;">...还有' + (foundRows.length - 10) + '个结�?/div>';
+                        html += '<div style="color: #666; margin-top: 10px;">...还有' + (foundRows.length - 10) + '个结�?/div>';
                     }
                     document.getElementById('successDesc').innerHTML = html;
                 } else {
@@ -168,7 +168,7 @@
             }
             
             function showFullExcelData() {
-                console.log('显示完整数据 - 全部' + excelData.length + '�?);
+                console.log('显示完整数据 - 全部' + excelData.length + '�?);
                 if (excelData.length === 0) {
                     alert('数据尚未加载完成，请稍后重试');
                     return;
@@ -180,12 +180,12 @@
                 modalDiv.id = 'dataModal';
                 
                 let html = '<div class="data-content">';
-                html += '<h2 style="color: #2e7d32; margin-bottom: 15px;">绿色食品产品适用标准目录�?023版）</h2>';
+                html += '<h2 style="color: #2e7d32; margin-bottom: 15px;">绿色食品产品适用标准目录�?023版）</h2>';
                 html += '<div style="margin-bottom: 15px;"></div>';
                 html += '<div class="data-table">';
                 html += '<table>';
                 html += '<thead>';
-                html += '<tr><th>行号</th><th>A�?/th><th>B�?/th><th>C�?/th><th>D�?/th></tr>';
+                html += '<tr><th>行号</th><th>A�?/th><th>B�?/th><th>C�?/th><th>D�?/th></tr>';
                 html += '</thead><tbody>';
                 
                 // 显示全部数据
@@ -212,7 +212,7 @@
                     modalDiv.remove();
                 });
                 
-                // 点击模态框背景也可以关�?
+                // 点击模态框背景也可以关�?
                 modalDiv.addEventListener('click', function(e) {
                     if (e.target === modalDiv) {
                         modalDiv.remove();
