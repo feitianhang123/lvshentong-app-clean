@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import androidæž?webkit.WebViewClient;
+import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
     
@@ -21,7 +21,8 @@ public class MainActivity extends Activity {
         
         // Enable JavaScript and configure WebView
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);æž?        webSettings.setDomStorageEnabled(true);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
