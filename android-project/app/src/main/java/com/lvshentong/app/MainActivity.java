@@ -17,10 +17,14 @@ public class MainActivity extends Activity {
         
         webView = findViewById(R.id.webview);
         
-        // Enable JavaScript
+        // Enable JavaScript and configure WebView
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setAllowFileAccessFromFileURLs(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
         
         // Set WebView client
         webView.setWebViewClient(new WebViewClient() {
