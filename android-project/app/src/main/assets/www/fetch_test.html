@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Fetch Test</title>
+</head>
+<body>
+    <h1>Fetch Test</h1>
+    <button onclick="testFetch()">Test Fetch</button>
+    <div id="result"></div>
+    
+    <script>
+        function testFetch() {
+            console.log('Testing fetch...');
+            document.getElementById('result').innerHTML = 'Testing fetch...';
+            
+            fetch('complete_excel.json')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response ok:', response.ok);
+                    console.log('Response headers:', response.headers);
+                    
+                    if (!response.ok) {
+                        throw new Error('HTTP error: ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Response text length:', text.length);
+                    console.log('First 200 chars:', text.substring(0, 200));
+                    
+                    try {
+                        const data = JSON.parse(text);
+                        document.getElementById('result').innerHTML = 
+                            '<h3>✅ Fetch成功!</h3>' +
+                            '<p>数据长度: ' + data.length + '</p>' +
+                            '<p>文件大小: ' + text.length + ' 字符</p>';
+                    } catch (e) {
+                        document.getElementById('result').innerHTML = 
+                            '<h3>❌ JSON解析失败</h3>' +
+                            '<p>错误: ' + e.message + '</p>' +
+                            '<p>响应预览: ' + text.substring(0, 200) + '...</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    document.getElementById('result').innerHTML = 
+                        '<h3>❌ Fetch失败</h3>' +
+                        '<p>错误: ' + error.message + '</p>';
+                });
+        }
+    </script>
+</body>
+</html>
