@@ -25,9 +25,15 @@ public class MainActivity extends Activity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
-        webSettings.setAllowFileAccessFromFileURLs(true);
+        webSettings.setAllowFile极AccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         webSettings.setDatabaseEnabled(true);
+        
+        // 重要：Android 10+ 需要额外权限
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            webSettings.setAllowFileAccess(true);
+            webSettings.setAllowContentAccess(true);
+        }
         
         // 重要：启用混合内容模式，允许HTTPS页面加载HTTP资源
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
