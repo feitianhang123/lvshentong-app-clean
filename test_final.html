@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>最终功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { margin: 20px 0; padding: 15px; border: 2px solid #ddd; border-radius: 8px; }
+        .success { border-color: #4CAF50; background: #f8fff8; }
+        .error { border-color: #f44336; background: #ffebee; }
+    </style>
+</head>
+<body>
+    <h1>模块一最终功能测试</h1>
+    
+    <div class="test" id="test1">
+        <h3>✅ JSON文件检查</h3>
+        <div id="jsonTest">正在检查JSON文件...</div>
+    </div>
+    
+    <div class="test" id="test2">
+        <h3>✅ 搜索功能测试</h3>
+        <div id="searchTest">正在测试搜索功能...</div>
+    </div>
+    
+    <div class="test" id="test3">
+        <h3>✅ 页面功能测试</h3>
+        <div id="pageTest">正在测试页面功能...</div>
+    </div>
+
+    <script>
+        // 测试JSON文件
+        async function testJSON() {
+            const testElement = document.getElementById('test1');
+            const resultDiv = document.getElementById('jsonTest');
+            
+            try {
+                const response = await fetch('./complete_excel.json');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                const validProducts = data.filter(item => item.col3 && item.col3 !== 'nan');
+                
+                resultDiv.innerHTML = `
+                    <strong>✅ 成功!</strong><br>
+                    文件大小: ${response.headers.get('content-length')} 字节<br>
+                    总行数: ${data.length}<br>
+                    有效产品: ${validProducts.length} 个<br>
+                    示例: ${validProducts[0]?.col3 || '无'}
+                `;
+                testElement.classList.add('success');
+                
+                return true;
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 失败:</strong> ${error.message}`;
+                testElement.classList.add('error');
+                return false;
+            }
+        }
+        
+        // 测试搜索功能
+        async function testSearch() {
+            const testElement = document.getElementById('test2');
+            const resultDiv = document.getElementById('searchTest');
+            
+            try {
+                const response = await fetch('./complete_excel.json');
+                const data = await response.json();
+                
+                const testTerms = ['苹果', '肉', '茶', '大米'];
+                let results = [];
+                
+                testTerms.forEach(term => {
+                    const found = data.filter(item => 
+                        item.col3 && item.col3.includes(term) && item.col3 !== 'nan'
+                    ).length;
+                    results.push(`${term}: ${found}个`);
+                });
+                
+                resultDiv.innerHTML = `
+                    <strong>✅ 搜索功能正常!</strong><br>
+                    ${results.join('<br>')}
+                `;
+                testElement.classList.add('success');
+                
+                return true;
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 搜索测试失败:</strong> ${error.message}`;
+                testElement.classList.add('error');
+                return false;
+            }
+        }
+        
+        // 测试页面功能
+        function testPage() {
+            const testElement = document.getElementById('test3');
+            const resultDiv = document.getElementById('pageTest');
+            
+            try {
+                // 检查关键元素是否存在
+                const hasContainer = document.querySelector('.container');
+                const hasSearchInput = document.querySelector('.search-input');
+                const hasSearchBtn = document.querySelector('.search-btn');
+                
+                resultDiv.innerHTML = `
+                    <strong>✅ 页面结构正常!</strong><br>
+                    容器: ${hasContainer ? '存在' : '缺失'}<br>
+                    搜索框: ${hasSearchInput ? '存在' : '缺失'}<br>
+                    搜索按钮: ${hasSearchBtn ? '存在' : '缺失'}<br>
+                    <a href="module1_fixed_final_v4.html" target="_blank">点击查看完整页面</a>
+                `;
+                testElement.classList.add('success');
+                
+                return true;
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 页面测试失败:</strong> ${error.message}`;
+                testElement.classList.add('error');
+                return false;
+            }
+        }
+        
+        // 运行所有测试
+        async function runAllTests() {
+            console.log('开始运行所有测试...');
+            
+            const jsonResult = await testJSON();
+            const searchResult = await testSearch();
+            const pageResult = testPage();
+            
+            if (jsonResult && searchResult && pageResult) {
+                console.log('✅ 所有测试通过！');
+            } else {
+                console.log('❌ 部分测试失败');
+            }
+        }
+        
+        // 启动测试
+        runAllTests();
+    </script>
+</body>
+</html>

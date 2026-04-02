@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块一功能测试</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; padding: 20px; background: #f8fff8; }
+        .test-case { margin: 20px 0; padding: 15px; border: 2px solid #ddd; border-radius: 8px; }
+        .success { background: #e8f5e8; border-color: #4CAF50; }
+        .error { background: #ffebee; border-color: #f44336; }
+        .loading { background: #fff3e0; border-color: #ff9800; }
+        button { background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        input { padding: 10px; border: 2px solid #ccc; border-radius: 5px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>模块一功能测试</h1>
+    
+    <div class="test-case" id="test1">
+        <h3>测试1: JSON数据加载</h3>
+        <button onclick="loadJSONData()">加载JSON数据</button>
+        <div id="jsonResult"></div>
+    </div>
+    
+    <div class="test-case" id="test2">
+        <h3>测试2: 搜索功能</h3>
+        <input type="text" id="searchInput" placeholder="输入产品名称">
+        <button onclick="searchProducts()">搜索</button>
+        <div id="searchResult"></div>
+    </div>
+    
+    <div class="test-case" id="test3">
+        <h3>测试3: API连接测试</h3>
+        <button onclick="testAPI()">测试API连接</button>
+        <div id="apiResult"></div>
+    </div>
+
+    <script>
+        let jsonData = null;
+        
+        // 加载本地JSON数据
+        async function loadJSONData() {
+            const testElement = document.getElementById('test1');
+            const resultDiv = document.getElementById('jsonResult');
+            
+            testElement.classList.add('loading');
+            resultDiv.innerHTML = '正在加载JSON数据...';
+            
+            try {
+                const response = await fetch('./complete_excel.json');
+                jsonData = await response.json();
+                
+                resultDiv.innerHTML = `<strong>✅ 成功加载!</strong> 共 ${jsonData.length} 行数据`;
+                testElement.classList.remove('loading');
+                testElement.classList.add('success');
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 加载失败:</strong> ${error.message}`;
+                testElement.classList.remove('loading');
+                testElement.classList.add('error');
+            }
+        }
+        
+        // 搜索产品
+        function searchProducts() {
+            const testElement = document.getElementById('test2');
+            const resultDiv = document.getElementById('searchResult');
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            
+            if (!jsonData) {
+                resultDiv.innerHTML = '<strong>❌ 请先加载JSON数据</strong>';
+                return;
+            }
+            
+            if (!searchTerm) {
+                resultDiv.innerHTML = '<strong>❌ 请输入搜索关键词</strong>';
+                return;
+            }
+            
+            testElement.classList.add('loading');
+            resultDiv.innerHTML = `正在搜索"${searchTerm}"...`;
+            
+            try {
+                const results = jsonData.filter(item => {
+                    const product = item.col3 || '';
+                    return product.toLowerCase().includes(searchTerm.toLowerCase()) && 
+                           product !== 'nan' && product.trim() !== '';
+                });
+                
+                if (results.length > 0) {
+                    let html = `<strong>✅ 找到 ${results.length} 个产品:</strong><br>`;
+                    results.slice(0, 5).forEach(result => {
+                        html += `• ${result.col3} (行号: ${result.row})<br>`;
+                    });
+                    if (results.length > 5) {
+                        html += `... 还有 ${results.length - 5} 个结果`;
+                    }
+                    resultDiv.innerHTML = html;
+                    testElement.classList.remove('loading');
+                    testElement.classList.add('success');
+                } else {
+                    resultDiv.innerHTML = '<strong>❌ 未找到匹配产品</strong>';
+                    testElement.classList.remove('loading');
+                    testElement.classList.add('error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 搜索失败:</strong> ${error.message}`;
+                testElement.classList.remove('loading');
+                testElement.classList.add('error');
+            }
+        }
+        
+        // 测试API连接
+        async function testAPI() {
+            const testElement = document.getElementById('test3');
+            const resultDiv = document.getElementById('apiResult');
+            
+            testElement.classList.add('loading');
+            resultDiv.innerHTML = '正在测试API连接...';
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/search?q=苹果');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<strong>✅ API连接成功!</strong> 找到 ${data.count} 个产品`;
+                    testElement.classList.remove('loading');
+                    testElement.classList.add('success');
+                } else {
+                    resultDiv.innerHTML = `<strong>❌ API返回错误:</strong> ${data.message}`;
+                    testElement.classList.remove('loading');
+                    testElement.classList.add('error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ API连接失败:</strong> ${error.message}`;
+                testElement.classList.remove('loading');
+                testElement.classList.add('error');
+            }
+        }
+    </script>
+</body>
+</html>
