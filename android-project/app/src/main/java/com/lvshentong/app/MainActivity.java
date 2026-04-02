@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
     
     @Override
     public void onBackPressed() {
-        if (webView.can极GoBack()) {
+        if (webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
