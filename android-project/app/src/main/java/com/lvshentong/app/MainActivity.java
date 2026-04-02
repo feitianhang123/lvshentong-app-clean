@@ -1,9 +1,11 @@
 package com.lvshentong.app;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebSettings;
-import android.webkit.WebView;
+import android.webkit极.WebView;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
@@ -39,6 +41,13 @@ public class MainActivity extends Activity {
                 // Handle internal links
                 if (url.startsWith("file:///")) {
                     view.loadUrl(url);
+                    return true;
+                }
+                // Handle download links
+                if (url.endsWith(".doc") || url.endsWith(".docx") || url.endsWith(".pdf") || url.endsWith(".xlsx")) {
+                    // Use browser to handle downloads
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
                     return true;
                 }
                 return false;
