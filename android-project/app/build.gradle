@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.greenfood.app'
+    namespace 'com.lvshentong.app'
     compileSdk 34
 
     defaultConfig {
