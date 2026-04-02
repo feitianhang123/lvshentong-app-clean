@@ -28,10 +28,9 @@ jobs:
     - name: Clean and Build APK with Gradle
       run: |
         cd android-project
-        # Use gradle wrapper with specified version
-        chmod +x gradlew
-        ./gradlew --version
-        ./gradlew clean assembleDebug
+        # Use system gradle directly
+        gradle --version
+        gradle clean assembleDebug
       
     - name: Upload APK
       uses: actions/upload-artifact@v4
