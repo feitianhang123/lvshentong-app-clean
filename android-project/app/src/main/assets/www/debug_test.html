@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>JSON文件加载测试</h1>
+    <button onclick="testJSON()">测试JSON加载</button>
+    <div id="result"></div>
+    
+    <script>
+        function testJSON() {
+            console.log('开始测试JSON加载...');
+            fetch('complete_excel.json')
+                .then(response => {
+                    console.log('响应状态:', response.status);
+                    if (!response.ok) {
+                        throw new Error('HTTP错误: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('JSON加载成功，数据长度:', data.length);
+                    document.getElementById('result').innerHTML = 
+                        '<h3>✅ JSON加载成功！</h3>' +
+                        '<p>数据行数: ' + data.length + '</p>' +
+                        '<p>前5行数据预览:</p>' +
+                        '<pre>' + JSON.stringify(data.slice(0, 5), null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    console.error('JSON加载失败:', error);
+                    document.getElementById('result').innerHTML = 
+                        '<h3>❌ JSON加载失败</h3>' +
+                        '<p>错误信息: ' + error.message + '</p>';
+                });
+        }
+    </script>
+</body>
+</html>
