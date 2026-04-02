@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块一调试 - 绿色食品申报通</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; color: #333; }
+        .container { max-width: 400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; padding: 20px; text-align: center; }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .content { padding: 20px; }
+        .test-section { margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 10px; border: 1px solid #e0e0e0; }
+        .test-btn { background: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .test-btn:hover { background: #45a049; }
+        .result { margin-top: 10px; padding: 10px; background: white; border-radius: 5px; border: 1px solid #ddd; }
+        .success { color: #2e7d32; border-color: #4CAF50; }
+        .error { color: #d32f2f; border-color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>模块一功能调试</h1>
+            <button class="back-btn" onclick="window.location.href='index_fixed.html'">返回主页</button>
+        </div>
+        
+        <div class="content">
+            <div class="test-section">
+                <h3>1. JSON文件加载测试</h3>
+                <button class="test-btn" onclick="testJSON()">测试JSON加载</button>
+                <div id="jsonResult" class="result"></div>
+            </div>
+            
+            <div class="test-section">
+                <h3>2. 搜索功能测试</h3>
+                <input type="text" id="testSearch" placeholder="输入搜索关键词" style="padding: 8px; width: 200px; margin-right: 10px;">
+                <button class="test-btn" onclick="testSearch()">测试搜索</button>
+                <div id="searchResult" class="result"></div>
+            </div>
+            
+            <div class="test-section">
+                <h3>3. 目录卡点击测试</h3>
+                <button class="test-btn" onclick="testDataCard()">测试目录卡点击</button>
+                <div id="cardResult" class="result"></div>
+            </div>
+            
+            <div class="test-section">
+                <h3>4. 完整数据查看</h3>
+                <button class="test-btn" onclick="showFullData()">查看完整数据</button>
+                <div id="fullDataResult" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let excelData = [];
+        
+        // 测试JSON文件加载
+        function testJSON() {
+            console.log('开始测试JSON加载...');
+            document.getElementById('jsonResult').innerHTML = '<div>正在加载JSON文件...</div>';
+            
+            fetch('complete_excel.json')
+                .then(response => {
+                    console.log('响应状态:', response.status);
+                    if (!response.ok) {
+                        throw new Error('HTTP错误: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    excelData = data;
+                    console.log('JSON加载成功，数据长度:', data.length);
+                    document.getElementById('jsonResult').innerHTML = 
+                        '<div class="success">✅ JSON加载成功！</div>' +
+                        '<div>数据行数: ' + data.length + '</div>' +
+                        '<div>前3行数据预览:</div>' +
+                        '<pre>' + JSON.stringify(data.slice(0, 3), null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    console.error('JSON加载失败:', error);
+                    document.getElementById('jsonResult').innerHTML = 
+                        '<div class="error">❌ JSON加载失败</div>' +
+                        '<div>错误信息: ' + error.message + '</div>';
+                });
+        }
+        
+        // 测试搜索功能
+        function testSearch() {
+            const searchTerm = document.getElementById('testSearch').value.trim();
+            if (!searchTerm) {
+                document.getElementById('searchResult').innerHTML = '<div class="error">请输入搜索关键词</div>';
+                return;
+            }
+            
+            if (excelData.length === 0) {
+                document.getElementById('searchResult').innerHTML = '<div class="error">请先加载JSON数据</div>';
+                return;
+            }
+            
+            console.log('搜索关键词:', searchTerm);
+            
+            const foundRows = excelData.filter(row =>
+                (row.col1 && row.col1.includes(searchTerm)) ||
+                (row.col2 && row.col2.includes(searchTerm)) ||
+                (row.col3 && row.col3.includes(searchTerm)) ||
+                (row.col4 && row.col4.includes(searchTerm))
+            );
+            
+            console.log('找到结果:', foundRows.length);
+            
+            if (foundRows.length > 0) {
+                let html = '<div class="success">✅ 找到 ' + foundRows.length + ' 个匹配结果</div>';
+                foundRows.slice(0, 5).forEach(row => {
+                    html += '<div style="margin: 10px 0; padding: 10px; border-left: 3px solid #4CAF50; background: #f9f9f9;">';
+                    html += '<strong>第' + row.row + '行：</strong><br>';
+                    if (row.col1) html += 'A列：' + row.col1 + '<br>';
+                    if (row.col2) html += 'B列：' + row.col2 + '<br>';
+                    if (row.col3) html += 'C列：' + row.col3 + '<br>';
+                    if (row.col4) html += 'D列：' + row.col4;
+                    html += '</div>';
+                });
+                if (foundRows.length > 5) {
+                    html += '<div>... 还有 ' + (foundRows.length - 5) + ' 个结果</div>';
+                }
+                document.getElementById('searchResult').innerHTML = html;
+            } else {
+                document.getElementById('searchResult').innerHTML = '<div class="error">❌ 未找到匹配结果</div>';
+            }
+        }
+        
+        // 测试目录卡点击
+        function testDataCard() {
+            if (excelData.length === 0) {
+                document.getElementById('cardResult').innerHTML = '<div class="error">请先加载JSON数据</div>';
+                return;
+            }
+            
+            console.log('显示完整数据表格');
+            
+            let html = '<div class="success">✅ 显示完整数据表格 (' + excelData.length + ' 行)</div>';
+            html += '<div style="overflow-x: auto; margin-top: 10px;">';
+            html += '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<thead><tr style="background: #4CAF50; color: white;">';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">行号</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">A列</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">B列</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">C列</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">D列</th>';
+            html += '</tr></thead><tbody>';
+            
+            excelData.slice(0, 10).forEach(row => {
+                html += '<tr>';
+                html += '<td style="padding: 8px; border: 1px solid #ddd;">' + row.row + '</td>';
+                html += '<td style="padding: 8px; border: 1px solid #ddd;">' + (row.col1 || '') + '</td>';
+                html += '<td style="padding: 8px; border: 1px solid #ddd;">' + (row.col2 || '') + '</td>';
+                html += '<td style="padding: 8px; border: 1px solid #ddd;">' + (row.col3 || '') + '</td>';
+                html += '<td style="padding: 8px; border: 1px solid #ddd;">' + (row.col4 || '') + '</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            if (excelData.length > 10) {
+                html += '<div style="margin-top: 10px;">... 还有 ' + (excelData.length - 10) + ' 行数据</div>';
+            }
+            html += '</div>';
+            
+            document.getElementById('cardResult').innerHTML = html;
+        }
+        
+        // 显示完整数据
+        function showFullData() {
+            if (excelData.length === 0) {
+                document.getElementById('fullDataResult').innerHTML = '<div class="error">请先加载JSON数据</div>';
+                return;
+            }
+            
+            document.getElementById('fullDataResult').innerHTML = 
+                '<div class="success">✅ 数据加载完成</div>' +
+                '<div>总行数: ' + excelData.length + '</div>' +
+                '<div>数据示例（第1行）: ' + JSON.stringify(excelData[0]) + '</div>';
+        }
+        
+        // 页面加载时自动测试JSON
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('调试页面加载完成');
+            testJSON();
+        });
+    </script>
+</body>
+</html>

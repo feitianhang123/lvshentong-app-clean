@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android极.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
     
@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
         
         // Enable JavaScript and configure WebView
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
+        webSettings.setJavaScriptEnabled(true);极
         webSettings.setDomStorageEnabled(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
@@ -55,12 +55,12 @@ public class MainActivity extends Activity {
         });
         
         // Load local HTML file
-        webView.loadUrl(file:///android_asset/www/module1_debug.html");
+        webView.loadUrl("file:///android_asset/www/module1_debug.html");
     }
     
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
+        if (webView.can极GoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
