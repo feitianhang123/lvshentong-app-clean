@@ -1,3 +1,3 @@
 #!/bin/bash
-# Use system gradle command directly
+# Use system gradle command
 exec gradle "$@"
