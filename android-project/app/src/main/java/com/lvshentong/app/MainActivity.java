@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 // Handle internal links
                 if (url.startsWith("file:///")) {
-                    view.load极Url(url);
+                    view.loadUrl(url);
                     return true;
                 }
                 // Handle download links
