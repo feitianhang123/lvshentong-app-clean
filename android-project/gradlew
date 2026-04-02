@@ -1,4 +1,13 @@
 #!/bin/bash
-# Fallback to Windows gradlew.bat if Linux gradlew fails
-echo "Linux gradlew not properly configured. Falling back to gradlew.bat..."
-./gradlew.bat "$@"
+# Gradle wrapper script for Linux
+# If this fails, the build will use the gradle command directly
+
+echo "Using simplified gradle wrapper..."
+
+# Try to use local gradle if available
+if command -v gradle &> /dev/null; then
+    exec gradle "$@"
+else
+    # Fallback to direct java execution with gradle wrapper jar
+    exec java -cp "gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
+fi
