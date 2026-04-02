@@ -25,6 +25,12 @@ public class MainActivity extends Activity {
         webSettings.setAllowContentAccess(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setDatabaseEnabled(true);
+        
+        // 重要：启用混合内容模式，允许HTTPS页面加载HTTP资源
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         
         // Set WebView client
         webView.setWebViewClient(new WebViewClient() {
