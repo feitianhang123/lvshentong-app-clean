@@ -2,7 +2,7 @@ package com.lvshentong.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.U极ri;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
                 .build();
         
         // Set WebView client with asset loader
-        webView.setWebViewClient(new WebView极Client() {
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 return assetLoader.shouldInterceptRequest(request.getUrl());
