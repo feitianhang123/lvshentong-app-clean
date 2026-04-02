@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
         });
         
         // Load local HTML file
-        webView.loadUrl("file:///android_asset/www/index_fixed.html");
+        webView.loadUrl("file:///android_asset/www/module1_simple_test.html");
     }
     
     @Override
