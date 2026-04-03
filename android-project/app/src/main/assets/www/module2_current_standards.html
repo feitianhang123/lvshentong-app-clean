@@ -1,158 +1,158 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>现行标准 - 绿色食品申报通</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15); overflow: hidden; }
-        
-        header { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 30px; text-align: center; }
-        header h1 { font-size: 28px; margin-bottom: 10px; font-weight: 300; }
-        header p { opacity: 0.9; font-size: 16px; }
-        
-        .search-box { padding: 20px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
-        .search-box input { width: 100%; padding: 12px 20px; border: 2px solid #4caf50; border-radius: 25px; font-size: 16px; outline: none; transition: border-color 0.3s; }
-        .search-box input:focus { border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); }
-        
-        .tabs { display: flex; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; }
-        .tab:hover { background: #e8f5e8; }
-        .tab.active { border-bottom-color: #4caf50; color: #2e7d32; font-weight: 500; }
-        
-        .stats { padding: 15px 20px; background: #e8f5e8; color: #2e7d32; font-size: 14px; border-bottom: 1px solid #d4edda; }
-        
-        .standards-container { padding: 20px; max-height: 500px; overflow-y: auto; }
-        .standard-card { background: white; border: 1px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.3s; cursor: pointer; }
-        .standard-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.1); border-color: #4caf50; }
-        .standard-name { font-size: 18px; font-weight: 500; color: #2e7d32; margin-bottom: 8px; }
-        .standard-code { font-size: 14px; color: #6c757d; margin-bottom: 10px; font-family: 'Consolas', monospace; }
-        .standard-type { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin-right: 8px; }
-        .type-product { background: #e8f5e8; color: #2e7d32; }
-        .type-guideline { background: #e3f2fd; color: #1976d2; }
-        .download-btn { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 8px 16px; border: none; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s; margin-top: 10px; }
-        .download-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3); }
-        
-        .no-results { text-align: center; padding: 40px; color: #6c757d; font-size: 16px; }
-        
-        @media (max-width: 600px) {
-            .container { border-radius: 15px; margin: 10px; }
-            header { padding: 20px; }
-            header h1 { font-size: 24px; }
-            .standard-card { padding: 15px; }
-            .standard-name { font-size: 16px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>绿色食品现行标准查询</h1>
-            <p>全面收录农业农村部发布的绿色食品标准</p>
-        </header>
-        
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="搜索标准名称或标准号..." />
-        </div>
-        
-        <div class="tabs">
-            <div class="tab active" data-type="all">所有标准</div>
-            <div class="tab" data-type="product">产品标准</div>
-            <div class="tab" data-type="guideline">准则标准</div>
-        </div>
-        
-        <div class="stats">
-            <span id="statsInfo">共 143 个标准 (产品标准: 129, 准则标准: 14)</span>
-        </div>
-        
-        <div class="standards-container" id="standardsContainer">
-            <!-- 标准列表将通过JavaScript动态生成 -->
-        </div>
-    </div>
-
-    <script src="standards_data.js"></script>
-    <script>
-        let currentType = 'all';
-        let currentSearch = '';
-        
-        // 获取DOM元素
-        const searchInput = document.getElementById('searchInput');
-        const tabs = document.querySelectorAll('.tab');
-        const container = document.getElementById('standardsContainer');
-        const statsInfo = document.getElementById('statsInfo');
-        
-        // 搜索功能
-        searchInput.addEventListener('input', (e) => {
-            currentSearch = e.target.value.toLowerCase().trim();
-            renderStandards();
-        });
-        
-        // 选项卡切换
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                currentType = tab.dataset.type;
-                renderStandards();
-            });
-        });
-        
-        // 渲染标准列表
-        function renderStandards() {
-            let standards = standardsData;
-            
-            // 按类型筛选
-            if (currentType !== 'all') {
-                standards = standards.filter(standard => standard.type === currentType);
-            }
-            
-            // 搜索筛选
-            if (currentSearch) {
-                standards = standards.filter(standard => 
-                    standard.name.toLowerCase().includes(currentSearch) ||
-                    standard.code.toLowerCase().includes(currentSearch)
-                );
-            }
-            
-            // 清空容器
-            container.innerHTML = '';
-            
-            // 显示无结果信息
-            if (standards.length === 0) {
-                container.innerHTML = '<div class="no-results">没有找到匹配的标准</div>';
-                statsInfo.textContent = '没有找到匹配的标准';
-                return;
-            }
-            
-            // 更新统计信息
-            const total = standardsData.length;
-            const productCount = standardsData.filter(s => s.type === 'product').length;
-            const guidelineCount = standardsData.filter(s => s.type === 'guideline').length;
-            statsInfo.textContent = `共 ${total} 个标准 (产品标准: ${productCount}, 准则标准: ${guidelineCount})`;
-            
-            // 渲染标准卡片
-            standards.forEach(standard => {
-                const card = document.createElement('div');
-                card.className = 'standard-card';
-                
-                const typeClass = standard.type === 'product' ? 'type-product' : 'type-guideline';
-                const typeText = standard.type === 'product' ? '产品标准' : '准则标准';
-                
-                card.innerHTML = `
-                    <div class="standard-name">${standard.name}</div>
-                    <div class="standard-code">${standard.code}</div>
-                    <span class="standard-type ${typeClass}">${typeText}</span>
-                    <button class="download-btn" onclick="window.open('${standard.url}', '_blank')">下载标准</button>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-        
-        // 初始渲染
-        renderStandards();
-    </script>
-</body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现行标准 - 绿色食品申报通</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15); overflow: hidden; }
+        
+        header { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 30px; text-align: center; }
+        header h1 { font-size: 28px; margin-bottom: 10px; font-weight: 300; }
+        header p { opacity: 0.9; font-size: 16px; }
+        
+        .search-box { padding: 20px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
+        .search-box input { width: 100%; padding: 12px 20px; border: 2px solid #4caf50; border-radius: 25px; font-size: 16px; outline: none; transition: border-color 0.3s; }
+        .search-box input:focus { border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); }
+        
+        .tabs { display: flex; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; }
+        .tab:hover { background: #e8f5e8; }
+        .tab.active { border-bottom-color: #4caf50; color: #2e7d32; font-weight: 500; }
+        
+        .stats { padding: 15px 20px; background: #e8f5e8; color: #2e7d32; font-size: 14px; border-bottom: 1px solid #d4edda; }
+        
+        .standards-container { padding: 20px; max-height: 500px; overflow-y: auto; }
+        .standard-card { background: white; border: 1px solid #e9ecef; border-radius: 12px; padding: 20px; margin-bottom: 15px; transition: all 0.3s; cursor: pointer; }
+        .standard-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.1); border-color: #4caf50; }
+        .standard-name { font-size: 18px; font-weight: 500; color: #2e7d32; margin-bottom: 8px; }
+        .standard-code { font-size: 14px; color: #6c757d; margin-bottom: 10px; font-family: 'Consolas', monospace; }
+        .standard-type { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin-right: 8px; }
+        .type-product { background: #e8f5e8; color: #2e7d32; }
+        .type-guideline { background: #e3f2fd; color: #1976d2; }
+        .download-btn { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 8px 16px; border: none; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s; margin-top: 10px; }
+        .download-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3); }
+        
+        .no-results { text-align: center; padding: 40px; color: #6c757d; font-size: 16px; }
+        
+        @media (max-width: 600px) {
+            .container { border-radius: 15px; margin: 10px; }
+            header { padding: 20px; }
+            header h1 { font-size: 24px; }
+            .standard-card { padding: 15px; }
+            .standard-name { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>绿色食品现行标准查询</h1>
+            <p>全面收录农业农村部发布的绿色食品标准</p>
+        </header>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索标准名称或标准号..." />
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-type="all">所有标准</div>
+            <div class="tab" data-type="product">产品标准</div>
+            <div class="tab" data-type="guideline">准则标准</div>
+        </div>
+        
+        <div class="stats">
+            <span id="statsInfo">共 143 个标准 (产品标准: 129, 准则标准: 14)</span>
+        </div>
+        
+        <div class="standards-container" id="standardsContainer">
+            <!-- 标准列表将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script src="standards_data.js"></script>
+    <script>
+        let currentType = 'all';
+        let currentSearch = '';
+        
+        // 获取DOM元素
+        const searchInput = document.getElementById('searchInput');
+        const tabs = document.querySelectorAll('.tab');
+        const container = document.getElementById('standardsContainer');
+        const statsInfo = document.getElementById('statsInfo');
+        
+        // 搜索功能
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value.toLowerCase().trim();
+            renderStandards();
+        });
+        
+        // 选项卡切换
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentType = tab.dataset.type;
+                renderStandards();
+            });
+        });
+        
+        // 渲染标准列表
+        function renderStandards() {
+            let standards = standardsData;
+            
+            // 按类型筛选
+            if (currentType !== 'all') {
+                standards = standards.filter(standard => standard.type === currentType);
+            }
+            
+            // 搜索筛选
+            if (currentSearch) {
+                standards = standards.filter(standard => 
+                    standard.name.toLowerCase().includes(currentSearch) ||
+                    standard.code.toLowerCase().includes(currentSearch)
+                );
+            }
+            
+            // 清空容器
+            container.innerHTML = '';
+            
+            // 显示无结果信息
+            if (standards.length === 0) {
+                container.innerHTML = '<div class="no-results">没有找到匹配的标准</div>';
+                statsInfo.textContent = '没有找到匹配的标准';
+                return;
+            }
+            
+            // 更新统计信息
+            const total = standardsData.length;
+            const productCount = standardsData.filter(s => s.type === 'product').length;
+            const guidelineCount = standardsData.filter(s => s.type === 'guideline').length;
+            statsInfo.textContent = `共 ${total} 个标准 (产品标准: ${productCount}, 准则标准: ${guidelineCount})`;
+            
+            // 渲染标准卡片
+            standards.forEach(standard => {
+                const card = document.createElement('div');
+                card.className = 'standard-card';
+                
+                const typeClass = standard.type === 'product' ? 'type-product' : 'type-guideline';
+                const typeText = standard.type === 'product' ? '产品标准' : '准则标准';
+                
+                card.innerHTML = `
+                    <div class="standard-name">${standard.name}</div>
+                    <div class="standard-code">${standard.code}</div>
+                    <span class="standard-type ${typeClass}">${typeText}</span>
+                    <button class="download-btn" onclick="window.open('${standard.url}', '_blank')">下载标准</button>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // 初始渲染
+        renderStandards();
+    </script>
+</body>
 </html>
