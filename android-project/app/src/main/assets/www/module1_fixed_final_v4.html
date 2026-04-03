@@ -181,6 +181,10 @@
             // 加载数据
 
             fetch('complete_excel.json')
+                // 调试信息
+                console.log('数据文件路径:', window.location.href + 'complete_excel.json');
+                console.log('数据加载状态: 开始加载');
+    
 
                 .then(response => response.json())
 
