@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试模块一功能</title>
+    <script>
+        // 简单测试数据加载
+        async function testDataLoad() {
+            try {
+                console.log('测试数据加载...');
+                const response = await fetch('complete_excel.json');
+                
+                if (!response.ok) {
+                    throw new Error('HTTP错误: ' + response.status);
+                }
+                
+                const data = await response.json();
+                console.log('数据加载成功:', data.length, '行');
+                
+                // 测试搜索功能
+                const testTerm = "水稻";
+                const found = data.filter(row => 
+                    (row.col1 && row.col1.includes(testTerm)) ||
+                    (row.col2 && row.col2.includes(testTerm)) ||
+                    (row.col3 && row.col3.includes(testTerm)) ||
+                    (row.col4 && row.col4.includes(testTerm))
+                );
+                
+                console.log('搜索"' + testTerm + '"结果:', found.length, '个匹配');
+                
+                if (found.length > 0) {
+                    console.log('示例匹配:', found[0]);
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error('测试失败:', error.message);
+                return false;
+            }
+        }
+        
+        // 页面加载时运行测试
+        window.addEventListener('load', async () => {
+            console.log('开始测试模块一功能...');
+            const success = await testDataLoad();
+            console.log('测试完成:', success ? '成功' : '失败');
+        });
+    </script>
+</head>
+<body>
+    <h1>测试模块一功能</h1>
+    <p>查看浏览器控制台获取测试结果...</p>
+</body>
+</html>

@@ -180,13 +180,16 @@
 
             // 加载数据
 
+            console.log('数据文件路径:', window.location.href + 'complete_excel.json');
+            console.log('数据加载状态: 开始加载');
+            
             fetch('complete_excel.json')
-                // 调试信息
-                console.log('数据文件路径:', window.location.href + 'complete_excel.json');
-                console.log('数据加载状态: 开始加载');
-    
-
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('数据加载失败: ' + response.status);
+                    }
+                    return response.json();
+                })
 
                 .then(data => {
 
@@ -229,6 +232,11 @@
                     
 
                     console.log('事件监听器设置完成');
+                    
+                    // 启用界面元素
+                    document.getElementById('searchBtn').disabled = false;
+                    document.getElementById('dataCard').style.cursor = 'pointer';
+                    document.getElementById('dataCard').style.opacity = '1';
 
                 })
 
