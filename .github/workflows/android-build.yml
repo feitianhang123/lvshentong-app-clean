@@ -1,35 +1,39 @@
-name: Android Build
+name: Android CI
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up JDK 17
+      uses: actions/checkout@v4
+      
+    - name: Setup Java
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
-
+        
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v2
-
-    - name: Build with Gradle
+      uses: android-actions/setup-android@v3
+      
+    - name: Clean and Build APK with Gradle
       run: |
         cd android-project
-        gradle assembleDebug
-
-    - name: Upload APK artifact
+        # Use system gradle directly
+        gradle --version
+        gradle clean assembleDebug
+      
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: lvshentong-app
+        name: lvshentong-apk
         path: android-project/app/build/outputs/apk/debug/app-debug.apk
