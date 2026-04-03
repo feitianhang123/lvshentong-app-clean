@@ -1,231 +1,461 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>产品目录 - 绿色食品申报通</title>
+
     <style>
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; color: #333; }
+
         .container { max-width: 400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15); overflow: hidden; }
+
         .header { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; padding: 20px; text-align: center; position: relative; }
+
         .back-btn { position: absolute; left: 15px; top: 15px; background: rgba(255,255,255,0.2); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 18px; line-height: 30px; }
+
         .module-title { font-size: 20px; font-weight: bold; }
+
         .search-section { padding: 20px; background: #f8fff8; }
+
         .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+
         .search-input { flex: 1; padding: 12px 15px; border: 2px solid #e8f5e8; border-radius: 10px; font-size: 14px; }
+
         .search-input:focus { border-color: #4CAF50; outline: none; }
+
         .search-btn { background: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+
         .search-btn:hover { background: #45a049; }
+
         .standard-card { background: white; border: 2px solid #e8f5e8; border-radius: 15px; padding: 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease; }
+
         .standard-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2); border-color: #4CAF50; }
+
         .card-title { font-size: 16px; font-weight: bold; color: #2e7d32; margin-bottom: 8px; }
+
         .card-desc { font-size: 12px; color: #666; }
+
         .result-section { padding: 20px; display: none; }
+
         .result-success { background: #e8f5e8; border: 2px solid #4CAF50; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+
         .result-error { background: #ffebee; border: 2px solid #f44336; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+
         .result-title { font-weight: bold; margin-bottom: 8px; color: #2e7d32; }
+
         .result-desc { font-size: 14px; color: #666; }
+
         .back-to-search { background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+
         
+
         /* 数据查看模态框样式 */
+
         .data-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow: auto; }
+
         .data-content { max-width: 95%; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; }
+
         .data-table { max-height: 70vh; overflow: auto; border: 1px solid #ddd; }
+
         .data-table table { width: 100%; border-collapse: collapse; font-size: 11px; }
+
         .data-table th { border: 1px solid #ddd; padding: 8px; text-align: left; background: #f2f2f2; position: sticky; top: 0; }
+
         .data-table td { border: 1px solid #ddd; padding: 8px; }
+
         .data-table tr:nth-child(even) { background: #f9f9f9; }
+
     </style>
+
 </head>
+
 <body>
+
     <div class="container">
+
         <div class="header">
+
             <button class="back-btn" onclick="window.history.back()">←</button>
+
             <div class="module-title">产品目录</div>
+
         </div>
+
         <div class="search-section" id="searchSection">
+
             <div class="search-box">
+
                 <input type="text" class="search-input" id="searchInput" placeholder="请输入产品名称...">
+
                 <button class="search-btn" id="searchBtn">搜索</button>
+
             </div>
+
             <div class="standard-card" id="dataCard">
+
                 <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
+
                 <div class="card-desc">点击查看完整的标准目录内容</div>
+
             </div>
+
         </div>
+
         <div class="result-section" id="resultSection">
+
             <div class="result-success" id="successResult" style="display: none;">
+
                 <div class="result-title">✅ 找到匹配产品！</div>
+
                 <div class="result-desc" id="successDesc"></div>
+
             </div>
+
             <div class="result-error" id="errorResult" style="display: none;">
+
                 <div class="result-title">❌ 未找到产品</div>
+
                 <div class="result-desc">申报产品不在绿色食品使用标准目录内，暂时无法申报绿色食品。</div>
+
             </div>
+
             <button class="back-to-search" id="backBtn">返回主界面</button>
+
         </div>
+
     </div>
 
+
+
     <script>
+
         console.log('模块一最终版本加载...');
+
         
+
         // 辅助函数：清理数据，去掉"nan"文字
+
         function cleanData(value) {
+
             if (!value || value === 'nan' || value === 'NaN' || value.trim() === '') {
+
                 return '';
+
             }
+
             return value;
+
         }
+
         
+
         // 辅助函数：检查是否有实际内容（非空且不是nan）
+
         function hasContent(value) {
+
             return value && value !== 'nan' && value !== 'NaN' && value.trim() !== '';
+
         }
+
         
+
         document.addEventListener('DOMContentLoaded', function() {
+
             console.log('DOM加载完成');
+
             
+
             let excelData = [];
+
             
+
             // 加载数据
+
             fetch('complete_excel.json')
+
                 .then(response => response.json())
+
                 .then(data => {
+
                     excelData = data;
+
                     console.log('数据加载完成:', excelData.length, '行');
+
                     
+
                     // 预处理数据：清理所有"nan"值
+
                     excelData.forEach(row => {
+
                         row.col1 = cleanData(row.col1);
+
                         row.col2 = cleanData(row.col2);
+
                         row.col3 = cleanData(row.col3);
+
                         row.col4 = cleanData(row.col4);
+
                     });
+
                     
+
                     // 设置事件监听器
+
                     document.getElementById('searchBtn').addEventListener('click', searchProduct);
+
                     document.getElementById('dataCard').addEventListener('click', showFullExcelData);
+
                     document.getElementById('backBtn').addEventListener('click', backToSearch);
+
                     document.getElementById('searchInput').addEventListener('keypress', function(e) {
+
                         if (e.key === 'Enter') searchProduct();
+
                     });
+
                     
+
                     console.log('事件监听器设置完成');
+
                 })
+
                 .catch(error => {
+
                     console.error('数据加载失败:', error);
+
                     alert('数据加载失败，请刷新页面');
+
                 });
+
             
+
             function searchProduct() {
+
                 console.log('搜索函数被调用');
+
                 const searchTerm = document.getElementById('searchInput').value.trim();
+
                 if (!searchTerm) { 
+
                     alert('请输入产品名称'); 
+
                     return; 
+
                 }
+
                 
+
                 if (excelData.length === 0) {
+
                     alert('数据尚未加载完成，请稍后重试');
+
                     return;
+
                 }
+
                 
+
                 const foundRows = excelData.filter(row =>
+
                     (hasContent(row.col1) && row.col1.includes(searchTerm)) ||
+
                     (hasContent(row.col2) && row.col2.includes(searchTerm)) ||
+
                     (hasContent(row.col3) && row.col3.includes(searchTerm)) ||
+
                     (hasContent(row.col4) && row.col4.includes(searchTerm))
+
                 );
+
                 
+
                 document.getElementById('searchSection').style.display = 'none';
+
                 document.getElementById('resultSection').style.display = 'block';
+
                 
+
                 if (foundRows.length > 0) {
+
                     document.getElementById('successResult').style.display = 'block';
+
                     document.getElementById('errorResult').style.display = 'none';
+
                     
+
                     let html = '<div><strong>找到' + foundRows.length + '个匹配结果：</strong></div>';
+
                     foundRows.forEach((row, index) => {
+
                         if (index < 10) {
+
                             html += '<div style="margin: 8px 0; padding: 8px; border-left: 3px solid #4CAF50; background: #f9f9f9;">';
+
                             html += '<strong>第' + row.row + '行：</strong><br>';
+
                             if (hasContent(row.col1)) html += 'A列：' + row.col1 + '<br>';
+
                             if (hasContent(row.col2)) html += 'B列：' + row.col2 + '<br>';
+
                             if (hasContent(row.col3)) html += 'C列：' + row.col3 + '<br>';
+
                             if (hasContent(row.col4)) html += 'D列：' + row.col4;
+
                             html += '</div>';
+
                         }
+
                     });
+
                     if (foundRows.length > 10) {
+
                         html += '<div style="color: #666; margin-top: 10px;">...还有' + (foundRows.length - 10) + '个结果</div>';
+
                     }
+
                     document.getElementById('successDesc').innerHTML = html;
+
                 } else {
+
                     document.getElementById('successResult').style.display = 'none';
+
                     document.getElementById('errorResult').style.display = 'block';
+
                 }
+
             }
+
             
+
             function showFullExcelData() {
+
                 console.log('显示完整数据 - 全部' + excelData.length + '行');
+
                 if (excelData.length === 0) {
+
                     alert('数据尚未加载完成，请稍后重试');
+
                     return;
+
                 }
+
                 
+
                 // 创建模态框
+
                 const modalDiv = document.createElement('div');
+
                 modalDiv.className = 'data-modal';
+
                 modalDiv.id = 'dataModal';
+
                 
+
                 let html = '<div class="data-content">';
+
                 html += '<h2 style="color: #2e7d32; margin-bottom: 15px;">绿色食品产品适用标准目录（2023版）</h2>';
+
                 html += '<div style="margin-bottom: 15px;"></div>';
+
                 html += '<div class="data-table">';
+
                 html += '<table>';
+
                 html += '<thead>';
+
                 html += '<tr><th>行号</th><th>A列</th><th>B列</th><th>C列</th><th>D列</th></tr>';
+
                 html += '</thead><tbody>';
+
                 
+
                 // 显示全部数据
+
                 excelData.forEach(row => {
+
                     html += '<tr>';
+
                     html += '<td>' + row.row + '</td>';
+
                     html += '<td>' + row.col1 + '</td>';
+
                     html += '<td>' + row.col2 + '</td>';
+
                     html += '<td>' + row.col3 + '</td>';
+
                     html += '<td>' + row.col4 + '</td>';
+
                     html += '</tr>';
+
                 });
+
                 
+
                 html += '</tbody></table></div>';
+
                 html += '<div style="margin-top: 20px; text-align: center;">';
+
                 html += '<button id="closeModalBtn" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">关闭</button>';
+
                 html += '</div></div>';
+
                 
+
                 modalDiv.innerHTML = html;
+
                 document.body.appendChild(modalDiv);
+
                 
+
                 // 添加关闭事件
+
                 document.getElementById('closeModalBtn').addEventListener('click', function() {
+
                     modalDiv.remove();
+
                 });
+
                 
+
                 // 点击模态框背景也可以关闭
+
                 modalDiv.addEventListener('click', function(e) {
+
                     if (e.target === modalDiv) {
+
                         modalDiv.remove();
+
                     }
+
                 });
+
             }
+
             
+
             function backToSearch() {
+
                 document.getElementById('searchSection').style.display = 'block';
+
                 document.getElementById('resultSection').style.display = 'none';
+
                 document.getElementById('searchInput').value = '';
+
             }
+
         });
+
     </script>
+
 </body>
+
 </html>
