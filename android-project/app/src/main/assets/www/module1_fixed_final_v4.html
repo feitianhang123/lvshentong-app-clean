@@ -32,6 +32,11 @@
                 <input type="text" class="search-input" id="searchInput" placeholder="请输入产品名称">
                 <button class="search-btn" onclick="searchProduct()">搜索</button>
             </div>
+            
+            <div class="standard-catalog-card" onclick="showFullCatalog()" style="background: white; border: 2px solid #e8f5e8; border-radius: 8px; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s ease;">
+                <div style="font-size: 16px; font-weight: bold; color: #2e7d32; margin-bottom: 8px;">绿色食品产品适用标准目录（2023版）</div>
+                <div style="font-size: 12px; color: #666;">点击查看完整的标准目录内容</div>
+            </div>
         </div>
         
         <div class="result-section" id="resultSection">
@@ -131,11 +136,29 @@
             }
         }
         
-        // 初始化
-        window.onload = function() {
-            console.log('页面加载完成，开始加载数据...');
-            loadJSONData();
-        };
-    </script>
-</body>
-</html>
+        // 显示完整目录
+        function showFullCatalog() {
+            console.log('显示完整目录 - 全部' + jsonData.length + '行');
+            if (jsonData.length === 0) {
+                alert('数据尚未加载完成，请稍后重试');
+                return;
+            }
+            
+            // 创建模态框
+            const modalDiv = document.createElement('div');
+            modalDiv.style.position = 'fixed';
+            modalDiv.style.top = '0';
+            modalDiv.style.left = '0';
+            modalDiv.style.width = '100%';
+            modalDiv.style.height = '100%';
+            modalDiv.style.background = 'rgba(0,0,0,0.8)';
+            modalDiv.style.zIndex = '1000';
+            modalDiv.style.overflow = 'auto';
+            
+            let html = '<div style="max-width: 95%; margin: 20px auto; background: white; padding: 20px; border-radius: 10px;">';
+            html += '<h2 style="color: #2e7d32; margin-bottom: 15px;">绿色食品产品适用标准目录（2023版）</h2>';
+            html += '<div style="margin-bottom: 15px;">共 ' + jsonData.length + ' 行数据</div>';
+            html += '<div style="max-height: 70vh; overflow: auto; border: 1px solid #ddd;">';
+            html += '<table style="width: 100%; border-collapse: collapse; font-size: 11px;">';
+            html += '<thead>';
+            html += '<tr><th style="border: 1px solid #ddd; padding: 8px; text-align: left; background: #f2f2f2; position: sticky; top: 0;">行号</th><th style="border: 1px solid #ddd; padding: 8px; text-align: left; background: #f2极 content length, truncating to 100KB. Use edit with offset/limit for large files.
