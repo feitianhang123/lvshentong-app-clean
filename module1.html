@@ -5,170 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>产品目录 - 绿色食品申报通</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif; 
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
+            min-height: 100vh; padding: 20px; color: #333; 
         }
-        
-        body {
-            font-family: 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
+        .container { 
+            max-width: 400px; margin: 0 auto; background: white; 
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15); 
+            overflow: hidden; 
         }
-        
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
-            overflow: hidden;
+        .header { 
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); 
+            color: white; padding: 20px; text-align: center; 
         }
-        
-        .header {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
+        .back-btn { 
+            position: absolute; left: 15px; top: 15px; 
+            background: rgba(255,255,255,0.2); border: none; color: white; 
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer; 
+            font-weight: bold; 
         }
-        
-        .back-btn {
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
+        .module-title { font-size: 20px; font-weight: bold; }
+        .search-section { padding: 20px; background: #f8fff8; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-input { 
+            flex: 1; padding: 12px 15px; border: 2px solid #e8f5e8; 
+            border-radius: 10px; font-size: 14px; outline: none; 
+            transition: border-color 0.3s ease; 
         }
-        
-        .module-title {
-            font-size: 20px;
-            font-weight: bold;
+        .search-input:focus { border-color: #4CAF50; }
+        .search-btn { 
+            background: #4CAF50; color: white; border: none; 
+            padding: 12px 20px; border-radius: 10px; cursor: pointer; 
+            font-weight: bold; transition: background 0.3s ease; 
         }
-        
-        .search-section {
-            padding: 20px;
-            background: #f8fff8;
+        .search-btn:hover { background: #45a049; }
+        .standard-card { 
+            background: white; border: 2px solid #e8f5e8; border-radius: 15px; 
+            padding: 20px; margin-bottom: 15px; cursor: pointer; 
+            transition: all 0.3s ease; 
         }
-        
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+        .standard-card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 极0.2); 
+            border-color: #4CAF50; 
         }
-        
-        .search-input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #e8f5e8;
-            border-radius: 10px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s ease;
+        .card-title { 
+            font-size: 16px; font-weight: bold; color: #2e7d32; 
+            margin-bottom: 8px; 
         }
-        
-        .search-input:focus {
-            border-color: #4CAF50;
+        .card-desc { font-size: 12px; color: #666; }
+        .result-section { padding: 20px; display: none; }
+        .result-success { 
+            background: #e8f5e8; border: 2px solid #4CAF50; border-radius: 10px; 
+            padding: 15px; margin-bottom: 15px; 极
         }
-        
-        .search-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s ease;
+        .result-error { 
+            background: #ffebee; border: 2px solid #f44336; border-radius: 10px; 
+            padding: 15px; margin-bottom: 15px; 
         }
-        
-        .search-btn:hover {
-            background: #45a049;
+        .result-title { 
+            font-weight: bold; margin-bottom: 8px; color: #2e7d32; 
         }
-        
-        .standard-card {
-            background: white;
-            border: 2px solid #e8f5e8;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .result-desc { font-size: 14px; color: #666; }
+        .back-to-search { 
+            background: #4CAF50; color: white; border: none; 
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; 
+            margin-top: 10px; 
         }
-        
-        .standard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
-            border-color: #4CAF50;
-        }
-        
-        .card-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2e7d32;
-            margin-bottom: 8px;
-        }
-        
-        .card-desc {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .result-section {
-            padding: 20px;
-            display: none;
-        }
-        
-        .result-success {
-            background: #e8f5e8;
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .result-error {
-            background: #ffebee;
-            border: 2px solid #f44336;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .result-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #2e7d32;
-        }
-        
-        .result-desc {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .back-to-search {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
+        .loading { text-align: center; padding: 20px; color: #666; }
     </style>
 </head>
 <body>
@@ -208,6 +114,140 @@
         </div>
     </div>
 
-    <script src="module1_functions.js"></script>
+    <script>
+        // 绿色食品产品数据库（精简版）
+        const productDatabase = {
+            "大豆": { row: 3, aliases: "黄豆、黄大豆、黑豆、黑大豆、乌豆、青豆" },
+            "玉米": { row: 26, aliases: "苞谷、棒子、玉茭、苞米" },
+            "大米": { row: 32, aliases: "粳米、籼米、糙米" },
+            "花生": { row: 38, aliases: "落花生、长生果" },
+            "绿茶": { row: 16, aliases: "" },
+            "红茶": { row: 17, aliases: "" },
+            "苹果": { row: 67, aliases: "" },
+            "梨": { row: 68, aliases: "" },
+            "葡萄": { row: 69, aliases: "" },
+            "番茄": { row: 70, aliases: "西红柿、蕃柿、洋柿子" },
+            "牛肉": { row: 76, aliases: "牛、牛肉" },
+            "猪肉": { row: 77, aliases: "猪、猪肉" },
+            "羊肉": { row: 78, aliases: "羊、羊肉" },
+            "牛奶": { row: 82, aliases: "牛乳" },
+            "鸡蛋": { row: 93, aliases: "鸡卵、鸡子" }
+        };
+
+        // 搜索产品函数
+        function searchProduct() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            
+            if (!searchTerm) {
+                alert('请输入产品名称');
+                return;
+            }
+
+            const searchSection = document.getElementById('searchSection');
+            const resultSection = document.getElementById('resultSection');
+            const loading = document.getElementById('loading');
+            const successResult = document.getElementById('successResult');
+            const errorResult = document.getElementById('errorResult');
+            const successDesc = document.getElementById('successDesc');
+            const errorDesc = document.getElementById('errorDesc');
+
+            // 显示加载中
+            searchSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            successResult.style.display = 'none';
+            errorResult.style.display = 'none';
+            loading.style.display = 'block';
+
+            // 立即搜索
+            setTimeout(() => {
+                loading.style.display = 'none';
+                
+                // 精确匹配主名称
+                if (productDatabase[searchTerm]) {
+                    const productInfo = productDatabase[searchTerm];
+                    successResult.style.display = 'block';
+                    errorResult.style.display = 'none';
+                    successDesc.innerHTML = `
+                        <div style="margin-bottom: 10px;">
+                            <strong>产品名称：</strong>${searchTerm}
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>所在行数：</strong>第${productInfo.row}行
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>产品别名：</strong>${productInfo.aliases || '无'}
+                        </div>
+                        <div style="color: #666; font-size: 12px;">
+                            详细信息请查阅完整的标准目录文件
+                        </div>
+                    `;
+                } else {
+                    // 检查别名
+                    let foundInAliases = false;
+                    for (const [product, info] of Object.entries(productDatabase)) {
+                        if (info.aliases && info.aliases.includes(searchTerm)) {
+                            successResult.style.display = 'block';
+                            errorResult.style.display = 'none';
+                            successDesc.innerHTML = `
+                                <div style="margin-bottom: 10px;">
+                                    <strong>搜索别名：</strong>${searchTerm}
+                                </div>
+                                <div style="margin-bottom: 10px;">
+                                    <strong>对应产品：</strong>${product}
+                                </div>
+                                <div style="margin-bottom: 10px;">
+                                    <strong>所在行数：</strong>第${info.row}行
+                                </div>
+                                <div style="margin-bottom: 10px;">
+                                    <strong>产品别名：</strong>${info.aliases}
+                                </div>
+                                <div style="color: #666; font-size: 12px;">
+                                    详细信息请查阅完整的标准目录文件
+                                </div>
+                            `;
+                            foundInAliases = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!foundInAliases) {
+                        successResult.style.display = 'none';
+                        errorResult.style.display = 'block';
+                        errorDesc.textContent = '申报产品不在绿色食品使用标准目录内，暂时无法申报绿色食品。';
+                    }
+                }
+            }, 100);
+        }
+
+        // 显示标准目录内容
+        function showStandardContent() {
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.href = '绿色食品产品适用标准目录（2023版）.xlsx';
+            link.download = '绿色食品产品适用标准目录（2023版）.xlsx';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert('正在下载绿色食品产品适用标准目录（2023版）.xlsx');
+        }
+
+        // 返回搜索页面
+        function backToSearch() {
+            document.getElementById('searchSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('searchInput').value = '';
+        }
+
+        // 处理回车键
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                searchProduct();
+            }
+        }
+
+        console.log('模块一功能已加载，包含', Object.keys(productDatabase).length, '个产品');
+    </script>
 </body>
 </html>
