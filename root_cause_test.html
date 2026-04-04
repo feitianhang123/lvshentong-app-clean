@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>根本原因测试</title>
+    <script>
+        // 测试1: 内联JavaScript
+        console.log('=== 根本原因测试开始 ===');
+        function testInlineJS() {
+            console.log('✅ 内联JavaScript函数被调用');
+            alert('内联JS工作正常');
+        }
+        
+        // 测试2: 检查外部JS加载
+        function checkExternalJS() {
+            console.log('检查外部JS函数被调用');
+            if (typeof searchProduct === 'function') {
+                console.log('✅ searchProduct函数存在');
+                alert('外部JS已加载');
+            } else {
+                console.log('❌ searchProduct函数不存在');
+                alert('外部JS未加载');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>根本原因分析测试</h1>
+    
+    <div>
+        <h2>测试1: 内联JavaScript</h2>
+        <button onclick="testInlineJS()">测试内联JS</button>
+        <button onclick="console.log('直接控制台输出')">直接控制台</button>
+    </div>
+    
+    <div>
+        <h2>测试2: 外部JavaScript</h2>
+        <button onclick="checkExternalJS()">检查外部JS</button>
+        <button onclick="if (typeof searchProduct === 'function') { searchProduct(); } else { alert('searchProduct不存在'); }">直接调用searchProduct</button>
+    </div>
+    
+    <div>
+        <h2>测试3: 文件下载</h2>
+        <button onclick="if (typeof downloadExcelFile === 'function') { downloadExcelFile(); } else { alert('downloadExcelFile不存在'); }">测试下载</button>
+    </div>
+
+    <!-- 加载module1的JS -->
+    <script src="module1_working.js"></script>
+    
+    <script>
+        console.log('页面加载完成');
+        console.log('searchProduct类型:', typeof searchProduct);
+        console.log('downloadExcelFile类型:', typeof downloadExcelFile);
+        console.log('showStandardContent类型:', typeof showStandardContent);
+    </script>
+</body>
+</html>
