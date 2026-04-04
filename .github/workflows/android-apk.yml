@@ -1,0 +1,61 @@
+name: Android APK Build
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: 'Build type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+        - debug
+        - release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Copy HTML to assets
+      run: |
+        mkdir -p app/src/main/assets
+        cp module1-complete.html app/src/main/assets/
+        echo "HTML file copied to assets directory"
+    
+    - name: Build Debug APK
+      if: github.event.inputs.releaseType == 'debug' || github.event_name == 'workflow_dispatch'
+      run: |
+        chmod +x ./gradlew
+        ./gradlew assembleDebug
+        
+    - name: Build Release APK
+      if: github.event.inputs.releaseType == 'release' || github.event_name == 'release'
+      run: |
+        chmod +x ./gradlew
+        ./gradlew assembleRelease
+        
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: green-food-app-apk
+        path: app/build/outputs/apk/
+        retention-days: 30
+        
+    - name: List APK Files
+      run: |
+        find app/build/outputs/apk/ -name "*.apk" -exec ls -la {} \;
