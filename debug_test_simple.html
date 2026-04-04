@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+    <script>
+        console.log('Inline script loaded');
+        function testFunction() {
+            console.log('Test function called');
+            alert('Test function works!');
+        }
+    </script>
+</head>
+<body>
+    <h1>Debug Test Page</h1>
+    <button onclick="testFunction()">Test Button</button>
+    <button onclick="console.log('Direct onclick works')">Direct Console</button>
+</body>
+</html>

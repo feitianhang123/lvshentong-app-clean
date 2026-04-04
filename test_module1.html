@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块一功能测试</title>
+</head>
+<body>
+    <h1>模块一功能测试</h1>
+    
+    <div>
+        <h2>测试下载功能</h2>
+        <button onclick="downloadExcelFile()">点击测试下载Excel文件</button>
+    </div>
+    
+    <div>
+        <h2>测试搜索功能</h2>
+        <input type="text" id="testInput" placeholder="输入产品名称">
+        <button onclick="testSearch()">测试搜索</button>
+        <div id="testResult"></div>
+    </div>
+
+    <script src="module1_fixed_v2.js"></script>
+    <script>
+        function testSearch() {
+            const searchTerm = document.getElementById('testInput').value.trim();
+            const resultDiv = document.getElementById('testResult');
+            
+            if (!searchTerm) {
+                resultDiv.innerHTML = '请输入产品名称';
+                return;
+            }
+            
+            // 测试搜索逻辑
+            if (greenFoodStandards[searchTerm]) {
+                resultDiv.innerHTML = `找到产品: ${searchTerm}<br>标准: ${greenFoodStandards[searchTerm].number} (${greenFoodStandards[searchTerm].standard})`;
+            } else {
+                resultDiv.innerHTML = '未找到产品';
+            }
+        }
+    </script>
+</body>
+</html>

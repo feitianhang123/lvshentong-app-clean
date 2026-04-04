@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>深度诊断 - 根本原因分析</title>
+    <meta charset="UTF-8">
+    <script>
+        console.log('🔍 === 深度诊断开始 ===');
+        
+        // 测试1: 基本JavaScript功能
+        function testBasicJS() {
+            console.log('✅ 基本JS函数被执行');
+            document.getElementById('result1').textContent = '基本JS: 正常';
+        }
+        
+        // 测试2: 检查外部文件加载
+        function checkFileLoad() {
+            console.log('📁 检查文件加载状态');
+            
+            // 创建Image测试文件是否存在
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('result2').textContent = 'module1_working.js: ✅ 文件存在';
+                console.log('✅ module1_working.js 文件存在');
+            };
+            img.onerror = function() {
+                document.getElementById('result2').textContent = 'module1_working.js: ❌ 文件不存在';
+                console.error('❌ module1_working.js 文件不存在');
+            };
+            img.src = 'module1_working.js';
+        }
+        
+        // 测试3: 检查函数是否存在
+        function checkFunctions() {
+            console.log('🔧 检查函数存在性');
+            const results = [];
+            
+            const functionsToCheck = ['searchProduct', 'downloadExcelFile', 'showStandardContent'];
+            functionsToCheck.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    results.push(`${func}: ✅ 存在`);
+                    console.log(`✅ ${func} 函数存在`);
+                } else {
+                    results.push(`${func}: ❌ 不存在`);
+                    console.error(`❌ ${func} 函数不存在`);
+                }
+            });
+            
+            document.getElementById('result3').textContent = results.join(' | ');
+        }
+        
+        // 测试4: 模拟点击事件
+        function simulateClicks() {
+            console.log('🖱️ 模拟点击事件');
+            
+            // 模拟搜索按钮点击
+            const searchBtn = document.querySelector('[onclick*="searchProduct"]');
+            if (searchBtn) {
+                console.log('✅ 搜索按钮找到:', searchBtn);
+                document.getElementById('result4').textContent = '搜索按钮: ✅ 存在';
+            } else {
+                console.error('❌ 搜索按钮未找到');
+                document.getElementById('result4').textContent = '搜索按钮: ❌ 未找到';
+            }
+            
+            // 模拟目录卡点击
+            const catalogCard = document.querySelector('[onclick*="showStandardContent"]');
+            if (catalogCard) {
+                console.log('✅ 目录卡片找到:', catalogCard);
+                document.getElementById('result5').textContent = '目录卡片: ✅ 存在';
+            } else {
+                console.error('❌ 目录卡片未找到');
+                document.getElementById('result5').textContent = '目录卡片: ❌ 未找到';
+            }
+        }
+        
+        // 页面加载完成后自动运行诊断
+        window.onload = function() {
+            console.log('🌐 页面加载完成，开始自动诊断...');
+            testBasicJS();
+            checkFileLoad();
+            setTimeout(checkFunctions, 1000); // 给JS文件加载时间
+            setTimeout(simulateClicks, 1500);
+        };
+    </script>
+</head>
+<body>
+    <h1>🧪 深度诊断工具</h1>
+    <p>这个页面将帮助我们发现根本原因</p>
+    
+    <div style="background: #f5f5f5; padding: 20px; margin: 10px; border-radius: 10px;">
+        <h2>诊断结果:</h2>
+        <div id="result1" style="color: blue;">等待测试...</div>
+        <div id="result2" style="color: blue;">等待测试...</div>
+        <div id="result3" style="color: blue;">等待测试...</div>
+        <div id="result4" style="color: blue;">等待测试...</div>
+        <div id="result5" style="color: blue;">等待测试...</div>
+    </div>
+    
+    <div style="background: #e8f5e8; padding: 20px; margin: 10px; border-radius: 10px;">
+        <h2>手动测试:</h2>
+        <button onclick="testBasicJS()">测试基本JS</button>
+        <button onclick="checkFileLoad()">检查文件加载</button>
+        <button onclick="checkFunctions()">检查函数</button>
+        <button onclick="simulateClicks()">模拟点击</button>
+        <button onclick="if(typeof searchProduct==='function'){searchProduct()}else{alert('searchProduct不存在')}">直接调用搜索</button>
+    </div>
+
+    <!-- 加载module1的JS -->
+    <script src="module1_working.js"></script>
+</body>
+</html>

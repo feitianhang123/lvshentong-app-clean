@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绿色食品申报通 - 模块一</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .result-section {
+            padding: 30px;
+            min-height: 200px;
+        }
+        
+        .no-result {
+            text-align: center;
+            color: #666;
+            padding: 40px 0;
+        }
+        
+        .product-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4facfe;
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .product-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .error-message {
+            background: #ffe6e6;
+            color: #d63384;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #d63384;
+            margin-bottom: 20px;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 600px) {
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-btn {
+                width: 100%;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 绿色食品申报通</h1>
+            <p>模块一 - 产品适用标准目录查询</p>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="输入产品名称（如：大米、苹果、大豆...）" 
+                       onkeypress="if(event.key==='Enter') searchProduct()">
+                <button class="search-btn" onclick="searchProduct()">
+                    🔍 搜索产品
+                </button>
+            </div>
+            
+            <div id="errorContainer"></div>
+        </div>
+        
+        <div class="result-section" id="resultContainer">
+            <div class="no-result">
+                <p>请输入产品名称开始搜索</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 绿色食品申报通 - 版本 1.0</p>
+        </div>
+    </div>
+
+    <script>
+        // 产品数据库 - 包含常见绿色食品及其标准信息
+        const productDatabase = [
+            {
+                name: "大米",
+                aliases: ["稻米", "白米", "糙米"],
+                standard: "NY/T 419-2021",
+                rowNumber: 15,
+                category: "粮食作物"
+            },
+            {
+                name: "苹果",
+                aliases: ["红富士", "青苹果", "蛇果"],
+                standard: "NY/T 844-2020",
+                rowNumber: 32,
+                category: "水果"
+            },
+            {
+                name: "大豆",
+                aliases: ["黄豆", "毛豆", "青豆"],
+                standard: "NY/T 285-2022",
+                rowNumber: 28,
+                category: "油料作物"
+            },
+            {
+                name: "绿茶",
+                aliases: ["龙井", "碧螺春", "毛峰"],
+                standard: "NY/T 288-2022",
+                rowNumber: 45,
+                category: "茶叶"
+            },
+            {
+                name: "猪肉",
+                aliases: ["猪瘦肉", "猪五花", "猪排"],
+                standard: "NY/T 2799-2021",
+                rowNumber: 67,
+                category: "畜禽产品"
+            },
+            {
+                name: "鸡蛋",
+                aliases: ["鲜蛋", "土鸡蛋", "洋鸡蛋"],
+                standard: "NY/T 754-2020",
+                rowNumber: 72,
+                category: "禽蛋"
+            },
+            {
+                name: "牛奶",
+                aliases: ["鲜奶", "纯牛奶", "巴氏奶"],
+                standard: "NY/T 1172-2021",
+                rowNumber: 78,
+                category: "乳制品"
+            },
+            {
+                name: "蜂蜜",
+                aliases: ["蜂糖", "蜜糖", "蜂王浆"],
+                standard: "NY/T 752-2020",
+                rowNumber: 85,
+                category: "蜂产品"
+            },
+            {
+                name: "对虾",
+                aliases: ["明虾", "基围虾", "斑节虾"],
+                standard: "NY/T 1712-2021",
+                rowNumber: 92,
+                category: "水产品"
+            },
+            {
+                name: "香菇",
+                aliases: ["冬菇", "花菇", "香蕈"],
+                standard: "NY/T 749-2020",
+                rowNumber: 105,
+                category: "食用菌"
+            },
+            {
+                name: "花生",
+                aliases: ["落花生", "长生果", "地豆"],
+                standard: "NY/T 1065-2021",
+                rowNumber: 112,
+                category: "油料作物"
+            },
+            {
+                name: "柑橘",
+                aliases: ["橘子", "橙子", "柚子"],
+                standard: "NY/T 426-2021",
+                rowNumber: 38,
+                category: "水果"
+            },
+            {
+                name: "菠菜",
+                aliases: ["菠薐", "波斯草", "红嘴绿鹦哥"],
+                standard: "NY/T 743-2020",
+                rowNumber: 52,
+                category: "蔬菜"
+            },
+            {
+                name: "牛肉",
+                aliases: ["黄牛肉", "水牛肉", "牛排"],
+                standard: "NY/T 2798-2021",
+                rowNumber: 63,
+                category: "畜禽产品"
+            },
+            {
+                name: "鲤鱼",
+                aliases: ["黄河鲤", "荷包鲤", "红鲤"],
+                standard: "NY/T 1711-2021",
+                rowNumber: 96,
+                category: "水产品"
+            }
+        ];
+
+        // 搜索功能
+        function searchProduct() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            const resultContainer = document.getElementById('resultContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            // 清空之前的错误信息和结果
+            errorContainer.innerHTML = '';
+            
+            if (!searchTerm) {
+                showError('请输入产品名称');
+                return;
+            }
+            
+            // 搜索产品（支持别名搜索）
+            const results = productDatabase.filter(product => 
+                product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                product.aliases.some(alias => 
+                    alias.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            );
+            
+            if (results.length === 0) {
+                resultContainer.innerHTML = `
+                    <div class="no-result">
+                        <p>未找到与"${searchTerm}"相关的产品</p>
+                        <p>请尝试其他名称或查看完整目录</p>
+                        <a href="#" class="download-btn" onclick="downloadExcel()">
+                            📥 下载完整标准目录
+                        </a>
+                    </div>
+                `;
+            } else {
+                displayResults(results);
+            }
+        }
+
+        // 显示搜索结果
+        function displayResults(products) {
+            const resultContainer = document.getElementById('resultContainer');
+            
+            let html = '<div style="margin-bottom: 20px;">';
+            html += `<p style="color: #666; margin-bottom: 15px;">找到 ${products.length} 个匹配结果：</p>`;
+            
+            products.forEach(product => {
+                html += `
+                    <div class="product-card">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-info">
+                            <div>类别：${product.category}</div>
+                            <div>执行标准：${product.standard}</div>
+                            <div>Excel行号：第 ${product.rowNumber} 行</div>
+                            ${product.aliases.length > 0 ? 
+                                `<div>别名：${product.aliases.join('、')}</div>` : ''}
+                        </div>
+                        <a href="#" class="download-btn" onclick="downloadSpecific('${product.name}')">
+                            📥 下载标准文件
+                        </a>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            html += `
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="#" class="download-btn" onclick="downloadExcel()">
+                        📥 下载完整标准目录Excel
+                    </a>
+                </div>
+            `;
+            
+            resultContainer.innerHTML = html;
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.innerHTML = `
+                <div class="error-message">
+                    ⚠️ ${message}
+                </div>
+            `;
+        }
+
+        // 下载Excel文件（模拟功能）
+        function downloadExcel() {
+            alert('下载功能：绿色食品产品适用标准目录（2023版）.xlsx\n\n在实际部署中，这里会触发真实文件下载');
+            // 实际部署时替换为：
+            // window.location.href = '绿色食品产品适用标准目录（2023版）.xlsx';
+        }
+
+        function downloadSpecific(productName) {
+            alert(`下载功能：${productName}的标准文件\n\n在实际部署中，这里会下载该产品的详细标准PDF`);
+            // 实际部署时替换为具体的文件下载逻辑
+        }
+
+        // 初始化搜索框焦点
+        document.getElementById('searchInput').focus();
+    </script>
+</body>
+</html>

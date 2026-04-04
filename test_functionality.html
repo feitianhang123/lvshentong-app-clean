@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能测试</title>
+</head>
+<body>
+    <h1>模块一功能测试</h1>
+    
+    <div>
+        <h2>测试JavaScript加载</h2>
+        <button onclick="testJSLoad()">测试JS加载</button>
+        <div id="jsTestResult"></div>
+    </div>
+    
+    <div>
+        <h2>测试搜索功能</h2>
+        <input type="text" id="testSearch" placeholder="输入产品名称">
+        <button onclick="testSearchFunction()">测试搜索</button>
+        <div id="searchTestResult"></div>
+    </div>
+    
+    <div>
+        <h2>测试下载功能</h2>
+        <button onclick="testDownloadFunction()">测试下载</button>
+        <div id="downloadTestResult"></div>
+    </div>
+
+    <script src="module1_fixed_complete.js"></script>
+    <script>
+        function testJSLoad() {
+            const resultDiv = document.getElementById('jsTestResult');
+            
+            // 测试JavaScript是否加载成功
+            if (typeof greenFoodDatabase !== 'undefined') {
+                resultDiv.innerHTML = '✅ JavaScript加载成功！数据库包含 ' + 
+                    Object.keys(greenFoodDatabase).length + ' 个产品';
+            } else {
+                resultDiv.innerHTML = '❌ JavaScript加载失败';
+            }
+        }
+        
+        function testSearchFunction() {
+            const searchTerm = document.getElementById('testSearch').value.trim();
+            const resultDiv = document.getElementById('searchTestResult');
+            
+            if (!searchTerm) {
+                resultDiv.innerHTML = '请输入产品名称';
+                return;
+            }
+            
+            // 直接调用搜索函数测试
+            try {
+                const results = [];
+                
+                // 精确匹配主名称
+                if (greenFoodDatabase[searchTerm]) {
+                    results.push({
+                        product: searchTerm,
+                        standard: greenFoodDatabase[searchTerm].standard,
+                        name: greenFoodDatabase[searchTerm].name
+                    });
+                }
+                
+                // 精确匹配别名
+                for (const [product, info] of Object.entries(greenFoodDatabase)) {
+                    if (info.aliases && info.aliases.includes(searchTerm)) {
+                        results.push({
+                            product: product,
+                            standard: info.standard,
+                            name: info.name
+                        });
+                    }
+                }
+                
+                // 模糊匹配
+                if (results.length === 0) {
+                    for (const [product, info] of Object.entries(greenFoodDatabase)) {
+                        if (product.includes(searchTerm) || 
+                            (info.aliases && info.aliases.some(alias => alias.includes(searchTerm)))) {
+                            results.push({
+                                product: product,
+                                standard: info.standard,
+                                name: info.name
+                            });
+                        }
+                    }
+                }
+                
+                if (results.length > 0) {
+                    resultDiv.innerHTML = `找到 ${results.length} 个结果：<br>` + 
+                        results.map(r => `${r.product} - ${r.name} (${r.standard})`).join('<br>');
+                } else {
+                    resultDiv.innerHTML = '未找到匹配产品';
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = '搜索出错: ' + error.message;
+            }
+        }
+        
+        function testDownloadFunction() {
+            const resultDiv = document.getElementById('downloadTestResult');
+            
+            try {
+                downloadExcelFile();
+                resultDiv.innerHTML = '下载函数已调用';
+            } catch (error) {
+                resultDiv.innerHTML = '下载出错: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

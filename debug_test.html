@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试测试</title>
+</head>
+<body>
+    <h1>模块一功能调试</h1>
+    
+    <div>
+        <h2>1. 测试数据加载</h2>
+        <button onclick="testData()">测试数据</button>
+        <div id="dataResult"></div>
+    </div>
+    
+    <div>
+        <h2>2. 测试搜索功能</h2>
+        <input type="text" id="testSearchInput" placeholder="输入产品名称">
+        <button onclick="testSearchFunction()">测试搜索</button>
+        <div id="searchResult"></div>
+    </div>
+    
+    <div>
+        <h2>3. 测试下载功能</h2>
+        <button onclick="testDownload()">测试下载</button>
+        <div id="downloadResult"></div>
+    </div>
+
+    <script src="module1_fixed_v2.js"></script>
+    <script>
+        function testData() {
+            const resultDiv = document.getElementById('dataResult');
+            let output = '<h3>数据检查:</h3>';
+            
+            // 检查数据是否存在
+            output += '数据对象存在: ' + (typeof greenFoodStandards !== 'undefined') + '<br>';
+            output += '数据条目数: ' + Object.keys(greenFoodStandards).length + '<br>';
+            
+            // 检查几个示例
+            output += '大豆: ' + (greenFoodStandards['大豆'] ? '存在' : '不存在') + '<br>';
+            output += '绿茶: ' + (greenFoodStandards['绿茶'] ? '存在' : '不存在') + '<br>';
+            output += '测试产品: ' + (greenFoodStandards['测试产品'] ? '存在' : '不存在') + '<br>';
+            
+            resultDiv.innerHTML = output;
+        }
+        
+        function testSearchFunction() {
+            const searchTerm = document.getElementById('testSearchInput').value.trim();
+            const resultDiv = document.getElementById('searchResult');
+            
+            if (!searchTerm) {
+                resultDiv.innerHTML = '请输入产品名称';
+                return;
+            }
+            
+            // 直接测试搜索逻辑
+            const results = [];
+            
+            // 精确匹配
+            if (greenFoodStandards[searchTerm]) {
+                results.push({
+                    product: searchTerm,
+                    standard: greenFoodStandards[searchTerm].standard,
+                    number: greenFoodStandards[searchTerm].number
+                });
+            }
+            
+            // 模糊匹配
+            for (const [product, info] of Object.entries(greenFoodStandards)) {
+                if (product.includes(searchTerm) && product !== searchTerm) {
+                    results.push({
+                        product: product,
+                        standard: info.standard,
+                        number: info.number
+                    });
+                }
+            }
+            
+            if (results.length > 0) {
+                let output = `<h3>找到 ${results.length} 个结果:</h3>`;
+                results.forEach((result, index) => {
+                    output += `<div>${index + 1}. ${result.product} - ${result.number} (${result.standard})</div>`;
+                });
+                resultDiv.innerHTML = output;
+            } else {
+                resultDiv.innerHTML = '未找到匹配产品';
+            }
+        }
+        
+        function testDownload() {
+            const resultDiv = document.getElementById('downloadResult');
+            resultDiv.innerHTML = '尝试下载中...';
+            
+            try {
+                downloadExcelFile();
+                resultDiv.innerHTML = '下载函数已调用';
+            } catch (error) {
+                resultDiv.innerHTML = '下载出错: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

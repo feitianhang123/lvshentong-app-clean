@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>高级诊断 - 精确问题定位</title>
+    <meta charset="UTF-8">
+    <script>
+        console.log('🔍 === 高级诊断开始 ===');
+        
+        // 精确的文件存在性检查
+        function preciseFileCheck() {
+            console.log('📁 精确文件检查');
+            
+            // 方法1: 使用fetch检查文件
+            fetch('./module1_working.js')
+                .then(response => {
+                    if (response.ok) {
+                        console.log('✅ Fetch: module1_working.js 存在');
+                        document.getElementById('fetchResult').textContent = 'Fetch检查: ✅ 文件存在';
+                    } else {
+                        console.log('❌ Fetch: module1_working.js 不存在');
+                        document.getElementById('fetchResult').textContent = 'Fetch检查: ❌ 文件不存在';
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Fetch错误:', error);
+                    document.getElementById('fetchResult').textContent = 'Fetch检查: ❌ 错误 - ' + error.message;
+                });
+            
+            // 方法2: 检查函数来源
+            if (typeof searchProduct === 'function') {
+                console.log('✅ searchProduct函数存在，来源:', searchProduct.toString().substring(0, 100));
+                document.getElementById('funcSource').textContent = '函数来源: ✅ 已加载';
+            }
+        }
+        
+        // 检查DOM元素详细
+        function detailedDOMCheck() {
+            console.log('🏗️ 详细DOM检查');
+            
+            // 检查所有可能的目录卡选择器
+            const selectors = [
+                '.standard-card',
+                '[onclick*="showStandardContent"]',
+                '[onclick*="standard"]',
+                '.card',
+                '#catalogCard'
+            ];
+            
+            selectors.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                console.log(`选择器 "${selector}": 找到 ${elements.length} 个元素`);
+                elements.forEach((el, index) => {
+                    console.log(`  ${index + 1}.`, el);
+                });
+            });
+            
+            // 检查module1.html特有的元素
+            const specificSelectors = [
+                '#searchSection',
+                '#resultSection', 
+                '#successResult',
+                '#errorResult',
+                '#successDesc'
+            ];
+            
+            specificSelectors.forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    console.log(`✅ ${selector}: 存在`);
+                } else {
+                    console.log(`❌ ${selector}: 不存在`);
+                }
+            });
+        }
+        
+        // 测试实际功能
+        function testActualFunctionality() {
+            console.log('⚡ 测试实际功能');
+            
+            // 测试搜索功能
+            try {
+                // 设置测试搜索词
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = '牛肉';
+                    console.log('✅ 搜索输入框存在，已设置测试值');
+                }
+                
+                // 直接调用搜索
+                if (typeof searchProduct === 'function') {
+                    console.log('✅ 准备调用searchProduct');
+                    searchProduct();
+                }
+            } catch (error) {
+                console.error('❌ 功能测试出错:', error);
+            }
+        }
+        
+        // 页面加载完成后运行
+        window.onload = function() {
+            console.log('🌐 页面加载完成');
+            preciseFileCheck();
+            setTimeout(detailedDOMCheck, 1000);
+            setTimeout(testActualFunctionality, 2000);
+        };
+    </script>
+</head>
+<body>
+    <h1>🔬 高级诊断工具</h1>
+    <p>精确问题定位</p>
+    
+    <div style="background: #f5f5f5; padding: 20px; margin: 10px; border-radius: 10px;">
+        <h2>诊断结果:</h2>
+        <div id="fetchResult" style="color: blue;">Fetch检查: 进行中...</div>
+        <div id="funcSource" style="color: blue;">函数来源: 检查中...</div>
+    </div>
+    
+    <div style="background: #e8f5e8; padding: 20px; margin: 10px; border-radius: 10px;">
+        <h2>控制台输出:</h2>
+        <p>请查看浏览器开发者工具（F12）的控制台标签页</p>
+        <p>查看详细的诊断日志</p>
+    </div>
+
+    <!-- 加载module1的JS -->
+    <script src="./module1_working.js"></script>
+</body>
+</html>
