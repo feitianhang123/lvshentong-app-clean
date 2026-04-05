@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绿色食品申报通</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
+            min-height: 100vh; 
+            font-family: "Microsoft YaHei", sans-serif;
+            padding: 20px;
+        }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: #fff; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #43a047 0%, #388e3c 100%); 
+            color: #fff; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h1 { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .header p { font-size: 16px; opacity: 0.9; }
+        
+        .modules-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+            padding: 30px; 
+        }
+        
+        .module-card { 
+            background: #fff; 
+            border-radius: 15px; 
+            padding: 25px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            border-left: 6px solid #43a047; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .module-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4); 
+        }
+        .module-card h3 { 
+            color: #1b5e20; 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+        }
+        .module-card p { 
+            color: #666; 
+            font-size: 14px; 
+            line-height: 1.5; 
+        }
+        
+        .footer { 
+            background: #f5f5f5; 
+            padding: 20px; 
+            text-align: center; 
+            color: #666; 
+            font-size: 14px; 
+        }
+        
+        .version { 
+            background: #e3f2fd; 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin-top: 10px; 
+            color: #1976d2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>绿色食品申报通</h1>
+            <p>一站式绿色食品标准查询和申报助手</p>
+        </div>
+        
+        <div class="modules-grid">
+            <div class="module-card" onclick="location.href='module1-complete.html'">
+                <h3>📋 模块一：产品标准查询</h3>
+                <p>智能搜索绿色食品产品标准，支持别名搜索和Excel下载</p>
+            </div>
+            
+            <div class="module-card" onclick="location.href='module2_current_standards.html'">
+                <h3>📊 模块二：现行标准查询</h3>
+                <p>完整的143个绿色食品标准库，支持分类浏览和下载</p>
+            </div>
+            
+            <div class="module-card" onclick="location.href='module3_final.html'">
+                <h3>📝 模块三：材料清单</h3>
+                <p>各类产品申报材料清单，包含下载链接和说明</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>数据来源：中国绿色食品发展中心</p>
+            <div class="version">版本: 117 - 最新版本</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绿色食品申报 - 材料清单</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
+        body { background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; }
+        
+        .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3); }
+        
+        .header { background: linear-gradient(135deg, #43a047 0%, #388e3c 100%); color: #fff; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .header p { font-size: 16px; opacity: 0.9; }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; padding: 30px; }
+        .card { background: #fff; border-radius: 15px; padding: 25px; cursor: pointer; transition: all 0.3s ease; border-left: 6px solid #43a047; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4); }
+        .card h3 { color: #1b5e20; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .card .code { color: #388e3c; font-size: 14px; margin-bottom: 15px; }
+        .card .desc { color: #666; font-size: 14px; line-height: 1.5; }
+        
+        .detail-view { display: none; padding: 30px; }
+        .detail-header { background: linear-gradient(135deg, #43a047, #00796b); color: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .materials-list { background: #fafafa; padding: 20px; border-radius: 10px; }
+        .material-item { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #43a047; }
+        .download-btn { background: #1976d2; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 10px; font-size: 14px; }
+        .back-btn { background: #f44336; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px; }
+        
+        .footer { background: #f5f5f5; padding: 20px; text-align: center; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>绿色食品申报材料清单</h1>
+            <p>请选择申报类别查看详细材料要求</p>
+        </div>
+        
+        <div class="cards-grid" id="mainView">
+            <div class="card" onclick="showDetail('plant')">
+                <h3>种植产品申请材料清单</h3>
+                <div class="code">CGFDC-SQ-08/2025</div>
+                <div class="desc">包含种植产品申报所需的全部材料清单和要求</div>
+            </div>
+            
+            <div class="card" onclick="showDetail('livestock')">
+                <h3>畜禽产品申请材料清单</h3>
+                <div class="code">CGFDC-SQ-09/2025</div>
+                <div class="desc">包含畜禽产品申报所需的全部材料清单和要求</div>
+            </div>
+            
+            <div class="card" onclick="showDetail('processing')">
+                <h3>加工产品申请材料清单</h3>
+                <div class="code">CGFDC-SQ-10/2025</div>
+                <div class="desc">包含加工产品申报所需的全部材料清单和要求</div>
+            </div>
+            
+            <div class="card" onclick="showDetail('aquatic')">
+                <h3>水产品申请材料清单</h3>
+                <div class="code">CGFDC-SQ-11/2025</div>
+                <div class="desc">包含水产品申报所需的全部材料清单和要求</div>
+            </div>
+            
+            <div class="card" onclick="showDetail('mushroom')">
+                <h3>食用菌申请材料清单</h3>
+                <div class="code">CGFDC-SQ-12/2025</div>
+                <div class="desc">包含食用菌申报所需的全部材料清单和要求</div>
+            </div>
+            
+            <div class="card" onclick="showDetail('honey')">
+                <h3>蜂产品申请材料清单</h3>
+                <div class="code">CGFDC-SQ-13/2025</div>
+                <div class="desc">包含蜂产品申报所需的全部材料清单和要求</div>
+            </div>
+        </div>
+        
+        <div class="detail-view" id="detailView">
+            <button class="back-btn" onclick="showMain()">← 返回主页面</button>
+            <div class="detail-header">
+                <h2 id="detailTitle"></h2>
+                <div class="code" id="detailCode"></div>
+            </div>
+            
+            <div class="materials-list" id="materialsList">
+                <!-- 材料清单内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>数据来源：中国绿色食品发展中心 - http://www.greenfood.agri.cn/</p>
+        </div>
+    </div>
+
+    <script>
+        const materialsData = {
+            plant: {
+                title: "种植产品申请材料清单",
+                code: "CGFDC-SQ-08/2025",
+                items: [
+                    "《绿色食品 标志使用申请书》和《种植产品调查表》",
+                    "质量控制规范",
+                    "种植规程",
+                    "基地来源证明材料或原料来源证明材料",
+                    "基地图（基地位置图和种植地块分布图）",
+                    "带有绿色食品 标志的预包装标签设计样张（仅预包装食品提供）",
+                    "生产记录及绿色食品 证书复印件（仅续展申请人提供）",
+                    "产地环境质量检验报告",
+                    "产品检验报告",
+                    "绿色食品 产品抽样单",
+                    "中心要求提供的其他材料（绿色食品 企业内部检查员证书国家农产品质量安全追溯管理信息平台注册证明等）"
+                ]
+            },
+            livestock: {
+                title: "畜禽产品申请材料清单",
+                code: "CGFDC-SQ-09/2025",
+                items: [
+                    "《绿色食品 标志使用申请书》及《畜禽产品调查表》",
+                    "质量控制规范",
+                    "养殖规程",
+                    "基地来源证明材料",
+                    "原料（饲料及饲料添加剂）来源证明材料外购饲料及饲料添加剂包装标签和配方",
+                    "基地图（养殖基地位置图和养殖场所平面布局图）",
+                    "带有绿色食品 标志的预包装标签设计样张（仅预包装食品提供）",
+                    "生产记录及绿色食品 证书复印件（仅续展申请人提供）",
+                    "产地环境质量检验报告",
+                    "产品检验报告",
+                    "绿色食品 产品抽样单",
+                    "中心要求提供的其他材料（绿色食品 企业内部检查员证书国家农产品质量安全追溯管理信息平台注册证明等）"
+                ]
+            },
+            processing: {
+                title: "加工产品申请材料清单",
+                code: "CGFDC-SQ-10/2025",
+                items: [
+                    "《绿色食品 标志使用申请书》和《加工产品调查表》",
+                    "质量控制规范",
+                    "加工规程（包括屠宰加工蜂产品加工）",
+                    "配料来源证明材料外购配料标签和配方",
+                    "基地图（加工厂位置图和加工厂平面布局图）",
+                    "带有绿色食品 标志的预包装标签设计样张（仅预包装食品提供）",
+                    "生产记录及绿色食品 证书复印件（仅续展申请人提供）",
+                    "产地环境质量检验报告（必要时）",
+                    "产品检验报告",
+                    "绿色食品 产品抽样单",
+                    "中心要求提供的其他材料（绿色食品 企业内部检查员证书国家农产品质量安全追溯管理信息平台注册证明等）"
+                ]
+            },
+            aquatic: {
+                title: "水产品申请材料清单",
+                code: "CGFDC-SQ-11/2025",
+                items: [
+                    "《绿色食品 标志使用申请书》及《水产品调查表》",
+                    "质量控制规范",
+                    "养殖规程",
+                    "基地（养殖或捕捞）来源证明材料",
+                    "原料（饲料及饲料添加剂）来源证明材料外购饲料及饲料添加剂包装标签和配方",
+                    "基地图（基地位置图和养殖场所平面布局图）",
+                    "带有绿色食品 标志的预包装标签设计样张（仅预包装食品提供）",
+                    "生产记录及绿色食品 证书复印件（仅续展申请人提供）",
+                    "产地环境质量检验报告",
+                    "产品检验报告",
+                    "绿色食品 产品抽样单",
+                    "中国要求提供的其他材料（绿色食品 企业内部检查员证书国家农产品质量安全追溯管理信息平台注册证明等）"
+                ]
+            },
+            mushroom: {
+                title: "食用菌产品申请材料清单",
+                code: "CGFDC-SQ-12/2025",
+                items: [
+                    "《绿色食品 标志使用申请书》和《食用菌调查表》",
+                    "质量控制规范",
+                    "种植规程",
+                    "基地来源证明材料或原料来源证明材料",
+                    "基地极（基地位置图和种植基地分布图）",
+                    "栽培车间分布图（工厂化生产）",
+                    "带有绿色食品 标志的预包装标签设计样张（仅预包装食品提供）",
+                    "生产记录及绿色食品 证书复印件（仅续展申请人提供）",
+                    "产地极境质量检验报告",
+                    "产品检验报告",
+                    "绿色食品 产品抽样单",
+                    "中国绿色食品 发展中心要求提供的其他材料（绿色食品 企业内部检查员证书国家农产品质量安全追溯极管理信息平台注册证明等）"
+                ]
+            },
+            honey: {
+                title: "蜂产品申请材料清单",
+                code: "CGFDC-SQ-13/2025",
+                items: [
+                    "《绿色食品 标志使用申请书》及《蜂产品极查表》",
+                    "质量控制规范",
+                    "生产规程",
+                    "基地来源证明材料或原料来源证明材料",
+                    "基地图（基地位置图和基地地块分布图）",
+                    "带有绿色食品 标志的预包装标签设计样张（仅预包装食品提供）",
+                    "生产记录及绿色食品 证书复印件（仅续展申请人提供）",
+                    "产地环境质量检验报告",
+                    "产品检验报告",
+                    "绿色食品 产品抽样单",
+                    "中国绿色食品 发展中心要求提供的其他材料（绿色食品 企业内部检查员证书国家农产品质量安全追溯管理信息平台注册证明等）"
+                ]
+            }
+        };
+
+        const downloadLinks = {
+            applicationForm: {
+                name: "《绿色食品 标志使用申请书》",
+                code: "CGFDC-SQ-01/2019",
+                url: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371986324320.docx"
+            },
+            surveyForms: {
+                plant: {
+                    name: "《绿色食品 种植产品调查表》",
+                    code: "CGFDC-SQ-02/2022",
+                    url: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371986623151.doc",
+                    sssUrl: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371988677430.doc"
+                },
+                livestock: {
+                    name: "《绿色食品 畜禽产品调查表》",
+                    code: "CGFDC-SQ-03/2022",
+                    url: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371986772391.doc",
+                    sssUrl: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371988830135.doc"
+                },
+                processing: {
+                    name: "《绿色食品 加工产品调查表》",
+                    code: "CGFDC-SQ-04/2022",
+                    url: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371987019803.doc",
+                    sssUrl: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371988938770.doc"
+                },
+                aquatic: {
+                    name: "《绿色食品 水产品调查表》",
+                    code: "CGFDC-SQ-05/2022",
+                    url: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371987266548.doc",
+                    sssUrl: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371989000393.doc"
+                },
+                mushroom: {
+                    name: "《绿色食品 食用菌调查表》",
+                    code: "CGFDC-SQ-06/2022",
+                    url: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371987435805.doc",
+                    sssUrl: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371989195416.doc"
+                },
+                honey: {
+                    name: "《绿色食品 蜂产品调查表》",
+                    code: "CGFDC-SQ-07/2022",
+                    url: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371987879230.doc",
+                    sssUrl: "http://www.greenfood.agri.cn/ztzl/zlxz/shpjc_zlxz/202202/W020250430371989211156.doc"
+                }
+            },
+            procedureGuide: {
+                url: "http://www.greenfood.agri.cn/ywzn/lssp/txbz/scczgc/"
+            }
+        };
+
+        function showDetail(type) {
+            const data = materialsData[type];
+            if (!data) return;
+
+            document.getElementById('mainView').style.display = 'none';
+            document.getElementById('detailView').style.display = 'block';
+            
+            document.getElementById('detailTitle').textContent = data.title;
+            document.getElementById('detailCode').textContent = data.code;
+
+            const materialsList = document.getElementById('materialsList');
+            materialsList.innerHTML = '';
+
+            // 添加申请书
+            materialsList.innerHTML += `
+                <div class="material-item">
+                    <strong>1. ${downloadLinks.applicationForm.name}</strong>
+                    <div>编号：${downloadLinks.applicationForm.code}</div>
+                    <a href="${downloadLinks.applicationForm.url}" class="download-btn" target="_blank">下载申请书</a>
+                </div>
+            `;
+
+            // 添加调查表
+            const surveyForm = downloadLinks.surveyForms[type];
+            materialsList.innerHTML += `
+                <div class="material-item">
+                    <strong>2. ${surveyForm.name}</strong>
+                    <div>编号：${surveyForm.code}</div>
+                    <a href="${surveyForm.url}" class="download-btn" target="_blank">下载常规调查表</a>
+                    <a href="${surveyForm.sssUrl}" class="download-btn" target="_blank" style="background: #ff9800;">三区三州调查表</a>
+                </div>
+            `;
+
+            // 添加其他材料
+            data.items.forEach((item, index) => {
+                if (index >= 2) { // 跳过前两项（申请书和调查表）
+                    let html = `<div class="material-item"><strong>${index + 1}. ${item}</strong>`;
+                    
+                    // 为规程添加参考链接
+                    if (item.includes('规程')) {
+                        html += `<br><a href="${downloadLinks.procedureGuide.url}" class="download-btn" target="_blank" style="background: #4caf50;">查看规程参考</a>`;
+                    }
+                    
+                    html += '</div>';
+                    materialsList.innerHTML += html;
+                }
+            });
+        }
+
+        function showMain() {
+            document.getElementById('detailView').style.display = 'none';
+            document.getElementById('mainView').style.display = 'grid';
+        }
+
+        // 初始化显示主页面
+        showMain();
+    </script>
+</body>
+</html>
