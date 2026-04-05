@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块一：绿色食品标准目录查询</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #2ecc71;
+            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.2);
+        }
+        
+        .feature-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .feature-card p {
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+        
+        .search-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .search-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #2ecc71;
+            outline: none;
+        }
+        
+        .search-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #27ae60;
+        }
+        
+        .result-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .success-card {
+            border-left: 5px solid #2ecc71;
+        }
+        
+        .error-card {
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .back-btn {
+            display: block;
+            margin: 20px auto 0;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #2980b9;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .product-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            padding-right: 10px;
+        }
+        
+        .product-item {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>模块一：绿色食品标准目录查询</h1>
+            <p class="subtitle">快速查询产品是否适用于绿色食品标准</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="card-grid">
+                <div class="feature-card" onclick="showStandardContent()">
+                    <h3>📋 查看标准目录</h3>
+                    <p>浏览完整的绿色食品产品适用标准目录（2023版）</p>
+                </div>
+                
+                <div class="feature-card" onclick="focusSearch()">
+                    <h3>🔍 产品快速搜索</h3>
+                    <p>输入产品名称，查询是否适用于绿色食品标准</p>
+                </div>
+            </div>
+            
+            <div class="search-section" id="searchSection">
+                <h2>产品搜索</h2>
+                <div class="search-box">
+                    <input type="text" 
+                           id="searchInput" 
+                           class="search-input" 
+                           placeholder="请输入产品名称，如：大豆、绿茶、猪肉..."
+                           onkeypress="handleEnter(event)">
+                    <button class="search-btn" onclick="searchProduct()">搜索</button>
+                </div>
+                <p style="text-align: center; color: #7f8c8d; margin-top: 10px;">
+                    支持模糊搜索，输入部分关键词即可
+                </p>
+            </div>
+            
+            <div class="result-section" id="resultSection">
+                <div class="result-card success-card" id="successResult" style="display: none;">
+                    <h3 style="color: #2ecc71;">✅ 找到匹配产品</h3>
+                    <div class="result-desc" id="successDesc"></div>
+                    <button class="back-btn" onclick="backToSearch()">返回继续搜索</button>
+                </div>
+                
+                <div class="result-card error-card" id="errorResult" style="display: none;">
+                    <h3 style="color: #e74c3c;">❌ 未找到匹配产品</h3>
+                    <div class="result-desc">
+                        未找到匹配的绿色食品产品。请尝试其他关键词或查看完整目录。
+                    </div>
+                    <button class="back-btn" onclick="backToSearch()">返回继续搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 绿色食品产品数据库（直接从complete_excel.json提取的核心产品列表）
+        const productCatalog = [
+            "大豆", "黄豆", "黑豆", "绿豆", "小豆", "芸豆", "豇豆", "豌豆", "饭豆", "小扁豆",
+            "鹰嘴豆", "木豆", "羽扇豆", "利马豆", "绿茶", "红茶", "青茶", "黄茶", "白茶", "黑茶",
+            "代用茶", "生咖啡", "焙炒咖啡豆", "咖啡粉", "玉米", "鲜食玉米", "速冻玉米", "玉米粉",
+            "玉米糁", "稻谷", "大米", "糙米", "胚芽米", "蒸谷米", "紫米", "红米", "食用花生",
+            "油用花生", "水煮花生", "烤花生", "烤花生仁", "烤花生碎", "乳白花生", "乳白花生碎",
+            "炒花生仁", "炒花生果", "油炸花生仁", "裹衣花生", "花生蛋白粉", "花生组织蛋白", "花生酱",
+            "小麦", "小麦粉", "全麦粉", "宽皮柑橘", "甜橙", "柚", "柠檬", "金柑", "杂交柑橘",
+            "薄皮甜瓜", "厚皮甜瓜", "西瓜", "大白菜", "普通白菜", "乌塌菜", "紫菜薹", "菜薹",
+            "薹菜", "番茄", "茄子", "辣椒", "甜椒", "酸浆", "香瓜茄", "菠菜", "芹菜", "落葵",
+            "莴苣", "雍菜", "茴香", "苋菜", "青葙", "芫荽", "叶菾菜", "茼蒿", "荠菜", "冬寒菜",
+            "番杏", "菜苜蓿", "紫背天葵", "榆钱菠菜", "菊苣", "鸭儿芹", "苦苣", "苦荬菜", "菊花脑",
+            "酸模", "珍珠菜", "芝麻菜", "白花菜", "香芹菜", "罗勒", "薄荷", "紫苏", "莳萝",
+            "马齿苋", "蕺菜", "蒲公英", "马兰", "蒌蒿", "番薯叶", "韭菜", "韭黄", "韭薹", "韭花",
+            "大葱", "洋葱", "大蒜", "蒜薹", "蒜苗", "薤", "韭葱", "细香葱", "分葱", "胡葱",
+            "楼葱", "萝卜", "胡萝卜", "芜菁", "芜菁甘蓝", "美洲防风", "根菾菜", "婆罗门参",
+            "黑婆罗门参", "牛蒡", "山葵", "根芹菜", "结球甘蓝", "赤球甘蓝", "抱子甘蓝", "皱叶甘蓝",
+            "羽衣甘蓝", "花椰菜", "青花菜", "球茎甘蓝", "芥蓝", "黄瓜", "冬瓜", "节瓜", "南瓜",
+            "笋瓜", "西葫芦", "越瓜", "菜瓜", "丝瓜", "苦瓜", "瓠瓜", "蛇瓜", "佛手瓜", "菜豆",
+            "多花菜豆", "长豇豆", "扁豆", "莱豆", "蚕豆", "刀豆", "豌豆", "食荚豌豆", "四棱豆",
+            "菜用大豆", "藜豆", "香菇", "金针菇", "双孢蘑菇", "柱状田头菇", "草菇", "长根小奥德蘑",
+            "皱环球盖菇", "巴西蘑菇", "亚侧耳", "斑玉蕈", "糙皮侧耳", "佛州侧耳", "白黄侧耳",
+            "肺形侧耳", "刺芹侧耳", "白灵侧耳", "金顶侧耳", "桃红侧耳", "盖囊侧耳", "菌核侧耳",
+            "阿魏侧耳", "花脸香蘑", "大白口蘑", "蒙古口蘑", "长裙竹荪", "短裙竹荪", "红托竹荪",
+            "冬荪", "光滑环绣伞", "毛头鬼伞", "榆干离褶伞", "荷叶离褶", "裂褶菌", "蜜环菌",
+            "暗褐脉柄牛肝菌", "黑木耳", "毛木耳", "银耳", "金耳", "蛹虫草", "蝉花", "广东虫草",
+            "羊肚菌", "猴头菌", "绣球菌", "灰树花孔菌", "马铃薯", "姜", "山药", "豆薯", "菊芋",
+            "甘露子", "蕉芋", "菜用土圞儿", "葛", "甘薯", "木薯", "菊薯", "芋", "茎瘤芥", "抱子芥",
+            "笋子芥", "大叶芥", "小叶芥", "宽柄芥", "叶瘤芥", "长柄芥", "花叶芥", "凤尾芥", "白花芥",
+            "卷心芥", "结球芥", "分蘖芥", "大头芥", "薹芥", "绿豆芽", "黄豆芽", "黑豆芽", "青豆芽",
+            "红豆芽", "蚕豆芽", "红小豆芽", "豌豆苗", "花生芽", "苜蓿芽", "小扁豆芽", "萝卜芽",
+            "菘蓝芽", "沙芥芽", "芥菜芽", "芥蓝芽", "白菜芽", "独行菜芽", "种芽香椿", "向日葵芽",
+            "荞麦芽", "胡椒芽", "紫苏芽", "水芹芽", "小麦苗", "胡麻芽", "蕹菜芽", "芝麻芽",
+            "黄秋葵芽", "芦笋", "百合", "黄秋葵", "菜用枸杞", "襄荷", "菜蓟", "辣根", "食用大黄",
+            "桔梗", "芡实", "荸荠", "慈姑", "茭白", "豆瓣菜", "莼菜", "水芹", "蒲菜", "菱",
+            "莲子", "茉莉花", "玫瑰花", "菊花", "金雀花", "代代花", "槐花", "金银花", "荔枝",
+            "龙眼", "香蕉", "菠萝", "芒果", "枇杷", "黄皮", "番木瓜", "番石榴", "杨梅", "杨桃",
+            "橄榄", "红毛丹", "毛叶枣", "莲雾", "人心果", "西番莲", "山竹", "火龙果", "菠萝蜜",
+            "番荔枝", "青梅", "苹果", "梨", "桃", "草莓", "山楂", "柰子", "蓝莓", "无花果",
+            "树莓", "桑葚", "猕猴桃", "葡萄", "樱桃", "枣", "杏", "李", "柿", "石榴", "梅",
+            "醋栗", "刺梨", "啤酒大麦", "食用大麦", "大麦粉", "燕麦", "燕麦粉", "燕麦米", "粟",
+            "粟米", "黍", "黍米", "稷", "稷米", "荞麦", "荞麦米", "荞麦粉", "高粱", "高粱米",
+            "杂粮米", "杂粮米制品", "薏仁", "薏仁粉", "菖蒲", "蒜", "高良姜", "豆蔻", "香豆蔻",
+            "香草", "砂仁", "莳萝", "圆叶当归", "辣根", "黑芥籽", "龙蒿", "刺山柑", "葛缕子",
+            "桂皮", "肉桂", "阴香", "大清桂", "芫荽", "枯茗", "姜黄", "香茅", "枫茅", "小豆蔻",
+            "阿魏", "小茴香", "甘草", "八角", "刺柏", "山奈", "木姜子", "月桂", "薄荷", "椒样薄荷",
+            "留兰香", "调料九里香", "肉豆蔻", "甜罗勒", "甘牛至", "牛至", "欧芹", "多香果", "筚拨",
+            "黑胡椒", "白胡椒", "迷迭香", "白欧芥", "丁香", "罗晃子", "蒙百里香", "百里香", "香旱芹",
+            "葫芦巴", "香荚兰", "花椒", "姜", "藏红花", "草果", "葵花籽", "南瓜籽", "西瓜籽", "瓜蒌籽",
+            "核桃", "山核桃", "榛子", "香榧", "腰果", "松子", "杏仁", "开心果", "扁桃", "澳洲坚果",
+            "鲍鱼果", "板栗", "橡子", "银杏", "芡实", "莲子", "菱角", "保鲜参", "活性参", "生晒参",
+            "红参", "人参蜜片", "西洋参", "枸杞鲜果", "枸杞干果", "枸杞原汁", "枸杞原粉", "薇菜",
+            "蜂斗菜", "马齿苋", "蔊菜", "沙芥", "马兰", "蕺菜", "多齿蹄盖蕨", "守宫木", "蒲公英", "东风菜",
+            "野茼蒿", "山莴苣", "菊花脑", "歪头菜", "锦鸡儿", "山韭菜", "薤白", "野葱", "雉隐天冬", "茖葱",
+            "黄精", "紫萼", "野蔷薇", "小叶芹", "野芝麻", "香茶菜", "败酱", "海州常山", "苦刺花", "油菜籽",
+            "生乳", "巴氏杀菌乳", "灭菌乳", "调制乳", "发酵乳", "炼乳", "乳粉", "干酪", "再制干酪", "奶油",
+            "蜂蜜", "蜂王浆", "蜂花粉", "鲜禽肉", "冷却禽肉", "冷冻禽肉", "鲜蛋", "皮蛋", "卤蛋", "咸蛋",
+            "咸蛋黄", "糟蛋", "液态蛋", "蛋粉", "蛋片", "猪肉", "牛肉", "羊肉", "马肉", "驴肉", "兔肉", "调制肉制品",
+            "腌腊肉制品", "酱卤肉制品", "熏烧焙烤肉制品", "肉干制品", "肉类罐头", "畜禽可食用副产品",
+            "对虾科", "长额虾科", "褐虾科", "长臂虾科", "螯虾科", "淡水蟹活品", "海水蟹活品",
+            "海水蟹冻品", "活鱼", "鲜鱼", "去内脏或分割加工后冷冻的初加工鱼产品", "中华鳖",
+            "黄喉拟水龟", "三线闭壳龟", "红耳龟", "鳄龟", "海水贝类的鲜、活品"
+        ];
+
+        function focusSearch() {
+            document.getElementById('searchInput').focus();
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                searchProduct();
+            }
+        }
+
+        function searchProduct() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) {
+                alert('请输入产品名称');
+                return;
+            }
+
+            const searchSection = document.getElementById('searchSection');
+            const resultSection = document.getElementById('resultSection');
+            const successResult = document.getElementById('successResult');
+            const errorResult = document.getElementById('errorResult');
+            const successDesc = document.getElementById('successDesc');
+
+            // 显示加载中
+            searchSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            successResult.style.display = 'none';
+            errorResult.style.display = 'none';
+            successDesc.textContent = '搜索中...';
+
+            // 模拟网络延迟（500ms）
+            setTimeout(() => {
+                // 在前端进行搜索
+                const results = productCatalog.filter(product => 
+                    product.includes(searchTerm) || 
+                    product.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+
+                if (results.length > 0) {
+                    successResult.style.display = 'block';
+                    errorResult.style.display = 'none';
+                    
+                    if (results.length === 1) {
+                        successDesc.innerHTML = `
+                            <div style="margin-bottom: 10px;">
+                                <strong>找到产品：</strong>${results[0]}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>状态：</strong>该产品在绿色食品标准目录中
+                            </div>
+                            <div>
+                                <strong>说明：</strong>符合绿色食品申报条件
+                            </div>
+                        `;
+                    } else {
+                        successDesc.innerHTML = `<div style="margin-bottom: 10px;"><strong>找到${results.length}个匹配产品：</strong></div>`;
+                        const productList = document.createElement('div');
+                        productList.className = 'product-list';
+                        results.forEach((result, index) => {
+                            productList.innerHTML += `
+                                <div class="product-item">
+                                    <strong>${index + 1}. ${result}</strong>
+                                </div>
+                            `;
+                        });
+                        successDesc.appendChild(productList);
+                    }
+                } else {
+                    successResult.style.display = 'none';
+                    errorResult.style.display = 'block';
+                }
+            }, 500);
+        }
+
+        function showStandardContent() {
+            // 创建模态框显示标准目录信息
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            modal.style.zIndex = '1000';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            
+            const content = document.createElement('div');
+            content.style.background = 'white';
+            content.style.padding = '25px';
+            content.style.borderRadius = '15px';
+            content.style.maxWidth = '90%';
+            content.style.maxHeight = '85%';
+            content.style.overflow = 'auto';
+            
+            content.innerHTML = `
+                <h2 style="color: #2e7d32; margin-bottom: 18px; text-align: center;">绿色食品产品适用标准目录（2023版）</h2>
+                <p style="margin-bottom: 10px;"><strong>总产品数：</strong>${productCatalog.length}个产品</p>
+                <p style="margin-bottom: 20px;"><strong>覆盖范围：</strong>种植业、畜禽产品、渔业产品等三大类</p>
+                <div style="background: #f5f5f5; padding: 18px; border-radius: 10px; margin-top: 20px;">
+                    <p><strong>种植业：</strong>大豆、茶叶、咖啡、玉米、稻米、花生、小麦、柑橘、西瓜、各类蔬菜水果等</p>
+                    <p style="margin-top: 8px;"><strong>畜禽产品：</strong>乳制品、蜂产品、禽肉、蛋制品、畜肉、肉制品等</p>
+                    <p style="margin-top: 8px;"><strong>渔业产品：</strong>虾、
