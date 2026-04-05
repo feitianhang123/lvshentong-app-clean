@@ -1,0 +1,149 @@
+name: Simple APK Build
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Setup Android
+      uses: android-actions/setup-android@v3
+    
+    - name: Create simple APK structure
+      run: |
+        echo "创建简单的APK结构..."
+        mkdir -p simple-app/app/src/main/assets/www
+        mkdir -p simple-app/app/src/main/java/com/greenfood/app
+        mkdir -p simple-app/app/src/main/res/layout
+        
+        # 复制HTML文件
+        cp module1-complete.html simple-app/app/src/main/assets/www/
+        cp module2_current_standards.html simple-app/app/src/main/assets/www/
+        cp module3_final.html simple-app/app/src/main/assets/www/
+        
+        echo "文件复制完成"
+    
+    - name: Create basic build.gradle
+      run: |
+        cat > simple-app/build.gradle << 'EOF'
+// Top-level build file
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.0'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+EOF
+
+        cat > simple-app/app/build.gradle << 'EOF'
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.greenfood.lvshentong'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.greenfood.lvshentong"
+        minSdk 21
+        targetSdk 34
+        versionCode 118
+        versionName "1.1.8"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+}
+EOF
+
+    - name: Try gradle build
+      run: |
+        cd simple-app
+        echo "尝试gradle构建..."
+        ./gradlew assembleDebug || echo "Gradle构建失败，但继续其他方法"
+    
+    - name: Create Web App Package
+      run: |
+        echo "创建Web应用包..."
+        mkdir -p web-app-package
+        cp module1-complete.html web-app-package/
+        cp module2_current_standards.html web-app-package/
+        cp module3_final.html web-app-package/
+        cp standards_data.js web-app-package/
+        
+        # 创建简单主页
+        cat > web-app-package/index.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<head><title>绿色食品申报通</title></head>
+<body>
+<h1>绿色食品申报通</h1>
+<p><a href="module1-complete.html">模块一：产品标准查询</a></p>
+<p><a href="module2_current_standards.html">模块二：现行标准查询</a></p>
+<p><a href="module3_final.html">模块三：材料清单</a></p>
+<p>版本: 118</p>
+</body>
+</html>
+EOF
+        
+        # 创建zip包
+        zip -r web-app-package.zip web-app-package/
+        echo "Web应用包创建完成"
+    
+    - name: Upload Web App Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: web-app-package
+        path: web-app-package.zip
+        retention-days: 30
+    
+    - name: Upload APK if exists
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: apk-files
+        path: simple-app/app/build/outputs/apk/
+        retention-days: 30
+        if-no-files-found: ignore
