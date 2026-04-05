@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试规程参考链接</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-case { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .link-test { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>测试模块三"查看规程参考"链接</h1>
+    
+    <div class="test-case">
+        <h2>链接地址：</h2>
+        <p><code>http://www.greenfood.agri.cn/ywzn/lssp/txbz/scczgc/</code></p>
+        
+        <div class="link-test">
+            <a href="http://www.greenfood.agri.cn/ywzn/lssp/txbz/scczgc/" target="_blank">
+                点击这里测试链接
+            </a>
+        </div>
+        
+        <p>如果链接无法打开，请检查：</p>
+        <ol>
+            <li>网络连接是否正常</li>
+            <li>网站服务器是否正常运行</li>
+            <li>链接地址是否正确</li>
+        </ol>
+    </div>
+    
+    <div class="test-case">
+        <h2>模块三中的代码：</h2>
+        <pre>
+// 在 downloadLinks 对象中：
+procedureGuide: {
+    url: "http://www.greenfood.agri.cn/ywzn/lssp/txbz/scczgc/"
+}
+
+// 在使用时：
+html += `&lt;br&gt;&lt;a href="${downloadLinks.procedureGuide.url}" class="download-btn" target="_blank" style="background: #4caf50;"&gt;查看规程参考&lt;/a&gt;`;
+        </pre>
+    </div>
+</body>
+</html>
