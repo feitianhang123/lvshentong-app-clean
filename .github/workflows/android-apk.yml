@@ -33,19 +33,23 @@ jobs:
     
     - name: Copy HTML to assets
       run: |
-        mkdir -p app/src/main/assets
-        cp module1-complete.html app/src/main/assets/
-        echo "HTML file copied to assets directory"
+        echo "Copying latest HTML files to android-project assets..."
+        cp module1-complete.html android-project/app/src/main/assets/www/
+        cp module2_current_standards.html android-project/app/src/main/assets/www/
+        cp module3_final.html android-project/app/src/main/assets/www/
+        echo "HTML files copied successfully"
     
     - name: Build Debug APK
       if: github.event.inputs.releaseType == 'debug' || github.event_name == 'workflow_dispatch'
       run: |
+        cd android-project
         chmod +x ./gradlew
         ./gradlew assembleDebug
         
     - name: Build Release APK
       if: github.event.inputs.releaseType == 'release' || github.event_name == 'release'
       run: |
+        cd android-project
         chmod +x ./gradlew
         ./gradlew assembleRelease
         
@@ -53,9 +57,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: green-food-app-apk
-        path: app/build/outputs/apk/
+        path: android-project/app/build/outputs/apk/
         retention-days: 30
         
     - name: List APK Files
       run: |
-        find app/build/outputs/apk/ -name "*.apk" -exec ls -la {} \;
+        find android-project/app/build/outputs/apk/ -name "*.apk" -exec ls -la {} \;
