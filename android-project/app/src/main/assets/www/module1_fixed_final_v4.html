@@ -16,11 +16,11 @@
         }
         
         .container { 
-            max-width: 90%; 
-            width: 800px;
+            max-width: 95%; 
+            width: 900px;
             margin: 0 auto; 
             background: white; 
-            border-radius: 20px; 
+            border-radius: 25px; 
             box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
             overflow: hidden;
         }
@@ -344,7 +344,7 @@
                 return;
             }
             
-            document.getElementById('search-section').style.display = 'none';
+            document.querySelector('.search-section').style.display = 'none';
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('directoryView').style.display = 'block';
             
@@ -373,14 +373,22 @@
         // 隐藏目录视图
         function hideDirectory() {
             document.getElementById('directoryView').style.display = 'none';
-            document.getElementById('search-section').style.display = 'block';
+            document.querySelector('.search-section').style.display = 'block';
             document.getElementById('resultSection').style.display = 'none';
         }
 
         // 页面加载时初始化
         window.onload = function() {
+            console.log('模块一页面加载完成，开始加载Excel文件...');
             loadExcelFile();
         };
+
+        // 添加键盘事件支持
+        document.getElementById('productInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchProduct();
+            }
+        });
     </script>
 </body>
 </html>
