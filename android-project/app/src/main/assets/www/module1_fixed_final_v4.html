@@ -237,12 +237,13 @@
                 const row = excelData[i];
                 if (row && row.length >= 4 && row[2]) { // 确保有产品名称列
                     const productName = row[2].toString().trim();
-                    if (productName && productName !== '适用产品名称') {
+                    if (productName && productName !== '适用产品名称' && productName !== '适用产品名称说明') {
                         productData.push({
                             name: productName,
                             rowNumber: i + 1, // Excel行号（1-based）
                             standard: row[1] || '',
-                            description: row[3] || ''
+                            description: row[3] || '',
+                            originalRow: row
                         });
                     }
                 }
@@ -268,10 +269,12 @@
             const resultSection = document.getElementById('resultSection');
             resultSection.style.display = 'block';
             
-            // 搜索产品（支持模糊匹配）
-            const foundProducts = productData.filter(product => 
-                product.name.includes(productName) || productName.includes(product.name)
-            );
+            // 搜索产品（支持模糊匹配和精确匹配）
+            const foundProducts = productData.filter(product => {
+                const searchTerm = productName.toLowerCase();
+                const productTerm = product.name.toLowerCase();
+                return productTerm.includes(searchTerm) || searchTerm.includes(productTerm);
+            });
             
             if (foundProducts.length > 0) {
                 let resultHTML = '<div class="result-success">';
