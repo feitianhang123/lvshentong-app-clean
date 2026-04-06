@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>产品目录 - 绿色食品申报通</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
             min-height: 100vh; 
-            padding: 20px;
+            padding: 2%;
             color: #333;
         }
         
         .container { 
-            max-width: 400px; 
+            max-width: 90%; 
+            width: 800px;
             margin: 0 auto; 
             background: white; 
             border-radius: 20px; 
@@ -42,122 +42,53 @@
             opacity: 0.9;
         }
         
-        .search-section {
-            padding: 20px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
+        .content {
+            padding: 40px 20px;
+            text-align: center;
         }
         
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #4CAF50;
-            border-radius: 25px;
-            font-size: 16px;
-            outline: none;
-        }
-        
-        .search-input:focus {
-            border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-        }
-        
-        .search-btn {
-            background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 12px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-        }
-        
-        .directory-card {
-            background: #f8fff8;
-            border: 2px solid #e8f5e8;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .directory-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
-            border-color: #4CAF50;
-        }
-        
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2e7d32;
-            margin-bottom: 5px;
-        }
-        
-        .card-desc {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .result-section {
-            padding: 20px;
-            display: none;
-        }
-        
-        .result-success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
+        .status-message {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
             border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            color: #155724;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #856404;
         }
         
-        .result-error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            color: #721c24;
+        .feature-list {
+            text-align: left;
+            margin: 20px 0;
         }
         
-        .product-info {
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 10px;
+        .feature-item {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
         }
         
-        .product-row {
+        .feature-item:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
             font-weight: bold;
-            color: #2e7d32;
-            margin-bottom: 5px;
         }
         
         .back-btn {
             background: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 30px;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
         }
         
         .footer {
@@ -169,10 +100,16 @@
             border-top: 1px solid #eee;
         }
         
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
+        @media (max-width: 2400px) {
+            .container { max-width: 95%; width: auto; }
+        }
+        @media (max-width: 1200px) {
+            .container { max-width: 98%; }
+        }
+        @media (max-width: 600px) {
+            .container { border-radius: 15px; margin: 10px; }
+            .header { padding: 20px; }
+            .main-title { font-size: 20px; }
         }
     </style>
 </head>
@@ -180,170 +117,29 @@
     <div class="container">
         <div class="header">
             <div class="main-title">产品目录</div>
-            <div class="sub-title">绿色食品适用标准目录查询</div>
+            <div class="sub-title">模块一 - 开发中</div>
         </div>
         
-        <div class="search-section">
-            <div class="search-box">
-                <input type="text" class="search-input" id="productInput" placeholder="请输入产品名称（如：大豆、苹果等）">
-                <button class="search-btn" onclick="searchProduct()">搜索</button>
+        <div class="content">
+            <div class="status-message">
+                <strong>🚧 功能开发中</strong>
+                <p>模块一正在开发中，即将推出智能产品标准查询功能</p>
             </div>
             
-            <div class="directory-card" onclick="showFullDirectory()">
-                <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
-                <div class="card-desc">点击查看完整产品目录</div>
+            <div class="feature-list">
+                <div class="feature-item">智能搜索绿色食品产品标准</div>
+                <div class="feature-item">支持产品别名搜索（如：黄豆→大豆）</div>
+                <div class="feature-item">Excel文件一键下载功能</div>
+                <div class="feature-item">实时显示产品所在行数</div>
             </div>
-        </div>
-        
-        <div class="result-section" id="resultSection">
-            <!-- 搜索结果将在这里显示 -->
+            
+            <button class="back-btn" onclick="history.back()">返回主页</button>
         </div>
         
         <div class="footer">
-            <div>本软件内容均来源于中国绿色食品发展中心官网，如果存在问题请联络：QQ:10780329</div>
+            <div>本软件内容均来源于中国绿色食品发展中心官网</div>
+            <div>如果存在问题请联络作者：QQ:10780329</div>
         </div>
     </div>
-
-    <script>
-        let excelData = null;
-        let productData = [];
-        
-        // 加载Excel文件
-        function loadExcelFile() {
-            const url = '绿色食品产品适用标准目录（2023版）.xlsx';
-            
-            fetch(url)
-                .then(response => response.arrayBuffer())
-                .then(data => {
-                    const workbook = XLSX.read(data);
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    excelData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
-                    
-                    // 处理产品数据
-                    processProductData();
-                })
-                .catch(error => {
-                    console.error('加载Excel文件失败:', error);
-                    alert('无法加载产品目录文件，请检查文件路径');
-                });
-        }
-        
-        // 处理产品数据
-        function processProductData() {
-            if (!excelData || excelData.length < 3) return;
-            
-            // 从第3行开始处理数据（跳过标题行）
-            for (let i = 2; i < excelData.length; i++) {
-                const row = excelData[i];
-                if (row && row.length >= 4 && row[2]) { // 确保有产品名称列
-                    const productName = row[2].toString().trim();
-                    if (productName && productName !== '适用产品名称' && productName !== '适用产品名称说明') {
-                        productData.push({
-                            name: productName,
-                            rowNumber: i + 1, // Excel行号（1-based）
-                            standard: row[1] || '',
-                            description: row[3] || '',
-                            originalRow: row
-                        });
-                    }
-                }
-            }
-            
-            console.log('加载产品数据:', productData.length, '个产品');
-        }
-        
-        // 搜索产品
-        function searchProduct() {
-            const productName = document.getElementById('productInput').value.trim();
-            
-            if (!productName) {
-                alert('请输入产品名称');
-                return;
-            }
-            
-            if (!excelData) {
-                alert('产品目录文件正在加载中，请稍后再试');
-                return;
-            }
-            
-            const resultSection = document.getElementById('resultSection');
-            resultSection.style.display = 'block';
-            
-            // 搜索产品（支持模糊匹配和精确匹配）
-            const foundProducts = productData.filter(product => {
-                const searchTerm = productName.toLowerCase();
-                const productTerm = product.name.toLowerCase();
-                return productTerm.includes(searchTerm) || searchTerm.includes(productTerm);
-            });
-            
-            if (foundProducts.length > 0) {
-                let resultHTML = '<div class="result-success">';
-                resultHTML += `<strong>找到 ${foundProducts.length} 个匹配产品：</strong>`;
-                
-                foundProducts.forEach(product => {
-                    resultHTML += `<div class="product-info">`;
-                    resultHTML += `<div class="product-row">产品：${product.name}</div>`;
-                    resultHTML += `<div>所在行：第 ${product.rowNumber} 行</div>`;
-                    resultHTML += `<div>标准：${product.standard || '暂无标准信息'}</div>`;
-                    resultHTML += `<div>说明：${product.description || '暂无说明'}</div>`;
-                    resultHTML += `</div>`;
-                });
-                
-                resultHTML += '</div>';
-                resultSection.innerHTML = resultHTML;
-            } else {
-                resultSection.innerHTML = `
-                    <div class="result-error">
-                        <strong>申报产品不在绿色食品使用标准目录内，暂时无法申报绿色食品。</strong>
-                        <div>请检查产品名称是否正确，或联系技术支持。</div>
-                    </div>
-                `;
-            }
-        }
-        
-        // 显示完整目录
-        function showFullDirectory() {
-            if (!excelData) {
-                alert('产品目录文件正在加载中，请稍后再试');
-                return;
-            }
-            
-            const resultSection = document.getElementById('resultSection');
-            resultSection.style.display = 'block';
-            
-            let directoryHTML = '<div class="result-success">';
-            directoryHTML += '<strong>绿色食品产品适用标准目录（2023版） - 完整列表</strong>';
-            
-            // 显示前50个产品（避免页面过长）
-            const displayProducts = productData.slice(0, 50);
-            
-            displayProducts.forEach(product => {
-                directoryHTML += `<div class="product-info">`;
-                directoryHTML += `<div class="product-row">${product.name}</div>`;
-                directoryHTML += `<div>行号：${product.rowNumber}</div>`;
-                directoryHTML += `<div>标准：${product.standard || '暂无'}</div>`;
-                directoryHTML += `</div>`;
-            });
-            
-            if (productData.length > 50) {
-                directoryHTML += `<div style="text-align: center; margin-top: 10px;">... 还有 ${productData.length - 50} 个产品</div>`;
-            }
-            
-            directoryHTML += '</div>';
-            resultSection.innerHTML = directoryHTML;
-        }
-        
-        // 页面加载时初始化
-        window.onload = function() {
-            loadExcelFile();
-            
-            // 支持回车键搜索
-            document.getElementById('productInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchProduct();
-                }
-            });
-        };
-    </script>
 </body>
 </html>

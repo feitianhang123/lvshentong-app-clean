@@ -6,8 +6,8 @@
     <title>现行标准 - 绿色食品申报通</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15); overflow: hidden; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 2%; color: #333; }
+        .container { max-width: 90%; width: 1200px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15); overflow: hidden; }
         
         header { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 30px; text-align: center; }
         header h1 { font-size: 28px; margin-bottom: 10px; font-weight: 300; }
@@ -37,12 +37,21 @@
         
         .no-results { text-align: center; padding: 40px; color: #6c757d; font-size: 16px; }
         
-        @media (max-width: 600px) {
-            .container { border-radius: 15px; margin: 10px; }
-            header { padding: 20px; }
+        @media (max-width: 2400px) {
+            .container { max-width: 95%; width: auto; }
+        }
+        @media (max-width: 1200px) {
+            .container { max-width: 98%; }
             header h1 { font-size: 24px; }
             .standard-card { padding: 15px; }
             .standard-name { font-size: 16px; }
+        }
+        @media (max-width: 600px) {
+            .container { border-radius: 15px; margin: 10px; }
+            header { padding: 20px; }
+            header h1 { font-size: 20px; }
+            .standard-card { padding: 10px; }
+            .standard-name { font-size: 14px; }
         }
     </style>
 </head>
@@ -154,5 +163,10 @@
         // 初始渲染
         renderStandards();
     </script>
+    
+    <div class="footer" style="background: #f5f5f5; padding: 15px 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee;">
+        <div>本软件内容均来源于中国绿色食品发展中心官网</div>
+        <div>如果存在问题请联络作者：QQ:10780329</div>
+    </div>
 </body>
 </html>

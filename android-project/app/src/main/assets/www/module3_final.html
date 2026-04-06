@@ -29,6 +29,18 @@
         .back-btn { background: #f44336; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px; }
         
         .footer { background: #f5f5f5; padding: 20px; text-align: center; color: #666; font-size: 14px; }
+        
+        @media (max-width: 2400px) {
+            .container { max-width: 95%; width: auto; }
+        }
+        @media (max-width: 1200px) {
+            .cards-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+            .container { max-width: 98%; }
+        }
+        @media (max-width: 768px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            .card { padding: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -308,5 +320,10 @@
         // 初始化显示主页面
         showMain();
     </script>
+    
+    <div class="footer" style="background: #f5f5f5; padding: 15px 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee;">
+        <div>本软件内容均来源于中国绿色食品发展中心官网</div>
+        <div>如果存在问题请联络作者：QQ:10780329</div>
+    </div>
 </body>
 </html>

@@ -10,12 +10,13 @@
             font-family: 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
             min-height: 100vh; 
-            padding: 20px;
+            padding: 2%;
             color: #333;
         }
         
         .container { 
-            max-width: 400px; 
+            max-width: 90%; 
+            width: 800px;
             margin: 0 auto; 
             background: white; 
             border-radius: 20px; 
@@ -108,6 +109,18 @@
             border-top: 1px solid #eee;
         }
         
+        @media (max-width: 2400px) {
+            .container { max-width: 95%; width: auto; }
+        }
+        @media (max-width: 1200px) {
+            .container { max-width: 98%; }
+        }
+        @media (max-width: 600px) {
+            .container { border-radius: 15px; margin: 10px; }
+            .header { padding: 20px; }
+            .main-title { font-size: 20px; }
+        }
+        
         .badge {
             background: #ff9800;
             color: white;
@@ -144,7 +157,8 @@
         </div>
         
         <div class="footer">
-            <div>本软件内容均来源于中国绿色食品发展中心官网，如果存在问题请联络：QQ:10780329</div>
+            <div>本软件内容均来源于中国绿色食品发展中心官网</div>
+            <div>如果存在问题请联络作者：QQ:10780329</div>
         </div>
     </div>
 </body>
