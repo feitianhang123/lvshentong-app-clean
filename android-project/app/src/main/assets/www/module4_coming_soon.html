@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>标准修订追踪 - 绿色食品申报通</title>
+    <title>预审核 - 绿色食品申报通</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -42,34 +42,44 @@
         }
         
         .content {
-            padding: 30px 20px;
+            padding: 40px 20px;
             text-align: center;
         }
         
-        .status-message {
+        .coming-soon {
             background: #e3f2fd;
             border: 1px solid #bbdefb;
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 30px;
             margin-bottom: 20px;
             color: #1565c0;
+        }
+        
+        .coming-soon h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #1976d2;
         }
         
         .feature-list {
             text-align: left;
             margin: 20px 0;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
         }
         
         .feature-item {
             margin: 10px 0;
-            padding-left: 20px;
+            padding-left: 25px;
             position: relative;
         }
         
         .feature-item:before {
-            content: "📋";
+            content: "🔍";
             position: absolute;
             left: 0;
+            font-size: 16px;
         }
         
         .back-btn {
@@ -81,6 +91,7 @@
             cursor: pointer;
             font-size: 16px;
             transition: all 0.3s;
+            margin-top: 20px;
         }
         
         .back-btn:hover {
@@ -96,34 +107,44 @@
             color: #666;
             border-top: 1px solid #eee;
         }
+        
+        .badge {
+            background: #ff9800;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="main-title">标准修订追踪</div>
-            <div class="sub-title">模块四 - 规划中</div>
+            <div class="main-title">预审核</div>
+            <div class="sub-title">敬请期待</div>
         </div>
         
         <div class="content">
-            <div class="status-message">
-                <strong>📅 功能规划中</strong>
-                <p>模块四正在规划中，将提供绿色食品标准修订历史追踪功能</p>
+            <div class="coming-soon">
+                <span class="badge">敬请期待</span>
+                <h2>预审核功能正在开发中</h2>
+                <p>我们正在努力开发预审核功能，将为您提供更完善的申报服务</p>
             </div>
             
             <div class="feature-list">
-                <div class="feature-item">标准修订历史记录</div>
-                <div class="feature-item">修订内容对比分析</div>
-                <div class="feature-item">修订时间线展示</div>
-                <div class="feature-item">重要变更提醒功能</div>
+                <div class="feature-item">智能预审核：自动检查申报材料的完整性和合规性</div>
+                <div class="feature-item">风险评估：识别潜在的申报风险点</div>
+                <div class="feature-item">改进建议：提供具体的材料完善建议</div>
+                <div class="feature-item">进度追踪：实时查看预审核进度</div>
             </div>
             
             <button class="back-btn" onclick="history.back()">返回主页</button>
         </div>
         
         <div class="footer">
-            <div>版本：115 - 模块四规划中</div>
-            <div>开发计划：待确定</div>
+            <div>本软件内容均来源于中国绿色食品发展中心官网，如果存在问题请联络：QQ:10780329</div>
         </div>
     </div>
 </body>
