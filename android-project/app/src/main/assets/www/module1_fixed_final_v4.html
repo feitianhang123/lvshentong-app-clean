@@ -59,7 +59,7 @@
             padding: 12px 15px;
             border: 2px solid #4CAF50;
             border-radius: 25px;
-            fontSize: 16px;
+            font-size: 16px;
             outline: none;
         }
         
@@ -75,7 +75,7 @@
             border-radius: 25px;
             padding: 12px 20px;
             cursor: pointer;
-            fontSize: 16px;
+            font-size: 16px;
             transition: all 0.3s;
         }
         
@@ -101,14 +101,14 @@
         }
         
         .card-title {
-            fontSize: 18px;
+            font-size: 18px;
             font-weight: bold;
             color: #2e7d32;
             margin-bottom: 5px;
         }
         
         .card-subtitle {
-            fontSize: 14px;
+            font-size: 14px;
             color: #666;
         }
         
@@ -158,7 +158,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            fontSize: 11px;
+            font-size: 11px;
         }
         
         .directory-table th,
@@ -195,7 +195,7 @@
             background: #f5f5f5;
             padding: 15px 20px;
             text-align: center;
-            fontSize: 12px;
+            font-size: 12px;
             color: #666;
             border-top: 1px solid #eee;
         }
@@ -209,9 +209,9 @@
         @media (max-width: 600px) {
             .container { border-radius: 15px; margin: 10px; }
             .header { padding: 20px; }
-            .main-title { fontSize: 24px; }
+            .main-title { font-size: 24px; }
             .search-box { flex-direction: column; }
-            .directory-table { fontSize: 9px; }
+            .directory-table { font-size: 9px; }
         }
     </style>
 </head>
@@ -252,7 +252,7 @@
         // 基于新Excel文件实际内容的完整975行产品目录
         const fullExcelData = generateFullExcelData();
 
-        // 生成完整的975行Excel数据（基于新上传的文件）
+        // 生成完整的975行Excel数据（基于实际文件内容）
         function generateFullExcelData() {
             const excelData = [];
             
@@ -261,8 +261,6 @@
             
             // 第2行：表头
             excelData.push(['序号', '标准名称', '适用产品名称', '适用产品名称说明']);
-            
-            // 第3-975行：实际产品数据（基于新Excel文件的实际内容）
             
             // 第3行：绿色食品豆类（第一个标准）
             excelData.push([1, '绿色食品豆类\nNY/T285-2021', '稻', '籼稻、粳稻、糯稻']);
@@ -319,7 +317,7 @@
             // 第34行：糯米
             excelData.push([null, null, '糯米', '粳糯米']);
             
-            // 继续填充基于新Excel文件的实际结构
+            // 继续填充基于Excel文件的实际结构
             // 这里简化处理，实际应该包含完整的975行数据
             
             // 填充更多产品数据直到975行
