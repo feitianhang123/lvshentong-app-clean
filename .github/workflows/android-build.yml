@@ -1,0 +1,38 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+
+    - name: Build with Gradle
+      run: |
+        cd android-project
+        echo "开始构建APK..."
+        gradle assembleDebug
+        echo "构建完成，检查APK文件..."
+        ls -la app/build/outputs/apk/ || echo "APK目录不存在"
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lvshentong-app
+        path: android-project/app/build/outputs/apk/debug/app-debug.apk
