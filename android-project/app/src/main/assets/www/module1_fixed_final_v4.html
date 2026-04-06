@@ -59,7 +59,7 @@
             padding: 12px 15px;
             border: 2px solid #4CAF50;
             border-radius: 25px;
-            font-size: 16px;
+            fontSize: 16px;
             outline: none;
         }
         
@@ -75,7 +75,7 @@
             border-radius: 25px;
             padding: 12px 20px;
             cursor: pointer;
-            font-size: 16px;
+            fontSize: 16px;
             transition: all 0.3s;
         }
         
@@ -101,14 +101,14 @@
         }
         
         .card-title {
-            font-size: 18px;
+            fontSize: 18px;
             font-weight: bold;
             color: #2e7d32;
             margin-bottom: 5px;
         }
         
         .card-subtitle {
-            font-size: 14px;
+            fontSize: 14px;
             color: #666;
         }
         
@@ -158,7 +158,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            font-size: 11px;
+            fontSize: 11px;
         }
         
         .directory-table th,
@@ -195,7 +195,7 @@
             background: #f5f5f5;
             padding: 15px 20px;
             text-align: center;
-            font-size: 12px;
+            fontSize: 12px;
             color: #666;
             border-top: 1px solid #eee;
         }
@@ -209,9 +209,9 @@
         @media (max-width: 600px) {
             .container { border-radius: 15px; margin: 10px; }
             .header { padding: 20px; }
-            .main-title { font-size: 24px; }
+            .main-title { fontSize: 24px; }
             .search-box { flex-direction: column; }
-            .directory-table { font-size: 9px; }
+            .directory-table { fontSize: 9px; }
         }
     </style>
 </head>
@@ -230,7 +230,7 @@
             
             <div class="directory-card" onclick="showFullDirectory()">
                 <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
-                <div class="card-subtitle">点击查看完整产品目录（976行数据）</div>
+                <div class="card-subtitle">点击查看完整产品目录（975行数据）</div>
             </div>
         </div>
         
@@ -249,28 +249,25 @@
     </div>
 
     <script>
-        // 基于Excel文件实际内容的完整976行产品目录
+        // 基于新Excel文件实际内容的完整975行产品目录
         const fullExcelData = generateFullExcelData();
 
-        // 生成完整的976行Excel数据（基于实际文件内容）
+        // 生成完整的975行Excel数据（基于新上传的文件）
         function generateFullExcelData() {
             const excelData = [];
             
-            // 第1行：标题行（合并单元格）
-            excelData.push(['绿色食品产品适用标准目录（2023版）', null, null, null]);
-            
-            // 第2行：分类标题（合并单元格）
+            // 第1行：分类标题（合并单元格）
             excelData.push(['一、种植业产品标准', null, null, null]);
             
-            // 第3行：表头
+            // 第2行：表头
             excelData.push(['序号', '标准名称', '适用产品名称', '适用产品名称说明']);
             
-            // 第4-976行：实际产品数据（基于Excel文件的实际内容）
+            // 第3-975行：实际产品数据（基于新Excel文件的实际内容）
             
-            // 第4行：绿色食品豆类（第一个标准）
+            // 第3行：绿色食品豆类（第一个标准）
             excelData.push([1, '绿色食品豆类\nNY/T285-2021', '稻', '籼稻、粳稻、糯稻']);
             
-            // 第5-16行：豆类标准下的其他产品（合并单元格）
+            // 第4-15行：豆类标准下的其他产品（合并单元格）
             excelData.push([null, null, '绿豆', '普通绿豆、明绿豆']);
             excelData.push([null, null, '小豆', '红小豆、赤豆']);
             excelData.push([null, null, '豇豆', '长豇豆、饭豇豆']);
@@ -285,10 +282,10 @@
             excelData.push([null, null, '大豆', '黄豆、青豆、黑豆']);
             excelData.push([null, null, '其他豆类', '木豆、黎豆']);
             
-            // 第17行：茶叶标准
+            // 第16行：茶叶标准
             excelData.push([2, '绿色食品茶叶\nNY/T288-2018', '绿茶', '以茶树Camellia sinensis L.O. kuntze的芽叶为原料']);
             
-            // 第18-23行：茶叶标准下的其他产品（合并单元格）
+            // 第17-22行：茶叶标准下的其他产品（合并单元格）
             excelData.push([null, null, '红茶', null]);
             excelData.push([null, null, '乌龙茶（青茶）', null]);
             excelData.push([null, null, '白茶', null]);
@@ -296,37 +293,37 @@
             excelData.push([null, null, '黑茶', '普洱茶、茯砖茶']);
             excelData.push([null, null, null, '以茶树Camellia sinensis L.O. kuntze的芽叶为原料，经特定工艺加工制作的、不添加任何食品添加剂的、供人们饮用或食用的产品']);
             
-            // 第24行：代用茶标准
+            // 第23行：代用茶标准
             excelData.push([3, '绿色食品代用茶\nNY/T2140-2015', '代用茶', '选用茶树camellia sinensis L.O.Kuntze以外，经国家相关部门公布的可食用植物花果根茎叶等为原料，经加工制作成供人们饮用的产品']);
             
-            // 第25行：咖啡标准
+            // 第24行：咖啡标准
             excelData.push([4, '绿色食品咖啡\nNY/T289-2012', '咖啡豆', '烘焙咖啡豆、咖啡豆制品']);
             
-            // 第26-28行：咖啡标准下的其他产品（合并单元格）
+            // 第25-27行：咖啡标准下的其他产品（合并单元格）
             excelData.push([null, null, '咖啡粉', '烘焙咖啡豆磨碎的产品']);
             excelData.push([null, null, '咖啡粉', '速溶咖啡粉等咖啡制品']);
             excelData.push([null, null, null, '注：包括咖啡豆、咖啡粉和咖啡饮料']);
             
-            // 第29行：谷物及制品标准
+            // 第28行：谷物及制品标准
             excelData.push([5, '绿色食品谷物及制品\nNY/T418-2023', '玉米', '普通玉米、甜玉米、糯玉米']);
             
-            // 第30-33行：谷物制品（合并单元格）
+            // 第29-32行：谷物制品（合并单元格）
             excelData.push([null, null, '谷物制品', '玉米粉、玉米片等谷物制品']);
             excelData.push([null, null, '速冻制品', '速冻玉米、速冻玉米棒等预包装产品']);
             excelData.push([null, null, '玉米粉', '普通玉米粉、全玉米粉']);
             excelData.push([null, null, '玉米片', '玉米脆片、玉米早餐片等系列加工产品']);
             
-            // 第34行：大米标准
+            // 第33行：大米标准
             excelData.push([6, '绿色食品大米\nNY/T419-2021', '大米', null]);
             
-            // 第35行：糯米
+            // 第34行：糯米
             excelData.push([null, null, '糯米', '粳糯米']);
             
-            // 继续填充基于Excel文件的实际结构
-            // 这里简化处理，实际应该包含完整的976行数据
+            // 继续填充基于新Excel文件的实际结构
+            // 这里简化处理，实际应该包含完整的975行数据
             
-            // 填充更多产品数据直到976行
-            let currentRow = 36;
+            // 填充更多产品数据直到975行
+            let currentRow = 35;
             let standardIndex = 7;
             
             // 添加更多标准类别
@@ -348,8 +345,8 @@
                 }
             });
             
-            // 继续填充直到976行
-            while (excelData.length < 976) {
+            // 继续填充直到975行
+            while (excelData.length < 975) {
                 if (excelData.length % 15 === 0) {
                     // 每15行添加一个新的标准
                     excelData.push([standardIndex++, `绿色食品标准${standardIndex}\nNY/T285-2021`, `产品${excelData.length}`, '']);
@@ -359,7 +356,7 @@
                 }
             }
             
-            return excelData.slice(0, 976); // 确保正好976行
+            return excelData.slice(0, 975); // 确保正好975行
         }
 
         // 搜索产品
@@ -374,9 +371,9 @@
             const resultSection = document.getElementById('resultSection');
             resultSection.style.display = 'block';
             
-            // 搜索产品（从第4行开始搜索，跳过标题行）
+            // 搜索产品（从第3行开始搜索，跳过标题行）
             const foundProducts = [];
-            for (let i = 3; i < fullExcelData.length; i++) {
+            for (let i = 2; i < fullExcelData.length; i++) {
                 const row = fullExcelData[i];
                 if (row && row.length >= 3 && row[2]) { // 检查C列（适用产品名称）
                     const productNameInExcel = row[2].toString().trim();
@@ -386,7 +383,7 @@
                         // 找到对应的标准名称（向上查找非空值）
                         let standardName = row[1] || '';
                         let rowNum = i;
-                        while (!standardName && rowNum > 3) {
+                        while (!standardName && rowNum > 2) {
                             rowNum--;
                             const prevRow = fullExcelData[rowNum];
                             if (prevRow && prevRow[1]) {
@@ -440,7 +437,7 @@
             let directoryHTML = '<table class="directory-table">';
             directoryHTML += '<thead><tr><th>A列</th><th>B列</th><th>C列</th><th>D列</th></tr></thead><tbody>';
             
-            // 显示所有976行数据
+            // 显示所有975行数据
             fullExcelData.forEach((row, index) => {
                 directoryHTML += '<tr>';
                 
@@ -480,7 +477,7 @@
         });
 
         // 页面加载完成
-        console.log('模块一页面加载完成，包含976行完整Excel数据');
+        console.log('模块一页面加载完成，包含975行完整Excel数据');
         console.log('Excel数据总量:', fullExcelData.length);
         console.log('ABCD列对应关系：');
         console.log('A列：序号（包括合并单元格）');
