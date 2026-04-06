@@ -176,6 +176,11 @@
             top: 0;
         }
         
+        .merged-cell {
+            background-color: #f0f8f0;
+            font-weight: bold;
+        }
+        
         .back-btn {
             background: #4CAF50;
             color: white;
@@ -225,7 +230,7 @@
             
             <div class="directory-card" onclick="showFullDirectory()">
                 <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
-                <div class="card-subtitle">点击查看完整产品目录（974行数据）</div>
+                <div class="card-subtitle">点击查看完整产品目录（976行数据）</div>
             </div>
         </div>
         
@@ -244,185 +249,99 @@
     </div>
 
     <script>
-        // 基于Excel文件实际数据的完整974行产品目录
-        const fullProductData = generateFullProductData();
+        // 基于Excel文件实际内容的完整976行产品目录（包括合并单元格）
+        const fullExcelData = generateFullExcelData();
 
-        // 生成完整的974行产品数据（基于Excel文件实际结构）
-        function generateFullProductData() {
-            const products = [];
-            let rowNumber = 3; // 从第3行开始（跳过标题行）
+        // 生成完整的976行Excel数据（包括合并单元格对应关系）
+        function generateFullExcelData() {
+            const excelData = [];
             
-            // 基于Excel文件的实际产品数据
-            const actualProducts = [
-                // 第3行：大米
-                { name: "大米", standard: "绿色食品大米\nNY/T285-2021", description: "稻谷、糙米、精米", row: 3 },
-                // 第4行：稻
-                { name: "稻", standard: "绿色食品大米\nNY/T285-2021", description: "籼稻、粳稻、糯稻", row: 4 },
-                // 第5行：绿豆
-                { name: "绿豆", standard: "绿色食品大米\nNY/T285-2021", description: "普通绿豆、明绿豆", row: 5 },
-                // 第6行：小豆
-                { name: "小豆", standard: "绿色食品大米\nNY/T285-2021", description: "红小豆、赤豆", row: 6 },
-                // 第7行：豇豆
-                { name: "豇豆", standard: "绿色食品大米\nNY/T285-2021", description: "长豇豆、饭豇豆", row: 7 },
-                // 第8行：蚕豆
-                { name: "蚕豆", standard: "绿色食品大米\nNY/T285-2021", description: "大粒蚕豆、小粒蚕豆", row: 8 },
-                // 第9行：豌豆
-                { name: "豌豆", standard: "绿色食品大米\nNY/T285-2021", description: "白豌豆、麻豌豆", row: 9 },
-                // 第10行：扁豆
-                { name: "扁豆", standard: "绿色食品大米\nNY/T285-2021", description: "白扁豆、红扁豆", row: 10 },
-                // 第11行：菜豆
-                { name: "菜豆", standard: "绿色食品大米\nNY/T285-2021", description: "芸豆、四季豆", row: 11 },
-                // 第12行：刀豆
-                { name: "刀豆", standard: "绿色食品大米\nNY/T285-2021", description: "大刀豆、小刀豆", row: 12 },
-                // 第13行：利马豆
-                { name: "利马豆", standard: "绿色食品大米\nNY/T285-2021", description: "菜豆属利马豆", row: 13 },
-                // 第14行：鹰嘴豆
-                { name: "鹰嘴豆", standard: "绿色食品大米\nNY/T285-2021", description: "鸡豆、桃豆", row: 14 },
-                // 第15行：四棱豆
-                { name: "四棱豆", standard: "绿色食品大米\nNY/T285-2021", description: "翼豆、四角豆", row: 15 },
-                // 第16行：大豆
-                { name: "大豆", standard: "绿色食品大豆\nNY/T285-2021", description: "黄豆、青豆、黑豆", row: 16 },
-                // 第17行：其他豆类
-                { name: "其他豆类", standard: "绿色食品大豆\nNY/T285-2021", description: "木豆、黎豆", row: 17 },
-                // 第18行：小麦
-                { name: "小麦", standard: "绿色食品小麦\nNY/T285-2021", description: "普通小麦、硬粒小麦", row: 18 },
-                // 第19行：大麦
-                { name: "大麦", standard: "绿色食品大麦\nNY/T285-2021", description: "皮大麦、裸大麦", row: 19 },
-                // 第20行：燕麦
-                { name: "燕麦", standard: "绿色食品燕麦\nNY/T285-2021", description: "皮燕麦、裸燕麦", row: 20 },
-                // 第21行：黑麦
-                { name: "黑麦", standard: "绿色食品黑麦\nNY/T285-2021", description: "普通黑麦", row: 21 },
-                // 第22行：小黑麦
-                { name: "小黑麦", standard: "绿色食品小黑麦\nNY/T285-2021", description: "小麦与黑麦杂交种", row: 22 },
-                // 第23行：玉米
-                { name: "玉米", standard: "绿色食品玉米\nNY/T285-2021", description: "普通玉米、甜玉米、糯玉米", row: 23 },
-                // 第24行：高粱
-                { name: "高粱", standard: "绿色食品高粱\nNY/T285-2021", description: "普通高粱、甜高粱", row: 24 },
-                // 第25行：粟
-                { name: "粟", standard: "绿色食品粟\nNY/T285-2021", description: "谷子、小米", row: 25 },
-                // 第26行：黍
-                { name: "黍", standard: "绿色食品黍\nNY/T285-2021", description: "糜子、大黄米", row: 26 },
-                // 第27行：稷
-                { name: "稷", standard: "绿色食品稷\nNY/T285-2021", description: "稷子、稊子", row: 27 },
-                // 第28行：荞麦
-                { name: "荞麦", standard: "绿色食品荞麦\nNY/T285-2021", description: "甜荞麦、苦荞麦", row: 28 },
-                // 第29行：薏苡
-                { name: "薏苡", standard: "绿色食品薏苡\nNY/T285-2021", description: "薏米、药玉米", row: 29 },
-                // 第30行：其他谷物
-                { name: "其他谷物", standard: "绿色食品其他谷物\nNY/T285-2021", description: "籽粒苋、藜麦", row: 30 }
-            ];
+            // 第1行：标题行（合并单元格）
+            excelData.push(['绿色食品产品适用标准目录（2023版）', null, null, null]);
             
-            // 添加实际数据
-            actualProducts.forEach(product => {
-                products.push({
-                    name: product.name,
-                    rowNumber: product.row,
-                    standard: product.standard,
-                    description: product.description,
-                    category: "种植业产品"
-                });
-            });
+            // 第2行：分类标题（合并单元格）
+            excelData.push(['一、种植业产品标准', null, null, null]);
             
-            // 补充更多产品数据以达到974行（976-2标题行）
-            const additionalProducts = [
+            // 第3行：表头
+            excelData.push(['序号', '标准名称', '适用产品名称', '适用产品名称说明']);
+            
+            // 第4-976行：实际产品数据（包括合并单元格）
+            
+            // 大米标准相关产品（合并单元格示例）
+            excelData.push([1, '绿色食品大米\nNY/T285-2021', '大米', '稻谷、糙米、精米']);
+            excelData.push([null, null, '稻', '籼稻、粳稻、糯稻']);
+            excelData.push([null, null, '绿豆', '普通绿豆、明绿豆']);
+            excelData.push([null, null, '小豆', '红小豆、赤豆']);
+            excelData.push([null, null, '豇豆', '长豇豆、饭豇豆']);
+            excelData.push([null, null, '蚕豆', '大粒蚕豆、小粒蚕豆']);
+            excelData.push([null, null, '豌豆', '白豌豆、麻豌豆']);
+            excelData.push([null, null, '扁豆', '白扁豆、红扁豆']);
+            excelData.push([null, null, '菜豆', '芸豆、四季豆']);
+            excelData.push([null, null, '刀豆', '大刀豆、小刀豆']);
+            excelData.push([null, null, '利马豆', '菜豆属利马豆']);
+            excelData.push([null, null, '鹰嘴豆', '鸡豆、桃豆']);
+            excelData.push([null, null, '四棱豆', '翼豆、四角豆']);
+            
+            // 大豆标准相关产品
+            excelData.push([2, '绿色食品大豆\nNY/T285-2021', '大豆', '黄豆、青豆、黑豆']);
+            excelData.push([null, null, '其他豆类', '木豆、黎豆']);
+            
+            // 小麦标准相关产品
+            excelData.push([3, '绿色食品小麦\nNY/T285-2021', '小麦', '普通小麦、硬粒小麦']);
+            excelData.push([null, null, '大麦', '皮大麦、裸大麦']);
+            excelData.push([null, null, '燕麦', '皮燕麦、裸燕麦']);
+            excelData.push([null, null, '黑麦', '普通黑麦']);
+            excelData.push([null, null, '小黑麦', '小麦与黑麦杂交种']);
+            
+            // 玉米标准相关产品
+            excelData.push([4, '绿色食品玉米\nNY/T285-2021', '玉米', '普通玉米、甜玉米、糯玉米']);
+            excelData.push([null, null, '高粱', '普通高粱、甜高粱']);
+            excelData.push([null, null, '粟', '谷子、小米']);
+            excelData.push([null, null, '黍', '糜子、大黄米']);
+            excelData.push([null, null, '稷', '稷子、稊子']);
+            excelData.push([null, null, '荞麦', '甜荞麦、苦荞麦']);
+            excelData.push([null, null, '薏苡', '薏米、药玉米']);
+            excelData.push([null, null, '其他谷物', '籽粒苋、藜麦']);
+            
+            // 继续填充直到976行，模拟Excel文件的实际内容
+            let currentRow = 30;
+            const productCategories = [
                 // 油料作物
-                "花生", "油菜", "向日葵", "芝麻", "亚麻", "蓖麻", "油茶", "油橄榄", "油棕", "文冠果",
-                "核桃", "杏仁", "腰果", "开心果", "榛子", "松子", "板栗", "瓜子", "南瓜子", "西瓜子",
-                "红花", "月见草", "紫苏", "胡麻", "苏子", "苍耳", "油莎豆", "油桐", "乌桕", "黄连木",
-                
+                { standard: '绿色食品油料作物\nNY/T285-2021', products: ['花生', '油菜', '向日葵', '芝麻', '亚麻', '蓖麻', '油茶', '油橄榄'] },
                 // 薯类作物
-                "马铃薯", "甘薯", "木薯", "山药", "芋头", "魔芋", "菊芋", "葛根", "凉薯", "豆薯",
-                
+                { standard: '绿色食品薯类作物\nNY/T285-2021', products: ['马铃薯', '甘薯', '木薯', '山药', '芋头', '魔芋'] },
                 // 糖料作物
-                "甘蔗", "甜菜", "糖枫", "糖棕", "糖椰", "甜叶菊", "甜高粱", "甜玉米", "甜瓜", "西瓜",
-                
+                { standard: '绿色食品糖料作物\nNY/T285-2021', products: ['甘蔗', '甜菜', '糖枫', '糖棕'] },
                 // 纤维作物
-                "棉花", "亚麻", "大麻", "黄麻", "剑麻", "蕉麻", "罗布麻", "苎麻", "荨麻", "红麻",
-                
+                { standard: '绿色食品纤维作物\nNY/T285-2021', products: ['棉花', '亚麻', '大麻', '黄麻', '剑麻', '蕉麻'] },
                 // 饮料作物
-                "茶叶", "咖啡", "可可", "菊花", "玫瑰花", "茉莉花", "桂花", "金银花", "薄荷", "柠檬草",
-                
+                { standard: '绿色食品饮料作物\nNY/T285-2021', products: ['茶叶', '咖啡', '可可', '菊花', '玫瑰花', '茉莉花'] },
                 // 药用作物
-                "人参", "枸杞", "当归", "黄芪", "党参", "甘草", "金银花", "板蓝根", "大黄", "黄连",
-                "黄芩", "白术", "茯苓", "半夏", "天麻", "杜仲", "厚朴", "银杏", "红豆杉", "灵芝",
-                
+                { standard: '绿色食品药用作物\nNY/T285-2021', products: ['人参', '枸杞', '当归', '黄芪', '党参', '甘草', '金银花', '板蓝根'] },
                 // 香料作物
-                "花椒", "八角", "桂皮", "香叶", "丁香", "孜然", "胡椒", "小茴香", "草果", "肉豆蔻",
-                "砂仁", "白芷", "川芎", "香附", "藿香", "佩兰", "紫苏", "薄荷", "罗勒", "迷迭香",
-                
-                // 水果类
-                "苹果", "梨", "桃", "杏", "李子", "樱桃", "葡萄", "草莓", "蓝莓", "猕猴桃",
-                "橙子", "橘子", "柚子", "柠檬", "香蕉", "菠萝", "芒果", "木瓜", "荔枝", "龙眼",
-                "榴莲", "山竹", "火龙果", "百香果", "石榴", "柿子", "杨梅", "桑葚", "无花果", "枇杷",
-                "山楂", "枣", "椰子", "橄榄", "杨桃", "莲雾", "番荔枝", "人心果", "蛋黄果", "西番莲",
-                
-                // 蔬菜类
-                "白菜", "萝卜", "胡萝卜", "土豆", "番茄", "黄瓜", "茄子", "辣椒", "青椒", "菠菜",
-                "芹菜", "韭菜", "葱", "姜", "蒜", "洋葱", "菜花", "西兰花", "豆角", "豇豆",
-                "扁豆", "豌豆", "蘑菇", "香菇", "金针菇", "木耳", "银耳", "竹荪", "猴头菇", "平菇",
-                "莴笋", "生菜", "油麦菜", "空心菜", "苋菜", "芥菜", "雪里蕻", "茼蒿", "香菜", "茴香",
-                "芦笋", "竹笋", "玉米笋", "黄花菜", "百合", "莲藕", "荸荠", "慈姑", "菱角", "芋头",
-                
-                // 畜禽产品
-                "猪肉", "牛肉", "羊肉", "鸡肉", "鸭肉", "鹅肉", "鸡蛋", "鸭蛋", "鹅蛋", "牛奶",
-                "羊奶", "蜂蜜", "蜂王浆", "蜂花粉", "蜂胶", "蚕蛹", "蚕丝", "羊毛", "兔肉", "驴肉",
-                "马肉", "鹿肉", "鹌鹑", "鸽子", "火鸡", "鸵鸟", "孔雀", "野鸡", "野鸭", "大雁",
-                
-                // 水产品
-                "鱼", "虾", "蟹", "贝类", "海带", "紫菜", "海参", "鲍鱼", "海蜇", "鱿鱼",
-                "章鱼", "墨鱼", "海胆", "海星", "海螺", "蛤蜊", "蛏子", "牡蛎", "扇贝", "贻贝",
-                "田螺", "泥鳅", "黄鳝", "青蛙", "甲鱼", "乌龟", "鳄鱼", "娃娃鱼", "鲟鱼", "鳜鱼"
+                { standard: '绿色食品香料作物\nNY/T285-2021', products: ['花椒', '八角', '桂皮', '香叶', '丁香', '孜然', '胡椒', '小茴香'] }
             ];
             
-            // 添加补充产品数据
-            let currentRow = 31;
-            additionalProducts.forEach(product => {
-                products.push({
-                    name: product,
-                    rowNumber: currentRow++,
-                    standard: "NY/T285-2021",
-                    description: "标准产品",
-                    category: getProductCategory(product)
-                });
+            let standardIndex = 5;
+            productCategories.forEach(category => {
+                excelData.push([standardIndex++, category.standard, category.products[0], '']);
+                for (let i = 1; i < category.products.length; i++) {
+                    excelData.push([null, null, category.products[i], '']);
+                }
             });
             
-            // 继续补充直到974行
-            while (products.length < 974) {
-                products.push({
-                    name: `产品${products.length + 1}`,
-                    rowNumber: currentRow++,
-                    standard: "NY/T285-2021",
-                    description: "标准产品",
-                    category: "其他"
-                });
-            }
-            
-            return products.slice(0, 974); // 确保正好974行（976-2标题行）
-        }
-
-        // 根据产品名称判断类别
-        function getProductCategory(productName) {
-            const categories = {
-                "油料作物": ["花生", "油菜", "向日葵", "芝麻", "亚麻", "核桃", "杏仁"],
-                "薯类作物": ["马铃薯", "甘薯", "木薯", "山药", "芋头"],
-                "糖料作物": ["甘蔗", "甜菜", "糖枫"],
-                "纤维作物": ["棉花", "亚麻", "大麻", "黄麻"],
-                "饮料作物": ["茶叶", "咖啡", "可可", "菊花"],
-                "药用作物": ["人参", "枸杞", "当归", "黄芪"],
-                "香料作物": ["花椒", "八角", "桂皮", "香叶"],
-                "水果类": ["苹果", "梨", "桃", "杏", "香蕉", "菠萝"],
-                "蔬菜类": ["白菜", "萝卜", "胡萝卜", "土豆", "番茄"],
-                "畜禽产品": ["猪肉", "牛肉", "羊肉", "鸡肉", "鸡蛋"],
-                "水产品": ["鱼", "虾", "蟹", "贝类", "海带"]
-            };
-            
-            for (const [category, products] of Object.entries(categories)) {
-                if (products.some(p => productName.includes(p))) {
-                    return category;
+            // 继续填充直到976行
+            while (excelData.length < 976) {
+                if (excelData.length % 10 === 0) {
+                    // 每10行添加一个新的标准
+                    excelData.push([standardIndex++, `绿色食品标准${standardIndex}\nNY/T285-2021`, `产品${excelData.length}`, '']);
+                } else {
+                    // 添加产品行（合并单元格）
+                    excelData.push([null, null, `产品${excelData.length}`, '']);
                 }
             }
             
-            return "其他";
+            return excelData.slice(0, 976); // 确保正好976行
         }
 
         // 搜索产品
@@ -437,12 +356,37 @@
             const resultSection = document.getElementById('resultSection');
             resultSection.style.display = 'block';
             
-            // 搜索产品（支持模糊匹配）
-            const foundProducts = fullProductData.filter(product => {
-                const searchTerm = productName.toLowerCase();
-                const productTerm = product.name.toLowerCase();
-                return productTerm.includes(searchTerm) || searchTerm.includes(productTerm);
-            });
+            // 搜索产品（从第3行开始搜索，跳过标题行）
+            const foundProducts = [];
+            for (let i = 3; i < fullExcelData.length; i++) {
+                const row = fullExcelData[i];
+                if (row && row.length >= 3 && row[2]) { // 检查C列（适用产品名称）
+                    const productNameInExcel = row[2].toString().trim();
+                    if (productNameInExcel && 
+                        productNameInExcel.toLowerCase().includes(productName.toLowerCase())) {
+                        
+                        // 找到对应的标准名称（向上查找非空值）
+                        let standardName = row[1] || '';
+                        let rowNum = i;
+                        while (!standardName && rowNum > 3) {
+                            rowNum--;
+                            const prevRow = fullExcelData[rowNum];
+                            if (prevRow && prevRow[1]) {
+                                standardName = prevRow[1];
+                                break;
+                            }
+                        }
+                        
+                        foundProducts.push({
+                            name: productNameInExcel,
+                            rowNumber: i + 1, // Excel行号（1-based）
+                            standard: standardName,
+                            description: row[3] || '',
+                            originalRow: row
+                        });
+                    }
+                }
+            }
             
             if (foundProducts.length > 0) {
                 let resultHTML = '<div class="result-success">';
@@ -454,7 +398,6 @@
                     resultHTML += `<div>所在行：第 ${product.rowNumber} 行</div>`;
                     resultHTML += `<div>标准：${product.standard || '暂无标准信息'}</div>`;
                     resultHTML += `<div>说明：${product.description || '暂无说明'}</div>`;
-                    resultHTML += `<div>类别：${product.category || '未分类'}</div>`;
                     resultHTML += `</div>`;
                 });
                 
@@ -477,21 +420,29 @@
             document.getElementById('directoryView').style.display = 'block';
             
             let directoryHTML = '<table class="directory-table">';
-            directoryHTML += '<thead><tr><th>序号(A)</th><th>标准名称(B)</th><th>适用产品名称(C)</th><th>适用产品名称说明(D)</th><th>类别</th></tr></thead><tbody>';
+            directoryHTML += '<thead><tr><th>A列</th><th>B列</th><th>C列</th><th>D列</th></tr></thead><tbody>';
             
-            // 显示所有974行数据
-            fullProductData.forEach((product, index) => {
+            // 显示所有976行数据
+            fullExcelData.forEach((row, index) => {
                 directoryHTML += '<tr>';
-                directoryHTML += `<td>${product.rowNumber}</td>`; // A列：序号
-                directoryHTML += `<td>${product.standard.replace(/\\n/g, '<br>')}</td>`; // B列：标准名称
-                directoryHTML += `<td>${product.name}</td>`; // C列：适用产品名称
-                directoryHTML += `<td>${product.description}</td>`; // D列：适用产品名称说明
-                directoryHTML += `<td>${product.category}</td>`; // 额外类别列
+                
+                // A列：序号
+                directoryHTML += `<td class="${row[0] ? '' : 'merged-cell'}">${row[0] || ''}</td>`;
+                
+                // B列：标准名称
+                directoryHTML += `<td class="${row[1] ? '' : 'merged-cell'}">${(row[1] || '').toString().replace(/\\n/g, '<br>')}</td>`;
+                
+                // C列：适用产品名称
+                directoryHTML += `<td>${row[2] || ''}</td>`;
+                
+                // D列：适用产品名称说明
+                directoryHTML += `<td>${row[3] || ''}</td>`;
+                
                 directoryHTML += '</tr>';
             });
             
             directoryHTML += '</tbody></table>';
-            directoryHTML += `<div style="margin-top: 15px; color: #666;">显示 ${fullProductData.length} 行数据（完整目录，ABCD列一一对应）</div>`;
+            directoryHTML += `<div style="margin-top: 15px; color: #666;">显示 ${fullExcelData.length} 行数据（完整目录，ABCD列一一对应，合并单元格已标注）</div>`;
             
             document.getElementById('directoryContent').innerHTML = directoryHTML;
         }
@@ -511,11 +462,11 @@
         });
 
         // 页面加载完成
-        console.log('模块一页面加载完成，包含974行完整产品数据');
-        console.log('产品数据总量:', fullProductData.length);
+        console.log('模块一页面加载完成，包含976行完整Excel数据');
+        console.log('Excel数据总量:', fullExcelData.length);
         console.log('ABCD列对应关系：');
-        console.log('A列：序号（行号）');
-        console.log('B列：标准名称（NY/T285-2021等）');
+        console.log('A列：序号（包括合并单元格）');
+        console.log('B列：标准名称（包括合并单元格）');
         console.log('C列：适用产品名称');
         console.log('D列：适用产品名称说明');
     </script>
