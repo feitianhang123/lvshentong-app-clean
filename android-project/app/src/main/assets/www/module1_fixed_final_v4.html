@@ -267,10 +267,10 @@
             
             // 第4-976行：实际产品数据（基于Excel文件的实际内容）
             
-            // 第4行：大米标准
-            excelData.push([1, '绿色食品大米\nNY/T285-2021', '稻', '籼稻、粳稻、糯稻']);
+            // 第4行：绿色食品豆类（第一个标准）
+            excelData.push([1, '绿色食品豆类\nNY/T285-2021', '稻', '籼稻、粳稻、糯稻']);
             
-            // 第5-16行：大米标准下的其他产品（合并单元格）
+            // 第5-16行：豆类标准下的其他产品（合并单元格）
             excelData.push([null, null, '绿豆', '普通绿豆、明绿豆']);
             excelData.push([null, null, '小豆', '红小豆、赤豆']);
             excelData.push([null, null, '豇豆', '长豇豆、饭豇豆']);
@@ -283,6 +283,7 @@
             excelData.push([null, null, '鹰嘴豆', '鸡豆、桃豆']);
             excelData.push([null, null, '四棱豆', '翼豆、四角豆']);
             excelData.push([null, null, '大豆', '黄豆、青豆、黑豆']);
+            excelData.push([null, null, '其他豆类', '木豆、黎豆']);
             
             // 第17行：茶叶标准
             excelData.push([2, '绿色食品茶叶\nNY/T288-2018', '绿茶', '以茶树Camellia sinensis L.O. kuntze的芽叶为原料']);
@@ -309,15 +310,24 @@
             // 第29行：谷物及制品标准
             excelData.push([5, '绿色食品谷物及制品\nNY/T418-2023', '玉米', '普通玉米、甜玉米、糯玉米']);
             
-            // 第30行：谷物制品
+            // 第30-33行：谷物制品（合并单元格）
             excelData.push([null, null, '谷物制品', '玉米粉、玉米片等谷物制品']);
+            excelData.push([null, null, '速冻制品', '速冻玉米、速冻玉米棒等预包装产品']);
+            excelData.push([null, null, '玉米粉', '普通玉米粉、全玉米粉']);
+            excelData.push([null, null, '玉米片', '玉米脆片、玉米早餐片等系列加工产品']);
+            
+            // 第34行：大米标准
+            excelData.push([6, '绿色食品大米\nNY/T419-2021', '大米', null]);
+            
+            // 第35行：糯米
+            excelData.push([null, null, '糯米', '粳糯米']);
             
             // 继续填充基于Excel文件的实际结构
             // 这里简化处理，实际应该包含完整的976行数据
             
             // 填充更多产品数据直到976行
-            let currentRow = 31;
-            let standardIndex = 6;
+            let currentRow = 36;
+            let standardIndex = 7;
             
             // 添加更多标准类别
             const standards = [
@@ -477,6 +487,7 @@
         console.log('B列：标准名称（包括合并单元格）');
         console.log('C列：适用产品名称');
         console.log('D列：适用产品名称说明');
+        console.log('第一个标准：绿色食品豆类 NY/T285-2021');
     </script>
 </body>
 </html>
