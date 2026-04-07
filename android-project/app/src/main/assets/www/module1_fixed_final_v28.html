@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品目录 - 绿色食品申报通</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
+            min-height: 100vh; 
+            padding: 2%;
+            color: #333;
+        }
+        
+        .container { 
+            max-width: 95%; 
+            width: 900px;
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 25px; 
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
+            overflow: hidden;
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        
+        .main-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .sub-title {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            padding: 12px 25px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .search-btn:hover {
+            background: #45a049;
+        }
+        
+        .result-section {
+            padding: 20px;
+            display: none;
+        }
+        
+        .result-item {
+            background: #f8fff8;
+            border: 1px solid #e8f5e8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .result-title {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+        
+        .result-details {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .directory-view {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .directory-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .directory-table th {
+            background: #f5f5f5;
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-weight: bold;
+        }
+        
+        .directory-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .directory-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .footer {
+            background: #f5f5f5;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="main-title">产品目录</div>
+            <div class="sub-title">绿色食品产品适用标准目录（2023版）</div>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称...">
+                <button class="search-btn" onclick="searchProduct()">搜索</button>
+            </div>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div id="searchResults"></div>
+        </div>
+        
+        <div class="directory-view" id="directoryView">
+            <div id="directoryTable"></div>
+        </div>
+        
+        <div class="footer">
+            <div>本软件内容均来源于中国绿色食品发展中心官网</div>
+            <div>如果存在问题请联络作者：QQ:10780329</div>
+        </div>
+    </div>
+
+    <script>
+        // Excel数据（直接嵌入）
+        const excelData = <table class="directory-table"><thead><tr><th>A列</th><th>B列</th><th>C列</th><th>D列</th></tr></thead><tbody><tr><td>一、种植业产品标准</td><td></td><td></td><td></td></tr><tr><td>序号</td><td>标准名称</td><td>适用产品名称</td><td>适用产品别名及说明</td></tr><tr><td>1</td><td>绿色食品豆类
+NY/T285-2021</td><td>大豆</td><td>黄豆、黄大豆、黑豆、黑大豆、乌豆、青豆等</td></tr><tr><td></td><td></td><td>蚕豆</td><td>胡豆、佛豆、罗汉豆</td></tr><tr><td></td><td></td><td>绿豆</td><td>菉豆、植豆、青小豆</td></tr><tr><td></td><td></td><td>小豆</td><td>赤豆、红小豆、米赤豆、朱豆</td></tr><tr><td></td><td></td><td>芸豆</td><td>普通菜豆、干菜豆、腰豆</td></tr><tr><td></td><td></td><td>豇豆</td><td>长豆、角豆</td></tr><tr><td></td><td></td><td>豌豆</td><td>雪豆、毕豆、寒豆、荷兰豆</td></tr><tr><td></td><td></td><td>饭豆</td><td>米豆、精米豆、爬山豆</td></tr><tr><td></td><td></td><td>小扁豆</td><td>兵豆、滨豆、洋扁豆、鸡眼豆</td></tr><tr><td></td><td></td><td>鹰嘴豆</td><td>鹰咀豆、鸡豆、桃豆、回鹘豆、回回豆、脑核豆</td></tr><tr><td></td><td></td><td>木豆</td><td>树豆、扭豆、豆蓉</td></tr><tr><td></td><td></td><td>羽扇豆</td><td>鲁冰花</td></tr><tr><td></td><td></td><td>利马豆</td><td>棉豆、懒人豆、荷包豆、白豆</td></tr><tr><td>2</td><td>绿色食品茶叶
+NY/T288-2018</td><td>绿茶</td><td>包括各种绿茶及以绿茶为原料的窨制花茶</td></tr><tr><td></td><td></td><td>红茶</td><td></td></tr><tr><td></td><td></td><td>青茶（乌龙茶）</td><td></td></tr><tr><td></td><td></td><td>黄茶</td><td></td></tr><tr><td></td><td></td><td>白茶</td><td></td></tr><tr><td></td><td></td><td>黑茶</td><td>普洱茶、紧压茶</td></tr><tr><td></td><td></td><td></td><td>以茶树（CamelliasinensisL.O.kunts）的芽、叶、嫩茎为原料，以特定工艺加工的、不含任何添加剂的、供人们饮用或食用的产品。</td></tr><tr><td>3</td><td>绿色食品代用茶
+NY/T2140-2015</td><td>代用茶</td><td>选用除茶（camelliasinensisL.O.Kunts）以外，由国家行政主管部门公布的可用于食品的植物花及花蕾、芽叶、果（实）、根茎等为原料，经加工制作，采用冲泡（浸泡或煮）的方式，供人们饮用的产品。涉及保健食品的应符合国家相关规定。</td></tr><tr><td>4</td><td>绿色食品咖啡
+NY/T289-2012</td><td>生咖啡</td><td>咖啡鲜果经干燥脱壳处理所得产品</td></tr><tr><td></td><td></td><td>焙炒咖啡豆</td><td>生咖啡经焙炒所得产品</td></tr><tr><td></td><td></td><td>咖啡粉</td><td>焙炒咖啡豆磨碎后的产品</td></tr><tr><td></td><td></td><td></td><td>注：不适用于脱咖啡因咖啡和速溶型咖啡</td></tr><tr><td>5</td><td>绿色食品玉米及其制品
+NY/T418-2023</td><td>玉米</td><td>普通玉米、高淀粉玉米、高蛋白玉米、高油玉米</td></tr><tr><td></td><td></td><td>鲜食玉米</td><td>包括甜玉米、糯玉米、甜加糯玉米。同时适用于生、熟产品</td></tr><tr><td></td><td></td><td>速冻玉米</td><td>速冻糯玉米、速冻甜玉米、速冻甜加糯玉米的熟制预包装产品</td></tr><tr><td></td><td></td><td>玉米粉</td><td>脱胚玉米粉、全玉米粉</td></tr><tr><td></td><td></td><td>玉米糁</td><td>玉米粒经除杂、脱胚、研磨和筛分等系列工序加工而成的颗粒状产品</td></tr><tr><td>6</td><td>绿色食品稻米
+NY/T419-2021</td><td>稻谷</td><td></td></tr><tr><td></td><td></td><td>大米</td><td>含糯米</td></tr><tr><td></td><td></td><td>糙米</td><td>稻谷脱壳后保留着皮层和胚芽的米</td></tr><tr><td></td><td></td><td>胚芽米</td><td>胚芽保留率达75%以上的精米</td></tr><tr><td>6</td><td>绿色食品稻米
+NY/T419-2021</td><td>蒸谷米</td><td>稻谷经清理、浸泡、蒸煮、干燥等处理后，再按常规稻谷碾米加工方法生产的稻米</td></tr><tr><td></td><td></td><td>紫（黑）米</td><td></td></tr><tr><td></td><td></td><td>红米</td><td>糙米天然色泽为棕红色的稻米</td></tr><tr><td>7</td><td>绿色食品花生及制品
+NY/T420-2017</td><td>食用花生（果、仁）</td><td></td></tr><tr><td></td><td></td><td>油用花生（果、仁）</td><td></td></tr><tr><td></td><td></td><td>水煮花生（果、仁）</td><td></td></tr><tr><td></td><td></td><td>烤花生</td><td>包括原味烤花生、调味花生</td></tr><tr><td></td><td></td><td>烤花生仁</td><td>包括红衣型、脱红衣型</td></tr><tr><td></td><td></td><td>烤花生碎</td><td></td></tr><tr><td></td><td></td><td>乳白花生</td><td></td></tr><tr><td></td><td></td><td>乳白花生碎</td><td></td></tr><tr><td></td><td></td><td>炒花生仁</td><td>包括红衣型、脱红衣型</td></tr><tr><td></td><td></td><td>炒花生果</td><td></td></tr><tr><td></td><td></td><td>油炸花生仁</td><td></td></tr><tr><td></td><td></td><td>裹衣花生</td><td>包括淀粉型、糖衣型、混合型</td></tr><tr><td></td><td></td><td>花生蛋白粉</td><td></td></tr><tr><td></td><td></td><td>花生组织蛋白</td><td></td></tr><tr><td></td><td></td><td>花生酱</td><td>包括纯花生酱、稳定型花生酱、复合型花生酱</td></tr><tr><td></td><td></td><td></td><td>注：不包括花生类糖制品，花生类糖制品已归到《绿色食品糖果》（NY/T2986-2016）中。</td></tr><tr><td>8</td><td>绿色食品小麦及小麦粉
+NY/T421-2021</td><td>小麦</td><td>禾本科小麦属普通小麦种（TriticumaestivumL.）的果实，呈卵形或长椭圆形，腹面有深纵沟。按照小麦播种季节不同分为春小麦和冬小麦。按照小麦的用途和面筋含量高低分为强筋小麦、中筋小麦和弱筋小麦。</td></tr><tr><td></td><td></td><td>小麦粉</td><td>以小麦为原料，经清理、水分调节、研磨、筛理等工艺加工而成的粉状产品。</td></tr><tr><td></td><td></td><td>全麦粉</td><td>以整粒小麦为原料，经制粉工艺制成的，且小麦胚乳、胚芽与麸皮的相对比例与天然完整颖果基本一致的小麦全粉。</td></tr><tr><td>9</td><td>绿色食品柑橘类水果
+NY/T426-2021</td><td>宽皮柑橘类鲜果</td><td></td></tr><tr><td></td><td></td><td>甜橙类鲜果</td><td></td></tr><tr><td></td><td></td><td>柚类鲜果</td><td></td></tr><tr><td></td><td></td><td>柠檬类鲜果</td><td></td></tr><tr><td></td><td></td><td>金柑类鲜果</td><td></td></tr><tr><td></td><td></td><td>杂交柑橘类鲜果</td><td></td></tr><tr><td>10</td><td>绿色食品西甜瓜
+NY/T427-2016</td><td>薄皮甜瓜</td><td>果肉厚度一般不大于2.5cm的甜瓜</td></tr><tr><td></td><td></td><td>厚皮甜瓜</td><td>果肉厚度一般大于2.5cm的甜瓜</td></tr><tr><td></td><td></td><td>西瓜</td><td>包括普通西瓜、籽用西瓜（打瓜）、无籽西瓜及用于腌制或育种的小西瓜等</td></tr><tr><td>11</td><td>绿色食品白菜类蔬菜
+NY/T654-2020</td><td>大白菜</td><td>结球白菜、黄芽菜、包心白菜等</td></tr><tr><td></td><td></td><td>普通白菜</td><td>白菜、小白菜、青菜、油菜</td></tr><tr><td></td><td></td><td>乌塌菜</td><td>塌菜、黑菜、塌棵菜、塌地崧等</td></tr><tr><td></td><td></td><td>紫菜薹</td><td>红菜薹</td></tr><tr><td></td><td></td><td>菜薹</td><td>菜心、薹心菜、绿菜薹、菜尖</td></tr><tr><td></td><td></td><td>薹菜</td><td></td></tr><tr><td>12</td><td>绿色食品茄果类蔬菜
+NY/T655-2020</td><td>番茄</td><td>蕃柿、西红柿、洋柿子、小西红柿、樱桃西红柿、樱桃番茄、小柿子</td></tr><tr><td></td><td></td><td>茄子</td><td>矮瓜、吊菜子、落苏、茄瓜</td></tr><tr><td></td><td></td><td>辣椒</td><td>牛角椒、长辣椒、菜椒</td></tr><tr><td></td><td></td><td>甜椒</td><td>灯笼椒、柿子椒</td></tr><tr><td></td><td></td><td>酸浆</td><td>姑娘、挂金灯、金灯、锦灯笼、泡泡草</td></tr><tr><td></td><td></td><td>香瓜茄</td><td>人参果</td></tr><tr><td>13</td><td>绿色食品绿叶类蔬菜
+NY/T743-2020</td><td>菠菜</td><td>菠薐、波斯草、赤根草、角菜、波斯菜、红根菜</td></tr><tr><td></td><td></td><td>芹菜</td><td>芹、旱芹、药芹、野圆荽、塘蒿、苦堇</td></tr><tr><td></td><td></td><td>落葵</td><td>木耳菜、软浆叶、胭脂菜、藤菜</td></tr><tr><td></td><td></td><td>莴苣</td><td>生菜、千斤菜。
+包括茎用莴苣（莴笋）、皱叶莴苣、直立莴苣（也叫长叶莴苣、散叶莴苣，如油麦菜）、结球莴苣等。</td></tr><tr><td></td><td></td><td>雍菜</td><td>竹叶菜、空心菜、藤菜、藤藤菜、通菜</td></tr><tr><td></td><td></td><td>茴香</td><td>包括意大利茴香、小茴香和球茎茴香。</td></tr><tr><td></td><td></td><td>苋菜</td><td>苋、米苋、赤苋、刺苋</td></tr><tr><td></td><td></td><td>青葙</td><td>土鸡冠、青箱子、野鸡冠</td></tr><tr><td></td><td></td><td>芫荽</td><td>香菜、胡荽、香荽</td></tr><tr><td></td><td></td><td>叶菾菜</td><td>莙荙菜、厚皮菜、牛皮菜、火焰菜</td></tr><tr><td></td><td></td><td>茼蒿</td><td>包括大叶茼蒿（板叶茼蒿、菊花菜、大花茼蒿、大叶蓬蒿）、小叶茼蒿（花叶茼蒿或细叶茼蒿）和蒿子秆</td></tr><tr><td></td><td></td><td>荠菜</td><td>护生草、菱角草、地米菜、扇子草</td></tr><tr><td></td><td></td><td>冬寒菜</td><td>冬葵、葵菜、滑肠菜、葵、滑菜、冬苋菜、露葵</td></tr><tr><td></td><td></td><td>番杏</td><td>新西兰菠菜、洋菠菜、夏菠菜、毛菠菜</td></tr><tr><td></td><td></td><td>菜苜蓿</td><td>黄花苜蓿、南苜蓿、刺苜蓿、草头、菜苜蓿</td></tr><tr><td></td><td></td><td>紫背天葵</td><td>血皮菜、观音苋、红凤菜</td></tr><tr><td></td><td></td><td>榆钱菠菜</td><td>食用滨藜、洋菠菜、山菠菜、法国菠菜、山菠蓤草</td></tr><tr><td></td><td></td><td>菊苣</td><td>欧洲菊苣、吉康菜、法国苣荬菜</td></tr><tr><td></td><td></td><td>鸭儿芹</td><td>鸭脚板、三叶芹、山芹菜、野蜀葵、三蜀芹、水芹菜</td></tr><tr><td></td><td></td><td>苦苣</td><td>花叶生菜、花苣、菊苣菜</td></tr><tr><td></td><td></td><td>苦荬菜</td><td>取麻菜、苦苣菜</td></tr><tr><td></td><td></td><td>菊花脑</td><td>路边黄、菊花叶、黄菊仔、菊花菜</td></tr><tr><td></td><td></td><td>酸模</td><td>山菠菜、野菠菜、酸溜溜</td></tr><tr><td></td><td></td><td>珍珠菜</td><td>野七里香、角菜、白苞菜、珍珠花、野脚艾</td></tr><tr><td></td><td></td><td>芝麻菜</td><td>火箭生菜、臭菜</td></tr><tr><td></td><td></td><td>白花菜</td><td>羊角菜、凤蝶菜</td></tr><tr><td></td><td></td><td>香芹菜</td><td>洋芫荽、旱芹菜、荷兰芹、欧洲没药、欧芹、法国香菜、旱芹菜</td></tr><tr><td></td><td></td><td>罗勒</td><td>毛罗勒、九层塔、光明子、寒陵香、零陵香</td></tr><tr><td></td><td></td><td>薄荷</td><td>田野薄荷、蕃荷菜、苏薄荷、仁丹草</td></tr><tr><td></td><td></td><td>紫苏</td><td>荏、赤苏、白苏、回回苏</td></tr><tr><td></td><td></td><td>莳萝</td><td>土茴香、洋茴香、茴香草</td></tr><tr><td>13</td><td>绿色食品绿叶类蔬菜
+NY/T743-2020</td><td>马齿苋</td><td>马齿菜、长命菜、五星草、瓜子菜、马蛇子菜</td></tr><tr><td></td><td></td><td>蕺菜</td><td>鱼腥草、蕺儿根、侧耳根、狗贴耳、鱼鳞草</td></tr><tr><td></td><td></td><td>蒲公英</td><td>黄花苗、黄花地丁、婆婆丁、蒲公草</td></tr><tr><td></td><td></td><td>马兰</td><td>马兰头、红梗菜、紫菊、田边菊、鸡儿肠、竹节草</td></tr><tr><td></td><td></td><td>蒌蒿</td><td>芦蒿、水蒿</td></tr><tr><td></td><td></td><td>番薯叶</td><td></td></tr><tr><td>14</td><td>绿色食品葱蒜类蔬菜
+NY/T744-2020</td><td>韭菜</td><td>韭、草钟乳、起阳草、懒人菜、披菜</td></tr><tr><td></td><td></td><td>韭黄</td><td></td></tr><tr><td></td><td></td><td>韭薹</td><td></td></tr><tr><td></td><td></td><td>韭花</td><td></td></tr><tr><td></td><td></td><td>大葱</td><td>水葱、青葱、木葱、汉葱、小葱</td></tr><tr><td></td><td></td><td>洋葱</td><td>葱头、圆葱、株葱、冬葱、橹葱</td></tr><tr><td></td><td></td><td>大蒜</td><td>蒜、胡蒜、蒜子、蒜瓣、蒜头</td></tr><tr><td></td><td></td><td>蒜薹</td><td>蒜毫</td></tr><tr><td></td><td></td><td>蒜苗</td><td>蒜黄、青蒜</td></tr><tr><td></td><td></td><td>薤</td><td>藠头、藠子、荞头、菜芝</td></tr><tr><td></td><td></td><td>韭葱</td><td>扁葱、扁叶葱、洋蒜苗、洋大蒜</td></tr><tr><td></td><td></td><td>细香葱</td><td>四季葱、香葱、细葱、蝦夷葱</td></tr><tr><td></td><td></td><td>分葱</td><td>四季葱、菜葱、冬葱、红葱头</td></tr><tr><td></td><td></td><td>胡葱</td><td>火葱、蒜头葱、瓣子葱、肉葱</td></tr><tr><td></td><td></td><td>楼葱</td><td>龙爪葱、龙角葱</td></tr><tr><td>15</td><td>绿色食品根菜类蔬菜
+NY/T745-2020</td><td>萝卜</td><td>莱菔、芦菔、葖、地苏</td></tr><tr><td></td><td></td><td>胡萝卜</td><td>红萝卜、黄萝卜、番萝卜、丁香萝卜、赤珊瑚、黄根</td></tr><tr><td></td><td></td><td>芜菁</td><td>蔓菁、圆根、盘菜、九英菘</td></tr><tr><td></td><td></td><td>芜菁甘蓝</td><td>洋蔓菁、洋大头菜、洋疙瘩、根用甘蓝、瑞典芜菁</td></tr><tr><td></td><td></td><td>美洲防风</td><td>芹菜萝卜、蒲芹萝卜、欧防风</td></tr><tr><td></td><td></td><td>根菾菜</td><td>红菜头、紫菜头、火焰菜</td></tr><tr><td></td><td></td><td>婆罗门参</td><td>西洋牛蒡、西洋白牛蒡</td></tr><tr><td></td><td></td><td>黑婆罗门参</td><td>鸦葱、菊牛蒡、黑皮牡蛎菜</td></tr><tr><td></td><td></td><td>牛蒡</td><td>大力子、蝙蝠刺、东洋萝卜</td></tr><tr><td></td><td></td><td>山葵</td><td>瓦萨比、山姜、泽葵、山嵛菜</td></tr><tr><td></td><td></td><td>根芹菜</td><td>根用芹菜、根芹、根用塘蒿、旱芹菜根</td></tr><tr><td>16</td><td>绿色食品甘蓝类蔬菜
+NY/T746-2020</td><td>结球甘蓝</td><td>洋甘蓝、卷心菜、包心菜、包菜、圆甘蓝、椰菜、茴子白、莲花白、高丽菜</td></tr><tr><td></td><td></td><td>赤球甘蓝</td><td>红玉菜、紫甘蓝、红色高丽菜</td></tr><tr><td></td><td></td><td>抱子甘蓝</td><td>芽甘蓝、子持甘蓝</td></tr><tr><td></td><td></td><td>皱叶甘蓝</td><td>缩叶甘蓝</td></tr><tr><td></td><td></td><td>羽衣甘蓝</td><td>绿叶甘蓝、叶牡丹、花苞菜</td></tr><tr><td></td><td></td><td>花椰菜</td><td>花菜、菜花，包括松花菜</td></tr><tr><td></td><td></td><td>青花菜</td><td>绿菜花、意大利芥蓝、木立花椰菜、西兰花、嫩茎花椰菜</td></tr><tr><td></td><td></td><td>球茎甘蓝</td><td>苤蓝、擘蓝、菘、玉蔓箐、芥蓝头</td></tr><tr><td></td><td></td><td>芥蓝</td><td>白花芥蓝</td></tr><tr><td>17</td><td>绿色食品
+瓜类蔬菜
+NY/T747-2020</td><td>黄瓜</td><td>胡瓜、刺瓜、青瓜、吊瓜</td></tr><tr><td></td><td></td><td>冬瓜</td><td>白冬瓜、白瓜、东瓜、濮瓜、水芝、地芝、枕瓜</td></tr><tr><td></td><td></td><td>节瓜</td><td>小冬瓜、节冬瓜、毛瓜</td></tr><tr><td></td><td></td><td>南瓜</td><td>番瓜、饭瓜、番南瓜、麦瓜、倭瓜、金瓜、中国南瓜</td></tr><tr><td></td><td></td><td>笋瓜</td><td>印度南瓜、北瓜、搅瓜、玉瓜</td></tr><tr><td></td><td></td><td>西葫芦</td><td>美洲南瓜、角瓜、白瓜、小瓜、金丝搅瓜、飞碟瓜</td></tr><tr><td></td><td></td><td>越瓜</td><td>菜瓜、稍瓜、生瓜、白瓜</td></tr><tr><td>17</td><td>绿色食品
+瓜类蔬菜
+NY/T747-2020</td><td>菜瓜</td><td>蛇甜瓜、生瓜、羊角瓜</td></tr><tr><td></td><td></td><td>丝瓜</td><td>天丝瓜、天罗、蛮瓜、布瓜</td></tr><tr><td></td><td></td><td>苦瓜</td><td>凉瓜、锦荔枝、君子菜、癞葡萄、癞瓜</td></tr><tr><td></td><td></td><td>瓠瓜</td><td>扁蒲、葫芦、蒲瓜、棒瓜、瓠子、夜开花</td></tr><tr><td></td><td></td><td>蛇瓜</td><td>蛇丝瓜、蛇王瓜、蛇豆</td></tr><tr><td></td><td></td><td>佛手瓜</td><td>合手瓜、合掌瓜、洋丝瓜、隼人瓜、菜肴梨、洋茄子、安南瓜、寿瓜</td></tr><tr><td>18</td><td>绿色食品豆类蔬菜
+NY/T748-2020</td><td>菜豆</td><td>四季豆、芸豆、玉豆、豆角、芸扁豆、京豆、敏豆</td></tr><tr><td></td><td></td><td>多花菜豆</td><td>龙爪豆、大白芸豆、荷包豆、红花菜豆</td></tr><tr><td></td><td></td><td>长豇豆</td><td>豆角、长豆角、带豆、筷豆、长荚豇豆</td></tr><tr><td></td><td></td><td>扁豆</td><td>峨眉豆、眉豆、沿篱豆、鹊豆、龙爪豆</td></tr><tr><td></td><td></td><td>莱豆</td><td>利马豆、雪豆、金甲豆、棉豆、荷包豆、白豆、观音豆</td></tr><tr><td></td><td></td><td>蚕豆</td><td>胡豆、罗汉豆、佛豆、寒豆</td></tr><tr><td></td><td></td><td>刀豆</td><td>大刀豆、关刀豆、菜刀豆</td></tr><tr><td></td><td></td><td>豌豆</td><td>雪豆、回豆、麦豆、青斑豆、麻豆、青小豆</td></tr><tr><td></td><td></td><td>食荚豌豆</td><td>荷兰豆</td></tr><tr><td></td><td></td><td>四棱豆</td><td>翼豆、四稔豆、杨桃豆、四角豆、热带大豆</td></tr><tr><td></td><td></td><td>菜用大豆</td><td>毛豆、枝豆</td></tr><tr><td></td><td></td><td>藜豆</td><td>狸豆、虎豆、狗爪豆、八升豆、毛毛豆、毛胡豆</td></tr><tr><td>19</td><td>绿色食品食用菌
+NY/T749-2023</td><td>香菇</td><td>香菇、花菇、香蕈</td></tr><tr><td></td><td></td><td>金针菇</td><td>冬菇、朴菇、朴菰</td></tr><tr><td></td><td></td><td>双孢蘑菇</td><td>双孢菇、白蘑菇、洋蘑菇</td></tr><tr><td></td><td></td><td>柱状田头菇</td><td>杨树菇、茶树菇、柳松菇、杨树菇、柳环菌</td></tr><tr><td></td><td></td><td>草菇</td><td>麻菇、兰花菇、稻草菇、中华蘑菇、美味苞脚菇</td></tr><tr><td></td><td></td><td>长根小奥德蘑</td><td>黑皮鸡枞、长根小奥德蘑、长根金钱菌、长根干蘑</td></tr><tr><td></td><td></td><td>皱环球盖菇</td><td>大球盖菇、赤松茸、酒红球盖菇</td></tr><tr><td></td><td></td><td>巴西蘑菇</td><td>姬松茸、巴氏蘑菇</td></tr><tr><td></td><td></td><td>亚侧耳</td><td>元蘑、冻蘑、冬蘑、美味扇菇</td></tr><tr><td></td><td></td><td>斑玉蕈</td><td>真姬菇、海鲜菇、蟹味菇、来福蘑</td></tr><tr><td></td><td></td><td>糙皮侧耳</td><td>平菇、侧耳、北风菌</td></tr><tr><td></td><td></td><td>佛州侧耳</td><td>佛罗里达侧耳、白平菇、平菇</td></tr><tr><td></td><td></td><td>白黄侧耳</td><td>姬菇、小平菇、紫孢侧耳、黄白侧耳</td></tr><tr><td></td><td></td><td>肺形侧耳</td><td>小平菇、凤尾菇、秀珍菇、印度鲍鱼菇</td></tr><tr><td></td><td></td><td>刺芹侧耳</td><td>杏鲍菇、刺芹菇</td></tr><tr><td></td><td></td><td>白灵侧耳</td><td>白灵菇、刺芹侧耳托里变种</td></tr><tr><td></td><td></td><td>金顶侧耳</td><td>榆黄蘑、榆黄菇、金顶蘑、玉皇菇</td></tr><tr><td></td><td></td><td>桃红侧耳</td><td>淡红平菇、桃红平菇、红平菇、淡红侧耳</td></tr><tr><td></td><td></td><td>盖囊侧耳</td><td>泡囊侧耳、鲍鱼菇、鲍鱼侧耳</td></tr><tr><td></td><td></td><td>菌核侧耳</td><td>虎奶菇、核侧耳、茯苓侧耳</td></tr><tr><td></td><td></td><td>阿魏侧耳</td><td>阿魏蘑</td></tr><tr><td></td><td></td><td>花脸香蘑</td><td>花脸蘑、紫晶蘑、紫花脸蘑、紫花脸、紫晶口蘑</td></tr><tr><td></td><td></td><td>大白口蘑</td><td>金福菇、洛巴口蘑、巨大口蘑</td></tr><tr><td></td><td></td><td>蒙古口蘑</td><td>白蘑、口蘑、珍珠蘑</td></tr><tr><td></td><td></td><td>长裙竹荪</td><td>竹荪</td></tr><tr><td></td><td></td><td>短裙竹荪</td><td>竹荪、面纱菌、仙人伞、竹笙</td></tr><tr><td></td><td></td><td>红托竹荪</td><td>小仙菌、竹参、清香竹荪</td></tr><tr><td></td><td></td><td>冬荪</td><td>白鬼笔、竹下菌、无群荪、竹菌</td></tr><tr><td></td><td></td><td>光滑环绣伞</td><td>滑菇、珍珠菇、滑子蘑、小孢鳞伞</td></tr><tr><td></td><td></td><td>毛头鬼伞</td><td>鸡腿菇、鬼盖</td></tr><tr><td></td><td></td><td>榆干离褶伞</td><td>榆干侧耳、大榆蘑、对子蘑</td></tr><tr><td>19</td><td>绿色食品食用菌
+NY/T749-2023</td><td>荷叶离褶</td><td>鹿茸菇、一窝羊、荷叶菇、冷香菇、北风菌</td></tr><tr><td></td><td></td><td>裂褶菌</td><td>白参、白蕈、树花</td></tr><tr><td></td><td></td><td>蜜环菌</td><td>榛蘑、蜜环蕈、栎蘑</td></tr><tr><td></td><td></td><td>暗褐脉柄牛肝菌</td><td>暗褐网柄牛肝菌、盖氏牛肝菌</td></tr><tr><td></td><td></td><td>黑木耳</td><td>木耳、云耳、光木耳、耳子</td></tr><tr><td></td><td></td><td>毛木耳</td><td>黄背木耳、白背木耳、牛背木耳、紫木耳</td></tr><tr><td></td><td></td><td>银耳</td><td>白木耳、雪耳</td></tr><tr><td></td><td></td><td>金耳</td><td>金木耳、黄耳、黄木耳、黄白银耳</td></tr><tr><td></td><td></td><td>蛹虫草</td><td>北冬虫夏草、北虫草、虫草花</td></tr><tr><td></td><td></td><td>蝉花</td><td>蝉茸、冠蝉、胡蝉、螗蜩、唐蜩、蝉茸金蝉花</td></tr><tr><td></td><td></td><td>广东虫草</td><td></td></tr><tr><td></td><td></td><td>羊肚菌</td><td>羊肚蘑、羊肚菜、蜂窝菌</td></tr><tr><td></td><td></td><td>猴头菌</td><td>猴头、猴头蘑、猴菇、猴头菇、刺猬菇</td></tr><tr><td></td><td></td><td>绣球菌</td><td>绣球花、绣球蕈</td></tr><tr><td></td><td></td><td>灰树花孔菌</td><td>灰树花、舞菇</td></tr><tr><td></td><td></td><td></td><td>注：仅适用于人工培养的绿色食品食用菌鲜品和干品（包括压缩品）。</td></tr><tr><td>20</td><td>绿色食品薯芋类蔬菜
+NY/T1049-2023</td><td>马铃薯</td><td>土豆、山药蛋、洋芋、地蛋、荷兰薯、瓜哇薯、洋山芋</td></tr><tr><td></td><td></td><td>姜</td><td>生姜、黄姜、姜根、鲜姜、百辣云、勾装指、因地辛、炎凉小子</td></tr><tr><td></td><td></td><td>山药</td><td>大薯、薯蓣、佛掌薯、白苕、脚板苕、野山药、怀山、淮山、怀山药、山蓣</td></tr><tr><td></td><td></td><td>豆薯</td><td>沙葛、凉薯、新罗葛、地瓜、土瓜</td></tr><tr><td></td><td></td><td>菊芋</td><td>洋姜、鬼子姜</td></tr><tr><td></td><td></td><td>甘露子</td><td>草食蚕、螺丝菜、宝塔菜、甘露儿、地蚕、罗汉</td></tr><tr><td></td><td></td><td>蕉芋</td><td>蕉藕、姜芋、食用美人蕉、芭蕉芋</td></tr><tr><td></td><td></td><td>菜用土圞儿</td><td>土圞儿、香芋、地栗子、菜用土圞儿，香参、黄栗芋</td></tr><tr><td></td><td></td><td>葛</td><td>粉葛、葛根、甘葛藤</td></tr><tr><td></td><td></td><td>甘薯</td><td>山芋、地瓜、番芋、红苕、番薯、红薯、白薯、香薯、蜜薯、番薯、甜薯、普薯</td></tr><tr><td></td><td></td><td>木薯</td><td>木番薯、树薯</td></tr><tr><td></td><td></td><td>菊薯</td><td>雪莲果、雪莲薯、地参果</td></tr><tr><td></td><td></td><td>芋</td><td>芋艿、芋头、水芋、芋岌、毛艿、毛芋、青皮叶、接骨草、独皮叶</td></tr><tr><td>21</td><td>绿色食品芥菜类蔬菜
+NY/T1324-2023</td><td>茎瘤芥</td><td>青菜头、羊角菜、榨菜、菱角菜</td></tr><tr><td></td><td></td><td>抱子芥</td><td>儿菜、娃娃菜</td></tr><tr><td></td><td></td><td>笋子芥</td><td>棒菜</td></tr><tr><td></td><td></td><td>大叶芥</td><td>大叶青菜</td></tr><tr><td></td><td></td><td>小叶芥</td><td>小叶青菜</td></tr><tr><td></td><td></td><td>宽柄芥</td><td></td></tr><tr><td></td><td></td><td>叶瘤芥</td><td></td></tr><tr><td></td><td></td><td>长柄芥</td><td></td></tr><tr><td></td><td></td><td>花叶芥</td><td></td></tr><tr><td></td><td></td><td>凤尾芥</td><td></td></tr><tr><td></td><td></td><td>白花芥</td><td></td></tr><tr><td></td><td></td><td>卷心芥</td><td></td></tr><tr><td></td><td></td><td>结球芥</td><td></td></tr><tr><td></td><td></td><td>分蘖芥</td><td></td></tr><tr><td></td><td></td><td>大头芥</td><td>辣疙瘩、冲菜、芥头、大头菜</td></tr><tr><td></td><td></td><td>薹芥</td><td></td></tr><tr><td>22</td><td>绿色食品芽苗类蔬菜
+NY/T1325-2023</td><td>绿豆芽</td><td></td></tr><tr><td></td><td></td><td>黄豆芽</td><td></td></tr><tr><td></td><td></td><td>黑豆芽</td><td></td></tr><tr><td></td><td></td><td>青豆芽</td><td></td></tr><tr><td></td><td></td><td>红豆芽</td><td></td></tr><tr><td></td><td></td><td>蚕豆芽</td><td></td></tr><tr><td></td><td></td><td>红小豆芽</td><td></td></tr><tr><td></td><td></td><td>豌豆苗</td><td></td></tr><tr><td></td><td></td><td>花生芽</td><td></td></tr><tr><td></td><td></td><td>苜蓿芽</td><td></td></tr><tr><td></td><td></td><td>小扁豆芽</td><td></td></tr><tr><td></td><td></td><td>萝卜芽</td><td></td></tr><tr><td></td><td></td><td>菘蓝芽</td><td></td></tr><tr><td></td><td></td><td>沙芥芽</td><td></td></tr><tr><td></td><td></td><td>芥菜芽</td><td></td></tr><tr><td></td><td></td><td>芥蓝芽</td><td></td></tr><tr><td></td><td></td><td>白菜芽</td><td></td></tr><tr><td></td><td></td><td>独行菜芽</td><td></td></tr><tr><td></td><td></td><td>种芽香椿</td><td></td></tr><tr><td></td><td></td><td>向日葵芽</td><td></td></tr><tr><td></td><td></td><td>荞麦芽</td><td></td></tr><tr><td></td><td></td><td>胡椒芽</td><td></td></tr><tr><td></td><td></td><td>紫苏芽</td><td></td></tr><tr><td></td><td></td><td>水芹芽</td><td></td></tr><tr><td></td><td></td><td>小麦苗</td><td></td></tr><tr><td></td><td></td><td>胡麻芽</td><td></td></tr><tr><td></td><td></td><td>蕹菜芽</td><td></td></tr><tr><td></td><td></td><td>芝麻芽</td><td></td></tr><tr><td></td><td></td><td>黄秋葵芽</td><td></td></tr><tr><td></td><td></td><td></td><td>注：该标准仅适用于绿色食品种芽类芽苗菜。</td></tr><tr><td>23</td><td>绿色食品多年生蔬菜
+NY/T1326-2023</td><td>芦笋</td><td>石刁柏、龙须菜等</td></tr><tr><td></td><td></td><td>百合</td><td>夜合、中篷花等</td></tr><tr><td></td><td></td><td>黄秋葵</td><td>秋葵、羊角豆等</td></tr><tr><td></td><td></td><td>菜用枸杞</td><td>枸杞头、枸杞菜等</td></tr><tr><td></td><td></td><td>襄荷</td><td>阳霍、野姜、襄草、茗荷等</td></tr><tr><td></td><td></td><td>菜蓟</td><td>朝鲜蓟、洋蓟、荷兰百合、法国百合等</td></tr><tr><td></td><td></td><td>辣根</td><td>西洋山萮菜、山葵萝卜等</td></tr><tr><td></td><td></td><td>食用大黄</td><td>圆叶大黄等</td></tr><tr><td></td><td></td><td>桔梗</td><td>地参、四叶菜、绿花根、铃铛花、沙油菜、梗草、道拉基（朝鲜语）等</td></tr><tr><td>24</td><td>绿色食品水生蔬菜
+NY/T1405-2023</td><td>芡实</td><td>鸡头米、鸡头、鸡头莲、鸡头苞、鸡头荷、刺莲藕、芡、水底黄蜂、卵菱</td></tr><tr><td></td><td></td><td>荸荠</td><td>田荠、田藕、马蹄、水栗、乌芋、菩荠、凫茈</td></tr><tr><td></td><td></td><td>慈姑</td><td>茨菰、慈菰、华夏慈姑、燕尾草、剪刀草、白地栗、驴耳朵草</td></tr><tr><td></td><td></td><td>茭白</td><td>高瓜、菰笋、菰首、茭笋、高笋、茭瓜</td></tr><tr><td></td><td></td><td>豆瓣菜</td><td>西洋菜、水田芥、凉菜、耐生菜、水芥、水蔊菜、水生菜</td></tr><tr><td></td><td></td><td>莼菜</td><td>水案板、蒪菜、马蹄菜、马蹄草、水荷叶、水葵、露葵、湖菜、名茆、凫葵</td></tr><tr><td></td><td></td><td>水芹</td><td>水芹菜、野芹、菜刀芹、蕲、楚葵、蜀芹、紫堇</td></tr><tr><td></td><td></td><td>蒲菜</td><td>香蒲、深蒲、蒲荔久、蒲笋、蒲芽、蒲白、蒲儿根、蒲儿菜、草芽</td></tr><tr><td></td><td></td><td>菱</td><td>芰、芰实、菱实、薢茩、水菱、蕨攗、风菱、乌菱、菱角、水栗</td></tr><tr><td></td><td></td><td>莲子（鲜）</td><td>白莲、莲实、莲米、莲肉</td></tr><tr><td></td><td></td><td></td><td>不适用于莲藕、水芋、水蕹菜、蒌蒿。</td></tr><tr><td>25</td><td>绿色食品食用花卉
+NY/T1506-2015</td><td>茉莉花</td><td></td></tr><tr><td></td><td></td><td>玫瑰花</td><td>仅限重瓣红玫瑰</td></tr><tr><td></td><td></td><td>菊花</td><td></td></tr><tr><td></td><td></td><td>金雀花</td><td></td></tr><tr><td></td><td></td><td>代代花</td><td></td></tr><tr><td></td><td></td><td>槐花</td><td></td></tr><tr><td></td><td></td><td>金银花</td><td></td></tr><tr><td></td><td></td><td>其他国家批准的可食用花卉</td><td>注：本标准仅适用于食用花卉的鲜品</td></tr><tr><td>26</td><td>绿色食品热带、亚热带水果
+NY/T750-2020</td><td>荔枝</td><td>丹荔、丽枝、离枝、火山荔、勒荔、荔支、荔果</td></tr><tr><td></td><td></td><td>龙眼</td><td>桂圆、三尺农味、益智、羊眼、牛眼、荔枝奴、亚荔枝、燕卵、比目、木弹、骊珠</td></tr><tr><td></td><td></td><td>香蕉</td><td>金蕉、弓蕉、蕉果、蕉子、香芽蕉、甘蕉</td></tr><tr><td></td><td></td><td>菠萝</td><td>凤梨、黄梨</td></tr><tr><td></td><td></td><td>芒果</td><td>马蒙、抹猛果、莽果、望果、蜜望、蜜望子、檬果、庵罗果</td></tr><tr><td></td><td></td><td>枇杷</td><td>天夏扇、芦橘、金丸、芦枝、金丸、炎果、焦子、腊兄、粗客</td></tr><tr><td></td><td></td><td>黄皮</td><td>黄弹、黄弹子、黄段、黄皮子、黄檀子、金弹子、黄罐子</td></tr><tr><td></td><td></td><td>番木瓜</td><td>木瓜、番瓜、万寿果、乳瓜、石瓜</td></tr><tr><td></td><td></td><td>番石榴</td><td>芭乐，鸡屎果，拔子，喇叭番石榴、番桃果、鸡失果、番鬼子</td></tr><tr><td></td><td></td><td>杨梅</td><td>圣生梅、白蒂梅、树梅、水杨梅、龙睛</td></tr><tr><td></td><td></td><td>杨桃</td><td>洋桃、羊桃、五棱子、五敛子、阳桃、三廉子</td></tr><tr><td></td><td></td><td>橄榄</td><td>黄榄、青果、山榄、白榄、红榄、青子、谏果、忠果、橄榄子、橄淡、青橄榄、黄榄、甘榄、广青果</td></tr><tr><td></td><td></td><td>红毛丹</td><td>韶子、毛龙眼、毛荔枝、红毛果、红毛胆</td></tr><tr><td></td><td></td><td>毛叶枣</td><td>印度枣、台湾青枣、缅枣、西西果</td></tr><tr><td></td><td></td><td>莲雾</td><td>天桃、水蒲桃、洋蒲桃、紫蒲桃、水石榴、辇雾、琏雾、天桃、爪哇浦桃、铃铛果</td></tr><tr><td></td><td></td><td>人心果</td><td>吴凤柿、赤铁果、奇果、查某籽仔、人参果</td></tr><tr><td></td><td></td><td>西番莲</td><td>鸡蛋果、受难果、巴西果、百香果、藤桃、西番莲果、热情果、西番果</td></tr><tr><td></td><td></td><td>山竹</td><td>山竺、山竹子、倒捻子、莽吉柿、凤果</td></tr><tr><td></td><td></td><td>火龙果</td><td>红龙果、青龙果、仙蜜果、玉龙果</td></tr><tr><td></td><td></td><td>菠萝蜜</td><td>波罗蜜、苞萝、木菠萝、树菠萝、大树菠萝、蜜冬瓜、牛肚子果、齿留香</td></tr><tr><td></td><td></td><td>番荔枝</td><td>洋波罗、佛头果、赖球果、释迦果、亚大果子、唛螺陀、洋波罗、假波罗、番鬼荔枝</td></tr><tr><td></td><td></td><td>青梅</td><td>青皮、海梅、苦香、油楠、青相、梅实，梅子、酸梅、乌梅、梅、梅果</td></tr><tr><td>27</td><td>绿色食品温带水果
+NY/T844-2017</td><td>苹果</td><td></td></tr><tr><td></td><td></td><td>梨</td><td></td></tr><tr><td></td><td></td><td>桃</td><td></td></tr><tr><td></td><td></td><td>草莓</td><td></td></tr><tr><td></td><td></td><td>山楂</td><td></td></tr><tr><td></td><td></td><td>柰子</td><td>俗称沙果，别名文林果、花红果、林擒、五色来、联珠果</td></tr><tr><td></td><td></td><td>蓝莓</td><td>别名笃斯、都柿、甸果等</td></tr><tr><td></td><td></td><td>无花果</td><td>映日果、奶浆果、蜜果等</td></tr><tr><td></td><td></td><td>树莓</td><td>覆盆子、悬钩子、野莓、乌藨（biao）子</td></tr><tr><td>27</td><td>绿色食品温带水果
+NY/T844-2017</td><td>桑葚</td><td>桑果、桑枣</td></tr><tr><td></td><td></td><td>猕猴桃</td><td></td></tr><tr><td></td><td></td><td>葡萄</td><td></td></tr><tr><td></td><td></td><td>樱桃</td><td></td></tr><tr><td></td><td></td><td>枣</td><td></td></tr><tr><td></td><td></td><td>杏</td><td></td></tr><tr><td></td><td></td><td>李</td><td></td></tr><tr><td></td><td></td><td>柿</td><td></td></tr><tr><td></td><td></td><td>石榴</td><td></td></tr><tr><td></td><td></td><td>梅</td><td>别名青梅、梅子、酸梅</td></tr><tr><td></td><td></td><td>醋栗</td><td>穗醋栗、灯笼果</td></tr><tr><td></td><td></td><td>刺梨</td><td></td></tr><tr><td>28</td><td>绿色食品大麦及大麦粉
+NY/T891-2014</td><td>啤酒大麦</td><td></td></tr><tr><td></td><td></td><td>食用大麦</td><td>用于食用的皮大麦（带壳大麦）和裸大麦</td></tr><tr><td></td><td></td><td>大麦粉</td><td>大麦加工成的用于食用的粉状产品</td></tr><tr><td>29</td><td>绿色食品燕麦及燕麦粉
+NY/T892-2014</td><td>燕麦</td><td>裸燕麦、莜麦</td></tr><tr><td></td><td></td><td>燕麦粉</td><td>以裸燕麦为原料，经初级加工制成的粉状产品</td></tr><tr><td></td><td></td><td>燕麦米</td><td>以裸燕麦为原料，经去杂、打毛、湿热处理和烘干等加工工序制得的粒状产品</td></tr><tr><td>30</td><td>绿色食品粟、黍、稷及其制品
+NY/T893-2021</td><td>粟</td><td>分为粳型、糯型</td></tr><tr><td></td><td></td><td>粟米</td><td>小米</td></tr><tr><td></td><td></td><td>黍</td><td>黍子、软糜子</td></tr><tr><td></td><td></td><td>黍米</td><td>大黄米、软黄米</td></tr><tr><td></td><td></td><td>稷</td><td>稷子、穄、硬糜子</td></tr><tr><td></td><td></td><td>稷米</td><td>稷子米、糜子米</td></tr><tr><td></td><td></td><td>粟、黍、稷加工成的粉状产品</td><td></td></tr><tr><td>31</td><td>绿色食品荞麦及荞麦粉
+NY/T894-2014</td><td>荞麦</td><td>乌麦、花荞、甜荞、荞子、胡荞麦</td></tr><tr><td></td><td></td><td>荞麦米</td><td>荞麦果实脱去外壳后得到的含种皮或不含种皮的籽粒</td></tr><tr><td></td><td></td><td>荞麦粉</td><td>荞麦经清理除杂去壳后直接碾磨成的粉状产品</td></tr><tr><td></td><td></td><td></td><td>注：本标准适用于甜荞麦和苦荞麦</td></tr><tr><td>32</td><td>绿色食品高粱及高粱米
+NY/T895-2023</td><td>高粱</td><td>蜀黍、秫秫、芦粟、茭子</td></tr><tr><td></td><td></td><td>高粱米</td><td></td></tr><tr><td>33</td><td>绿色食品杂粮米
+NY/T2974-2016</td><td>杂粮米</td><td>通过碾磨、脱壳将各种谷类、麦类、豆类、薯类等杂粮直接掺混的产品。</td></tr><tr><td></td><td></td><td>杂粮米制品</td><td>碾磨、脱壳、磨粉后将各种谷类、麦类、豆类、薯类等杂粮按照一定的营养配比，混合加工制得的产品。</td></tr><tr><td>34</td><td>绿色食品薏仁及薏仁粉
+NY/T2977-2016</td><td>薏仁</td><td>包括薏仁和带皮薏仁</td></tr><tr><td></td><td></td><td>薏仁粉</td><td>经薏仁或带皮薏仁研磨而成的粉状物</td></tr><tr><td></td><td></td><td></td><td>注：不适用于即食薏仁粉</td></tr><tr><td>35</td><td>绿色食品香辛料及其制品
+NY/T901-2021</td><td>菖蒲</td><td>使用部分：根茎</td></tr><tr><td></td><td></td><td>蒜</td><td>使用部分：鳞茎</td></tr><tr><td></td><td></td><td>高良姜</td><td>使用部分：根、茎</td></tr><tr><td></td><td></td><td>豆蔻</td><td>使用部分：果实、种子</td></tr><tr><td></td><td></td><td>香豆蔻</td><td>使用部分：果实、种子</td></tr><tr><td></td><td></td><td>香草</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>砂仁</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>莳萝、土茴香</td><td>使用部分：果实、种子</td></tr><tr><td>35</td><td>绿色食品香辛料及其制品
+NY/T901-2021</td><td>圆叶当归</td><td>使用部分：果、嫩枝、根</td></tr><tr><td></td><td></td><td>辣根</td><td>使用部分：根</td></tr><tr><td></td><td></td><td>黑芥籽</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>龙蒿</td><td>使用部分：叶、花序</td></tr><tr><td></td><td></td><td>刺山柑</td><td>使用部分：花蕾</td></tr><tr><td></td><td></td><td>葛缕子</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>桂皮、肉桂</td><td>使用部分：树皮</td></tr><tr><td></td><td></td><td>阴香</td><td>使用部分：树皮</td></tr><tr><td></td><td></td><td>大清桂</td><td>使用部分：树皮</td></tr><tr><td></td><td></td><td>芫荽</td><td>使用部分：种子、叶</td></tr><tr><td></td><td></td><td>枯茗</td><td>俗称:孜然，使用部分：果实</td></tr><tr><td></td><td></td><td>姜黄</td><td>使用部分：根、茎</td></tr><tr><td></td><td></td><td>香茅</td><td>使用部分：叶</td></tr><tr><td></td><td></td><td>枫茅</td><td>使用部分：叶</td></tr><tr><td></td><td></td><td>小豆蔻</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>阿魏</td><td>使用部分：根、茎</td></tr><tr><td></td><td></td><td>小茴香</td><td>使用部分：果实、梗、叶</td></tr><tr><td></td><td></td><td>甘草</td><td>使用部分：根</td></tr><tr><td></td><td></td><td>八角</td><td>大料、大茴香、五香八角，使用部分：果实</td></tr><tr><td></td><td></td><td>刺柏</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>山奈</td><td>使用部分：根、茎</td></tr><tr><td></td><td></td><td>木姜子</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>月桂</td><td>使用部分：叶</td></tr><tr><td></td><td></td><td>薄荷</td><td>使用部分：叶、嫩芽</td></tr><tr><td></td><td></td><td>椒样薄荷</td><td>使用部分：叶、嫩芽</td></tr><tr><td></td><td></td><td>留兰香</td><td>使用部分：叶、嫩芽</td></tr><tr><td></td><td></td><td>调料九里香</td><td>使用部分：叶</td></tr><tr><td></td><td></td><td>肉豆蔻</td><td>使用部分：假种皮、种仁</td></tr><tr><td></td><td></td><td>甜罗勒</td><td>使用部分：叶、嫩芽</td></tr><tr><td></td><td></td><td>甘牛至</td><td>使用部分：叶、花序</td></tr><tr><td></td><td></td><td>牛至</td><td>使用部分：叶、花</td></tr><tr><td></td><td></td><td>欧芹</td><td>使用部分：叶、种子</td></tr><tr><td></td><td></td><td>多香果</td><td>使用部分：果实、叶</td></tr><tr><td></td><td></td><td>筚拨</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>黑胡椒、白胡椒</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>迷迭香</td><td>使用部分：叶、嫩芽</td></tr><tr><td></td><td></td><td>白欧芥</td><td>使用部分：种子</td></tr><tr><td></td><td></td><td>丁香</td><td>使用部分：花蕾</td></tr><tr><td></td><td></td><td>罗晃子</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>蒙百里香</td><td>使用部分：嫩芽、叶</td></tr><tr><td></td><td></td><td>百里香</td><td>使用部分：嫩芽、叶</td></tr><tr><td></td><td></td><td>香旱芹</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>葫芦巴</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>香荚兰</td><td>使用部分：果荚</td></tr><tr><td></td><td></td><td>花椒</td><td>使用部分：果实，适用于保鲜花椒产品，水分指标不作为判定依据</td></tr><tr><td></td><td></td><td>姜</td><td>使用部分：根、茎</td></tr><tr><td>35</td><td>绿色食品香辛料及其制品
+NY/T901-2021</td><td>藏红花</td><td>使用部分：柱头</td></tr><tr><td></td><td></td><td>草果</td><td>使用部分：果实</td></tr><tr><td></td><td></td><td>干制香辛料</td><td>各种新鲜香辛料经干制之后的产品。</td></tr><tr><td></td><td></td><td>粉状香辛料</td><td>干制香辛料经物理破碎研磨，细度达到0.2mm筛上残留物≤2.5g/100g的粉末状产品</td></tr><tr><td></td><td></td><td>颗粒状香辛料</td><td>干制香辛料经物理破碎研磨，但细度未达到粉状香辛料要求的产品。</td></tr><tr><td></td><td></td><td>即食香辛料调味粉</td><td>干制香辛料经研磨和灭菌等工艺过程加工而成的，可供即食的粉末状产品</td></tr><tr><td></td><td></td><td></td><td>注：1.本标准适用于干制香辛料、粉状香辛料、颗粒状香辛料和即食香辛料调味粉，不适用于辣椒及其制品。2.涉及保健食品的应符合国家相关规定。</td></tr><tr><td>36</td><td>绿色食品瓜籽
+NY/T902-2015</td><td>葵花籽</td><td>包括油葵籽</td></tr><tr><td></td><td></td><td>南瓜籽</td><td></td></tr><tr><td></td><td></td><td>西瓜籽</td><td></td></tr><tr><td></td><td></td><td>瓜蒌籽</td><td></td></tr><tr><td></td><td></td><td></td><td>注：适用于葵花籽、南瓜籽、西瓜籽和瓜蒌籽的生瓜籽及籽仁，不适用于烘炒类等进行熟制工艺加工的瓜籽及籽仁。</td></tr><tr><td>37</td><td>绿色食品坚果
+NY/T1042-2017</td><td>核桃</td><td>胡桃</td></tr><tr><td></td><td></td><td>山核桃</td><td></td></tr><tr><td></td><td></td><td>榛子</td><td></td></tr><tr><td></td><td></td><td>香榧</td><td></td></tr><tr><td></td><td></td><td>腰果</td><td>鸡腰果、介寿果、槚如树</td></tr><tr><td></td><td></td><td>松子</td><td></td></tr><tr><td></td><td></td><td>杏仁</td><td></td></tr><tr><td></td><td></td><td>开心果</td><td>阿月浑子、无名子</td></tr><tr><td></td><td></td><td>扁桃</td><td>巴旦木</td></tr><tr><td></td><td></td><td>澳洲坚果</td><td>夏威夷果</td></tr><tr><td></td><td></td><td>鲍鱼果</td><td></td></tr><tr><td></td><td></td><td>板栗</td><td>栗子、毛栗</td></tr><tr><td></td><td></td><td>橡子</td><td></td></tr><tr><td></td><td></td><td>银杏</td><td>白果</td></tr><tr><td></td><td></td><td>芡实（米）</td><td>鸡头米、鸡头苞、鸡头莲、刺莲藕</td></tr><tr><td></td><td></td><td>莲子</td><td>莲肉、莲米</td></tr><tr><td></td><td></td><td>菱角</td><td>芰、水栗子</td></tr><tr><td></td><td></td><td></td><td>注：本标准适用于上述鲜或干的坚果及其果仁，也适用于以坚果为主要原料，不添加辅料，经水煮、蒸煮等工艺制成的原味坚果制品。不适用于坚果类烘炒制品。</td></tr><tr><td>38</td><td>绿色食品人参和西洋参
+NY/T1043-2016</td><td>保鲜参</td><td>以鲜人参为原料，洗刷后经过保鲜处理，能够较长时间贮藏的人参产品。</td></tr><tr><td></td><td></td><td>活性参（冻干参）</td><td>以鲜边条人参为原料，刮去表皮，采用真空低温冷冻（-25℃）干燥技术加工而成的产品。</td></tr><tr><td></td><td></td><td>生晒参</td><td>以鲜人参为原料，刷洗除须后，晒干或烘干而成的人参产品。</td></tr><tr><td></td><td></td><td>红参</td><td>以鲜人参为原料，经过刷洗，蒸制、干燥的人参产品。</td></tr><tr><td></td><td></td><td>人参蜜片</td><td>鲜人参洗刷后，将主根切成薄片，采用热水轻烫或短时间蒸制，浸蜜，干燥加工制成的人参产品。</td></tr><tr><td></td><td></td><td>西洋参</td><td>鲜西洋参（PanaxquinquefoliumL.）的根及根茎经洗净烘干、冷冻干燥或其他方法干燥制成的产品。</td></tr><tr><td></td><td></td><td></td><td>注：申报西洋参相关产品的企业应取得保健食品生产许可证</td></tr><tr><td>39</td><td>绿色食品枸杞及枸杞制品
+NY/T1051-2014</td><td>枸杞鲜果</td><td>野生或人工栽培，经过挑选、预冷、冷藏和包装的新鲜枸杞产品</td></tr><tr><td></td><td></td><td>枸杞干果</td><td>以枸杞鲜果为原料，经预处理后，自然晾晒、热风干燥、冷冻干燥等工艺加工而成的枸杞产品。</td></tr><tr><td></td><td></td><td>枸杞原汁</td><td>以枸杞鲜果为原料，经过表面清洗、破碎、均质、杀菌、灌装等工艺加工而成的枸杞产品。</td></tr><tr><td></td><td></td><td>枸杞原粉</td><td>以枸杞干果为原料，经研磨、粉碎等工艺加工而成的粉状枸杞产品。</td></tr><tr><td>40</td><td>绿色食品山野菜
+NY/T1507-2016</td><td>薇菜</td><td>大巢菜、野豌豆、牛毛广、紫萁</td></tr><tr><td></td><td></td><td>蜂斗菜</td><td>掌叶菜、蛇头草</td></tr><tr><td></td><td></td><td>马齿苋</td><td>长命菜、五行草、瓜子菜、马齿菜</td></tr><tr><td></td><td></td><td>蔊菜</td><td>辣米菜、野油菜、塘葛菜</td></tr><tr><td></td><td></td><td>蒌蒿</td><td>芦蒿、水蒿、水艾、蒌茼蒿</td></tr><tr><td></td><td></td><td>沙芥</td><td>山萝卜、沙萝卜、沙芥菜</td></tr><tr><td></td><td></td><td>马兰</td><td>马兰头、鸡儿肠</td></tr><tr><td></td><td></td><td>蕺菜</td><td>鱼腥草、鱼鳞草、蕺儿菜</td></tr><tr><td></td><td></td><td>多齿蹄盖蕨</td><td>猴腿蹄盖蕨</td></tr><tr><td></td><td></td><td>守宫木</td><td>树仔菜、五指山野菜、越南菜</td></tr><tr><td></td><td></td><td>蒲公英</td><td>孛孛丁、蒲公草</td></tr><tr><td></td><td></td><td>东风菜</td><td>山白菜、草三七、大耳毛</td></tr><tr><td></td><td></td><td>野茼蒿</td><td>革命菜、野塘蒿、安南菜</td></tr><tr><td></td><td></td><td>山莴苣</td><td>山苦菜、北山莴苣</td></tr><tr><td></td><td></td><td>菊花脑</td><td></td></tr><tr><td></td><td></td><td>歪头菜</td><td>野豌豆、歪头草、歪脖菜</td></tr><tr><td></td><td></td><td>锦鸡儿</td><td>黄雀花、阳雀花、酱瓣子</td></tr><tr><td></td><td></td><td>山韭菜</td><td>野韭菜</td></tr><tr><td></td><td></td><td>薤白</td><td>小根蒜、山蒜、小根菜、野蒜、野葱</td></tr><tr><td></td><td></td><td>野葱</td><td>沙葱、麦葱、山葱</td></tr><tr><td></td><td></td><td>雉隐天冬</td><td>龙须菜</td></tr><tr><td></td><td></td><td>茖葱</td><td>寒葱、山葱、格葱</td></tr><tr><td></td><td></td><td>黄精</td><td>鸡格、兔竹、鹿竹</td></tr><tr><td></td><td></td><td>紫萼</td><td>河白菜、东北玉簪、剑叶玉簪</td></tr><tr><td></td><td></td><td>野蔷薇</td><td>刺花、多花蔷薇</td></tr><tr><td></td><td></td><td>小叶芹</td><td>东北羊角芹</td></tr><tr><td></td><td></td><td>野芝麻</td><td>白花菜、野藿香、地蚤</td></tr><tr><td></td><td></td><td>香茶菜</td><td>野苏子、龟叶草、铁菱角</td></tr><tr><td></td><td></td><td>败酱</td><td>黄花龙牙、黄花苦菜、山芝麻</td></tr><tr><td></td><td></td><td>海州常山</td><td>斑鸠菜</td></tr><tr><td></td><td></td><td>苦刺花</td><td>白刺花、狼牙刺</td></tr><tr><td>41</td><td>绿色食品油菜籽
+NY/T2982-2016</td><td>油菜籽</td><td>适用于加工食用油的油菜籽。</td></tr><tr><td>二、畜禽产品标准</td><td></td><td></td><td></td></tr><tr><td>42</td><td>绿色食品乳与乳制品
+NY/T657-2021</td><td>生乳</td><td></td></tr><tr><td></td><td></td><td>巴氏杀菌乳</td><td></td></tr><tr><td></td><td></td><td>灭菌乳</td><td></td></tr><tr><td></td><td></td><td>调制乳</td><td></td></tr><tr><td></td><td></td><td>发酵乳</td><td>包括发酵乳和风味发酵乳</td></tr><tr><td></td><td></td><td>炼乳</td><td>包括淡炼乳、加糖炼乳和调制炼乳（调制加糖炼乳和调制淡炼乳）</td></tr><tr><td></td><td></td><td>乳粉</td><td>包括乳粉和调制乳粉</td></tr><tr><td>42</td><td>绿色食品乳与乳制品
+NY/T657-2021</td><td>干酪</td><td>包括高脂干酪、全脂干酪、中脂干酪、部分脱脂干酪、脱脂干酪</td></tr><tr><td></td><td></td><td>再制干酪</td><td></td></tr><tr><td></td><td></td><td>奶油</td><td>包括稀奶油、奶油和无水奶油</td></tr><tr><td></td><td></td><td></td><td>注：不适用于乳清制品、婴幼儿配方奶粉和人造奶油；该标准仅限于牛羊乳及其制品</td></tr><tr><td>43</td><td>绿色食品蜂产品
+NY/T752-2020</td><td>蜂蜜</td><td></td></tr><tr><td></td><td></td><td>蜂王浆</td><td>包括蜂王浆冻干粉</td></tr><tr><td></td><td></td><td>蜂花粉</td><td></td></tr><tr><td></td><td></td><td></td><td>注：本标准不适用于巢蜜、蜂胶、蜂蜡及其制品</td></tr><tr><td>44</td><td>绿色食品禽肉
+NY/T753-2021</td><td>鲜禽肉</td><td></td></tr><tr><td></td><td></td><td>冷却禽肉</td><td></td></tr><tr><td></td><td></td><td>冷冻禽肉</td><td></td></tr><tr><td></td><td></td><td></td><td>不适用于禽头、禽内脏、禽脚（爪）等禽副产品</td></tr><tr><td></td><td></td><td></td><td>本标准适用的禽类包括人工饲养的传统禽类（鸡、鸭、鹅、鸽、鹌鹑)和人工饲养的特种禽类（火鸡、珍珠鸡、雉鸡、鹧鸪、番鸭、绿头鸭、鸵鸟、鸸鹋）</td></tr><tr><td>45</td><td>绿色食品蛋及蛋制品
+NY/T754-2021</td><td>鲜蛋</td><td>鸡蛋、鸭蛋、鹅蛋、鸽子蛋、鹧鸪蛋、鹌鹑蛋等</td></tr><tr><td></td><td></td><td>皮蛋</td><td></td></tr><tr><td></td><td></td><td>卤蛋</td><td></td></tr><tr><td></td><td></td><td>咸蛋</td><td>包括生、熟咸蛋制品</td></tr><tr><td></td><td></td><td>咸蛋黄</td><td></td></tr><tr><td></td><td></td><td>糟蛋</td><td></td></tr><tr><td></td><td></td><td>液态蛋</td><td>巴氏杀菌冰全蛋、冰蛋黄、冰蛋白、巴氏杀菌全蛋液、鲜全蛋液、巴氏杀菌蛋白液、鲜蛋白液、巴氏杀菌蛋黄液、鲜蛋黄液</td></tr><tr><td></td><td></td><td>蛋粉和蛋片</td><td>巴氏杀菌全蛋粉、蛋黄粉、蛋白片</td></tr><tr><td>46</td><td>绿色食品畜肉
+NY/T2799-2023</td><td>猪肉</td><td></td></tr><tr><td></td><td></td><td>牛肉</td><td></td></tr><tr><td></td><td></td><td>羊肉</td><td></td></tr><tr><td></td><td></td><td>马肉</td><td></td></tr><tr><td></td><td></td><td>驴肉</td><td></td></tr><tr><td></td><td></td><td>兔肉</td><td></td></tr><tr><td></td><td></td><td></td><td>注：本标准适用于上述畜肉的鲜肉、冷却肉及冷冻肉；不适用于畜内脏、混合畜肉和辐照畜肉。</td></tr><tr><td>47</td><td>绿色食品畜禽肉制品
+NY/T843-2015</td><td>调制肉制品</td><td>包括冷藏调制肉类（如鱼香肉丝等菜肴式肉制品）和冷冻调制肉制品（如肉丸、肉卷、肉糕、肉排、肉串等）</td></tr><tr><td></td><td></td><td>腌腊肉制品</td><td>包括咸肉类（如腌咸肉、板鸭、酱封肉等）；腊肉类（如腊猪肉、腊牛肉、腊羊肉、腊鸡、腊鸭、腊兔、腊乳猪等）；腊肠类（如腊肠、风干肠、枣肠、南肠、香肚、发酵香肠等）；风干肉类（如风干牛肉、风干羊肉、风干鸡等）</td></tr><tr><td></td><td></td><td>酱卤肉制品</td><td>包括卤肉类（如盐水鸭、嫩卤鸡、白煮羊头、肴肉等）；酱肉类（如酱肘子、酱牛肉、酱鸭、扒鸡等）</td></tr><tr><td></td><td></td><td>熏烧焙烤肉制品</td><td>包括熏烤肉类（如熏肉、熏鸡、熏鸭）；烧烤肉类（如盐焗鸡、烤乳猪、叉烧肉等）；熟培根类（如五花培根、通脊培根等）</td></tr><tr><td></td><td></td><td>肉干制品</td><td>包括肉干、肉松、肉脯</td></tr><tr><td></td><td></td><td>肉类罐头</td><td>不包括内脏类的所有肉罐头</td></tr><tr><td>48</td><td>绿色食品畜禽可食用副产品
+NY/T1513-2017</td><td>畜禽可食用的生鲜副产品</td><td>畜（猪、牛、羊、兔）禽（鸡、鸭、鹅、鸽）的头（舌、耳）、尾、翅膀、蹄爪、内脏（肝、肾、肠、心、肺、胃）、皮等可食用的生鲜副产品</td></tr><tr><td></td><td></td><td>畜禽可食用的熟制副产品</td><td>以生鲜畜禽可食用副产品为原料，添加或不添加辅料，经腌、腊、卤、酱、蒸、煮、熏、烧、烤等一种或多种加工方式制成的可直接食用的制品。</td></tr><tr><td></td><td></td><td></td><td>注：不适用于骨及血类等畜禽可食用副产品。</td></tr><tr><td>三、渔业产品标准</td><td></td><td></td><td></td></tr><tr><td>49</td><td>绿色食品虾
+NY/T840-2020</td><td>对虾科</td><td></td></tr><tr><td></td><td></td><td>长额虾科</td><td></td></tr><tr><td></td><td></td><td>褐虾科</td><td></td></tr><tr><td></td><td></td><td>长臂虾科</td><td></td></tr><tr><td></td><td></td><td>螯虾科</td><td>如小龙虾</td></tr><tr><td></td><td></td><td></td><td>注：1.适用于活虾、鲜虾、速冻生虾、速冻熟虾，不适用于虾干制品；2.冻虾的形式可以是冻全虾、去头虾、带尾虾和虾仁。</td></tr><tr><td>50</td><td>绿色食品蟹
+NY/T841-2021</td><td>淡水蟹活品</td><td></td></tr><tr><td></td><td></td><td>海水蟹活品</td><td></td></tr><tr><td></td><td></td><td>海水蟹冻品</td><td>包括冻梭子蟹、冻切蟹、冻蟹肉</td></tr><tr><td>51</td><td>绿色食品鱼
+NY/T842-2021</td><td>活鱼</td><td>包括淡水、海水产品</td></tr><tr><td></td><td></td><td>鲜鱼</td><td>包括淡水、海水产品</td></tr><tr><td></td><td></td><td>去内脏或分割加工后冷冻的初加工鱼产品</td><td>包括淡水、海水产品</td></tr><tr><td></td><td></td><td></td><td>不适用于水发水产品。</td></tr><tr><td>52</td><td>绿色食品龟鳖类
+NY/T1050-2018</td><td>中华鳖</td><td>甲鱼、团鱼、王八、元鱼</td></tr><tr><td></td><td></td><td>黄喉拟水龟</td><td></td></tr><tr><td></td><td></td><td>三线闭壳龟</td><td>金钱龟、金头龟、红肚龟</td></tr><tr><td></td><td></td><td>红耳龟</td><td>巴西龟、巴西彩龟、秀丽锦龟、彩龟</td></tr><tr><td></td><td></td><td>鳄龟</td><td>肉龟、小鳄龟、小鳄鱼龟</td></tr><tr><td></td><td></td><td>其他淡水养殖的食用龟鳖</td><td></td></tr><tr><td></td><td></td><td></td><td>注：不适用于非人工养殖的野生龟鳖</td></tr><tr><td>53</td><td>绿色食品海水贝
+NY/T1329-2017</td><td>海水贝类的鲜、活品</td><td>包括鲍鱼、泥蚶、毛蚶（赤贝）、魁蚶、贻贝、红螺、香螺、玉螺、泥螺、栉孔扇贝、海湾扇贝、牡蛎、文蛤、杂色蛤、青柳蛤、大竹蛏和缢蛏的鲜、活品</td></tr><tr><td>53</td><td>绿色食品海水贝
+NY/T1329-2017</td><td>海水贝类肉的冻品</td><td>包括鲍鱼、蚶肉、贻贝肉、螺肉、扇贝肉、扇贝柱、牡蛎肉、蛤肉和蛏肉的冻品</td></tr><tr><td></td><td></td><td></td><td>注：冻品包括生制和熟制冻品</td></tr><tr><td>54</td><td>绿色食品海参及制品
+NY/T1514-2020</td><td>活海参</td><td></td></tr><tr><td></td><td></td><td>盐渍海参</td><td></td></tr><tr><td></td><td></td><td>干海参</td><td></td></tr><tr><td></td><td></td><td>冻干海参</td><td></td></tr><tr><td></td><td></td><td>即食海参</td><td></td></tr><tr><td>55</td><td>绿色食品海蜇制品
+NY/T1515-2020</td><td>盐渍海蜇皮</td><td></td></tr><tr><td></td><td></td><td>盐渍海蜇头</td><td></td></tr><tr><td></td><td></td><td>即食海蜇</td><td></td></tr><tr><td>56</td><td>绿色食品蛙类及制品
+NY/T1516-2020</td><td>活蛙</td><td>包括牛蛙、虎纹蛙、棘胸蛙、林蛙、美蛙等可供人们安全食用的养殖蛙类</td></tr><tr><td></td><td></td><td>鲜蛙体</td><td></td></tr><tr><td></td><td></td><td>蛙类干制品</td><td></td></tr><tr><td></td><td></td><td>蛙类冷冻制品</td><td></td></tr><tr><td>57</td><td>绿色食品藻类及其制品
+NY/T1709-2021</td><td>干海带</td><td>以鲜海带为原料，直接晒干或烘干的干海带产品。</td></tr><tr><td></td><td></td><td>盐渍海带</td><td>以鲜海带为原料，经漂烫、冷却、盐渍、脱水、切割或不切割等工序制成的产品。</td></tr><tr><td></td><td></td><td>即食海带</td><td>以鲜海带、干海带或盐渍海带为原料，经预处理、切割、熟化、调味、包装、杀菌等工艺制成的即食产品。</td></tr><tr><td></td><td></td><td>干紫菜</td><td>以紫菜原藻为原料，通过清洗、去杂、切碎、成型等预处理，采用自然风干、晒干、热风干燥、红外线干燥、微波干燥、低温冷冻干燥等工艺除去所含大部分水分制成的紫菜产品。</td></tr><tr><td></td><td></td><td>即食紫菜</td><td>以鲜紫菜、干紫菜或盐渍紫菜为原料，经预处理、切割、熟化、调味、包装、杀菌等工艺制成的即食产品</td></tr><tr><td></td><td></td><td>干裙带菜</td><td>以盐渍裙带菜为原料，经脱盐、清洗、脱水、切割、烘干等工序加工而成的产品。</td></tr><tr><td></td><td></td><td>盐渍裙带菜</td><td>以新鲜裙带菜为原料，经漂烫、冷却、盐渍等工序加工而成的藻类产品。</td></tr><tr><td></td><td></td><td>即食裙带菜</td><td>以鲜裙带菜、干裙带菜或盐渍裙带菜为原料，经预处理、切割、熟化、调味、包装、杀菌等工艺制成的即食产品。</td></tr><tr><td></td><td></td><td>螺旋藻粉</td><td>以螺旋藻为原料，经瞬时高温喷雾干燥制成的螺旋藻干粉。</td></tr><tr><td></td><td></td><td>螺旋藻片</td><td></td></tr><tr><td></td><td></td><td>雨生红球藻粉</td><td>以采收的雨生红球藻藻体及孢子为原料，经破壁、干燥等工艺制成的雨生红球藻粉。</td></tr><tr><td></td><td></td><td>螺旋藻胶囊</td><td></td></tr><tr><td>58</td><td>绿色食品头足类水产品
+NY/T2975-2016</td><td>头足类水产品</td><td>海洋捕捞的乌贼目（sepiidae）所属的各种乌贼（又称墨鱼，如乌贼、金乌贼、微鳍乌贼、曼氏无针乌贼等）；枪乌贼目（teuthida）所属的各种鱿鱼（又称枪乌贼、柔鱼、笔管等）；八腕目（octopoda）所属的各种章鱼及蛸（如船蛸、长蛸、短蛸、真蛸等）的鲜活品、冻品和解冻品</td></tr><tr><td>四、加工产品标准</td><td></td><td></td><td></td></tr><tr><td>59</td><td>绿色食品啤酒
+NY/T273-2021</td><td>淡色啤酒</td><td>色度2EBC~14EBC的啤酒</td></tr><tr><td></td><td></td><td>浓色啤酒</td><td>色度15EBC~40EBC的啤酒</td></tr><tr><td></td><td></td><td>黑色啤酒</td><td>色度大于等于41EBC的啤酒</td></tr><tr><td></td><td></td><td>特种啤酒</td><td>包括干啤酒、低醇啤酒、小麦啤酒、浑浊啤酒、冰啤酒。特种啤酒的理化指标除特征指标外，其他理化指标应符合相应啤酒（淡色、浓色、黑色啤酒）要求</td></tr><tr><td>60</td><td>绿色食品葡萄酒
+NY/T274-2023</td><td>按色泽分类</td><td>白葡萄酒、桃红葡萄酒、红葡萄酒</td></tr><tr><td></td><td></td><td>按二氧化碳含量分类</td><td>平静葡萄酒、含气葡萄酒（起泡葡萄酒、低起泡葡萄酒、葡萄酒汽酒）</td></tr><tr><td></td><td></td><td>按酒中含糖量分类</td><td>干葡萄酒、半干葡萄酒、半甜葡萄酒、甜葡萄酒、自然起泡葡萄酒、超天然起泡葡萄酒、天然起泡葡萄酒、绝干起泡葡萄酒、干起泡葡萄酒、半干起泡葡萄酒、甜起泡葡萄酒</td></tr><tr><td></td><td></td><td>按酒精度分类</td><td>葡萄酒、低度葡萄酒</td></tr><tr><td></td><td></td><td>按产品特性分类</td><td>冰葡萄酒、低度葡萄酒、贵腐葡萄酒、产膜葡萄酒、利口葡萄酒、加香葡萄酒、脱醇葡萄酒、原生葡萄酒</td></tr><tr><td>61</td><td>绿色食品食用糖
+NY/T422-2021</td><td>原糖</td><td>以甘蔗汁经清净处理、煮炼结晶、离心分蜜制成的带有糖蜜、不供作直接食用的蔗糖结晶。</td></tr><tr><td></td><td></td><td>白砂糖</td><td>以甘蔗或甜菜为原料，经提取糖汁、清净处理、煮炼结晶和分蜜等工艺加工制成的蔗糖结晶。</td></tr><tr><td></td><td></td><td>绵白糖</td><td>以甘蔗或甜菜为原料，经提取糖汁、清净处理、煮炼结晶、分蜜并加入适量转化糖浆等工艺制成的晶粒细小、颜色洁白、质地绵软的糖。</td></tr><tr><td></td><td></td><td>冰糖</td><td>砂糖经再溶、清净处理，重结晶而制得的大颗粒结晶糖。有单晶体和多晶体两种，呈透明或半透明状。</td></tr><tr><td></td><td></td><td>单晶体冰糖</td><td>单一晶体的大颗粒（每粒重约1.5g-2g）冰糖。</td></tr><tr><td></td><td></td><td>多晶体冰糖</td><td>由多颗晶体并聚而成的大块冰糖。按色泽可分为白冰糖和黄冰糖两种。</td></tr><tr><td></td><td></td><td>方糖</td><td>由颗粒适中的白砂糖，加入少量水或糖浆，经压铸等工艺制成小方块的糖。</td></tr><tr><td></td><td></td><td>精幼砂糖</td><td>用原糖或其他蔗糖溶液，经精炼处理后制成的颗粒较小的糖。</td></tr><tr><td></td><td></td><td>赤砂糖</td><td>以甘蔗为原料，经提取糖汁、清净处理等工艺加工制成的带蜜的棕红色或黄褐色砂糖。</td></tr><tr><td></td><td></td><td>红糖</td><td>以甘蔗为原料，经提取糖汁、清净处理后，直接煮制不经分蜜的棕红色或黄褐色的糖。</td></tr><tr><td></td><td></td><td>冰片糖</td><td>用冰糖蜜或砂糖加原糖蜜为原料，经加酸部分转化，煮成的金黄色片糖。</td></tr><tr><td></td><td></td><td>黄砂糖</td><td>以甘蔗、甘蔗糖、甜菜、甜菜糖、糖蜜为原料加工生产制得的带蜜黄色蔗糖结晶。</td></tr><tr><td></td><td></td><td>液体糖</td><td>以白砂糖、绵白糖、精制的糖蜜或中间制品为原料，经加工或转化工艺制炼而成的食用液体糖。液体糖分为全蔗糖糖浆和转化糖浆两类，全蔗糖糖浆以蔗糖为主，转化糖浆是以蔗糖经部份转化为还原糖（葡萄糖+果糖）后的产品。</td></tr><tr><td></td><td></td><td>糖霜</td><td>以白砂糖为原料，添加适量的食用淀粉或抗结剂，经磨制或粉碎等加工而成的粉末状产品。</td></tr><tr><td>62</td><td>绿色食品果（蔬）酱
+NY/T431-2017</td><td>水果酱</td><td></td></tr><tr><td></td><td></td><td>番茄酱</td><td></td></tr><tr><td></td><td></td><td>其他蔬菜酱</td><td></td></tr><tr><td></td><td></td><td></td><td>注：本标准适用于以水果、蔬菜为主要原料，经破碎、打浆、灭菌、浓缩等工艺生产的绿色食品块状酱或泥状酱；不适用于以果蔬为主要原料，配以辣椒、盐、香辛料等调味料生产的调味酱产品。</td></tr><tr><td>63</td><td>绿色食品白酒
+NY/T432-2021</td><td>白酒</td><td></td></tr><tr><td>64</td><td>绿色食品植物蛋白饮料
+NY/T433-2021</td><td>植物蛋白饮料</td><td>以一种或多种含有一定蛋白质的绿色食品植物果实、种子或种仁等为原料，添加或不添加其他食品原辅料和（或）食品添加剂，经加工或发酵制成的饮料。</td></tr><tr><td></td><td></td><td>豆奶（乳）</td><td>以大豆为主要原料，添加或不添加食品辅料和食品添加剂，经加工制成的产品。如纯豆奶（乳）、调制豆奶（乳）、浓浆豆奶（乳）等。经发酵工艺制成的产品称为发酵豆奶（乳），也可称为酸豆奶（乳）。</td></tr><tr><td></td><td></td><td>豆奶（乳）饮料</td><td>以大豆、大豆粉、大豆蛋白为主要原料，可添加食糖、营养强化剂、食品添加剂、其他食品辅料。经加工制成的、大豆固形物含量较低的产品。经发酵工艺制成的产品称为发酵豆奶（乳）饮料。</td></tr><tr><td>64</td><td>绿色食品植物蛋白饮料
+NY/T433-2021</td><td>椰子乳（汁）</td><td>以新鲜的椰子、椰子果肉制品（如椰子果浆、椰子果粉等）为原料，经加工制得的产品。以椰子果肉制品（椰子果浆、椰子果粉）为原料生产的产品称为复原椰子汁（乳）。</td></tr><tr><td></td><td></td><td>杏仁乳（露）</td><td>以杏仁为原料，可添加食品辅料、食品添加剂。经加工、调配后制得的产品。产品中去皮杏仁的质量比例应大于2.5%。不应使用除杏仁外的其他杏仁制品及其他含有蛋白质和脂肪的植物果实、种子、果仁及其制品。</td></tr><tr><td></td><td></td><td>核桃乳（露）</td><td>以核桃仁为原料，可添加食品辅料、食品添加剂。经加工、调配后制得的产品。产品中去皮核桃仁的质量比例应大于3%。不应使用除核桃仁外的其他核桃制品及其他含有蛋白质和脂肪的植物果实、种子、果仁及其制品。</td></tr><tr><td></td><td></td><td>花生乳（露）</td><td>以花生仁为主要原料，经磨碎、提浆等工艺制得的浆液中加入水、糖液等调制而成的乳状饮料。</td></tr><tr><td></td><td></td><td>复合植物蛋白饮料</td><td>以两种或两种以上含有一定蛋白质的植物果实、种子、种仁为原料，添加或不添加其他食品原辅料和（或）食品添加剂，经加工或发酵制成的饮料，如花生核桃、核桃杏仁、花生杏仁复合植物蛋白饮料。</td></tr><tr><td></td><td></td><td>其它植物蛋白饮料</td><td>以腰果、榛子、南瓜籽、葵花籽等为原料，经磨碎等工艺制得的浆液加入水、糖液等调制而成的饮料。</td></tr><tr><td>65</td><td>绿色食品果蔬汁饮料
+NY/T434-2016</td><td>果蔬汁(浆)</td><td>以水果或蔬菜为原料，采用物理方法制成的未发酵的汁液、浆液制品；或在浓缩果蔬汁中加入其加工过程中除去的等量水分复原制成的汁液、浆液制品。包括原榨果汁、果汁、蔬菜汁、果浆、蔬菜浆、复合果蔬汁（浆）。</td></tr><tr><td></td><td></td><td>果蔬汁饮料</td><td>以果蔬汁（浆）、浓缩果蔬汁（浆）、水为原料，添加或不添加其他辅料或食品添加剂，加工制成的制品。包括果蔬汁饮料、果肉（浆）饮料、复合果蔬汁饮料、果蔬汁饮料浓浆、水果饮料。</td></tr><tr><td></td><td></td><td>浓缩果蔬汁（浆）</td><td>以水果或蔬菜为原料，从采用物理方法制取的果汁（浆）或蔬菜汁（浆）中除去一定量水分制成的、加入其加工过程中除去的等量水分复原后具有果汁（浆）或蔬菜汁（浆）应有特征的制品。</td></tr><tr><td>66</td><td>绿色食品水果、蔬菜脆片
+NY/T435-2021</td><td>水果、蔬菜（含食用菌）脆片</td><td>以水果、蔬菜（含食用菌）为主要原料，经或不经切片（条、块），采用减压油炸脱水或非油炸脱水工艺，添加或不添加其他辅料制成的口感酥脆的即食型水果、蔬菜干制品。</td></tr><tr><td></td><td></td><td>油炸型</td><td>采用减压油炸脱水工艺制成的水果、蔬菜脆片。</td></tr><tr><td></td><td></td><td>非油炸型</td><td>采用真空冷冻干燥、微波真空干燥、压差闪蒸、气流膨化等非油炸脱水工艺制成的水果、蔬菜脆片。</td></tr><tr><td>67</td><td>绿色食品蜜饯
+NY/T436-2018</td><td>糖渍类</td><td>原料经糖熬煮或浸渍、干燥（或不干燥）等工艺制成的带有湿润糖液或浸渍在浓糖液中的制品</td></tr><tr><td></td><td></td><td>糖霜类</td><td>原料经加糖熬煮、干燥等工艺制成的表面附有白色糖霜的制品</td></tr><tr><td></td><td></td><td>果脯类</td><td>原料经糖渍、干燥等工艺制成的略有透明感，表面无糖析出的制品</td></tr><tr><td></td><td></td><td>凉果类</td><td>原料经盐渍、糖渍、干燥等工艺制成的半干态制品</td></tr><tr><td></td><td></td><td>话化类</td><td>原料经盐渍、糖渍（或不糖渍）、干燥等工艺制成的制品</td></tr><tr><td></td><td></td><td>果糕类</td><td>原料加工成酱状，经成型、干燥（或不干燥）等工艺制成的制品，分为糕类、条类和片类</td></tr><tr><td>68</td><td>绿色食品酱腌菜
+NY/T437-2023</td><td>酱腌菜</td><td>以新鲜蔬菜为主要原料，经腌渍或酱渍加工而成的各种蔬菜制品的总称。</td></tr><tr><td>68</td><td>绿色食品酱腌菜
+NY/T437-2023</td><td>酱渍菜</td><td>蔬菜咸坯经脱盐脱水后，再经甜酱、黄酱酱渍而成的制品。如扬州酱菜、镇江酱菜等。</td></tr><tr><td></td><td></td><td>糖醋渍菜</td><td>蔬菜咸坯经脱盐脱水后，再用糖渍、醋渍或糖醋渍制作而成的制品。如糖蒜、蜂蜜蒜米、甜酸藠头、糖醋萝卜等</td></tr><tr><td></td><td></td><td>酱油渍菜</td><td>蔬菜咸坯经脱盐脱水后，用酱油与调味料、香辛料混合浸渍而成的制品。如五香大头菜、榨菜萝卜、辣油萝卜丝、酱海带丝等。</td></tr><tr><td></td><td></td><td>虾油渍菜</td><td>新鲜蔬菜先经盐渍或不经盐渍，再用新鲜虾油浸渍而成的制品。如锦州虾油小菜、虾油小黄瓜等。</td></tr><tr><td></td><td></td><td>盐水渍菜</td><td>以新鲜蔬菜为原料，用盐水及香辛料混合腌制，经发酵或非发酵而成的制品。如泡菜、酸黄瓜、盐水笋等。</td></tr><tr><td></td><td></td><td>盐渍菜</td><td>以新鲜蔬菜为原料，用食盐盐渍而成的湿态、半干态、干态制品。如咸大头菜、榨菜、萝卜干等</td></tr><tr><td></td><td></td><td>糟渍菜</td><td>蔬菜咸坯用酒糟或醪糟糟渍而成的制品。如糟瓜等</td></tr><tr><td></td><td></td><td>其它类</td><td>除了以上分类以外，其它以蔬菜为原料制作而成的制品。如糖冰姜、藕脯、酸甘蓝、米糠萝卜等。</td></tr><tr><td></td><td></td><td></td><td>注：不适用于散装的酱腌菜产品；不适用于叶菜类蔬菜原料生产的酱腌菜。</td></tr><tr><td>69</td><td>绿色食品食用植物油
+NY/T751-2021</td><td>菜籽油</td><td>包括低芥酸菜籽油</td></tr><tr><td></td><td></td><td>大豆油</td><td></td></tr><tr><td></td><td></td><td>花生油</td><td></td></tr><tr><td></td><td></td><td>芝麻油</td><td></td></tr><tr><td></td><td></td><td>亚麻籽油</td><td>胡麻油</td></tr><tr><td></td><td></td><td>葵花籽（仁）油</td><td></td></tr><tr><td></td><td></td><td>玉米油</td><td></td></tr><tr><td></td><td></td><td>茶叶籽油</td><td></td></tr><tr><td></td><td></td><td>油茶籽油</td><td></td></tr><tr><td></td><td></td><td>米糠油</td><td></td></tr><tr><td></td><td></td><td>核桃油</td><td></td></tr><tr><td></td><td></td><td>红花籽油</td><td></td></tr><tr><td></td><td></td><td>葡萄籽油</td><td></td></tr><tr><td></td><td></td><td>橄榄油</td><td></td></tr><tr><td></td><td></td><td>牡丹籽油</td><td></td></tr><tr><td></td><td></td><td>棕榈（仁）油</td><td></td></tr><tr><td></td><td></td><td>沙棘籽油</td><td></td></tr><tr><td></td><td></td><td>紫苏籽油</td><td></td></tr><tr><td></td><td></td><td>精炼椰子油</td><td></td></tr><tr><td></td><td></td><td>南瓜籽油</td><td></td></tr><tr><td></td><td></td><td>秋葵籽油</td><td></td></tr><tr><td></td><td></td><td>食用调和油</td><td></td></tr><tr><td>70</td><td>绿色食品黄酒
+NY/T897-2017</td><td>传统型干黄酒</td><td></td></tr><tr><td></td><td></td><td>传统型半干黄酒</td><td></td></tr><tr><td></td><td></td><td>传统型半甜黄酒</td><td></td></tr><tr><td></td><td></td><td>传统型甜黄酒</td><td></td></tr><tr><td></td><td></td><td>清爽型干黄酒</td><td></td></tr><tr><td></td><td></td><td>清爽型半干黄酒</td><td></td></tr><tr><td></td><td></td><td>清爽型半甜黄酒</td><td></td></tr><tr><td></td><td></td><td>清爽型甜黄酒</td><td></td></tr><tr><td></td><td></td><td>特型黄酒</td><td></td></tr><tr><td>71</td><td>绿色食品含乳饮料
+NY/T898-2016</td><td>配制型含乳饮料</td><td>以乳或乳制品为原料，加入水，以及食糖和（或）甜味剂、酸味剂、果汁、茶、咖啡、植物提取液等的一种或几种调制而成的饮料</td></tr><tr><td></td><td></td><td>发酵型含乳饮料</td><td>以乳或乳制品为原料，经乳酸菌等有益菌培养发酵制得的乳液中加入水，以及食糖和（或）甜味剂、酸味剂、果汁、茶、咖啡、植物提取液等的一种或几种调制而成的饮料。也可称为酸乳（奶）饮料，按杀菌方式分为杀菌型和非杀菌型</td></tr><tr><td></td><td></td><td>乳酸菌饮料</td><td>以乳或乳制品为原料，经乳酸菌发酵制得的乳液中加入水、食用糖和（或）甜味剂、酸味剂、果汁、茶、咖啡、植物提取液等的一种或几种调制而成的饮料。</td></tr><tr><td>72</td><td>绿色食品冷冻饮品
+NY/T899-2016</td><td>冰淇淋</td><td>以饮用水、乳和（或）乳制品、蛋制品、水果制品、豆制品、食糖、食用植物油等的一种或多种为原辅料，添加或不添加食品添加剂和（或）食品营养强化剂，经混合、灭菌、均质、冷却、老化、冻结、硬化等工艺制成的体积膨胀的冷冻饮品</td></tr><tr><td></td><td></td><td>雪泥</td><td>以饮用水、食糖、果汁等为主要原料，配以相关辅料，含或不含食品添加剂和食品营养强化剂，经混合、灭菌、凝冻或低温炒制等工艺制成的松软的冰雪状冷冻饮品。</td></tr><tr><td></td><td></td><td>雪糕</td><td>以饮用水、乳和（或）乳制品、蛋制品、果蔬制品、粮谷制品、豆制品、食糖、食用植物油等的一种或多种为原辅料，添加或不添加食品添加剂和（或）食品营养强化剂，经混合、灭菌、均质、冷却、成型、冻结等工艺制成的冷冻饮品。</td></tr><tr><td></td><td></td><td>冰棍</td><td>以饮用水、食糖和（或）甜味剂等为主要原料，配以豆类或果品等相关辅料（含或不含食品添加剂和食品营养强化剂），经混合、灭菌、冷却、注模、插或不插杆、冻结、脱模等工艺制成的带或不带棒的冷冻饮品。</td></tr><tr><td></td><td></td><td>甜味冰</td><td>以饮用水、食糖等为主要原料，添加或不添加食品添加剂，经混合、灭菌、罐装、硬化等工艺制成的冷冻饮品。</td></tr><tr><td></td><td></td><td>食用冰</td><td>以饮用水为原料，经灭菌、注模、冻结、脱模或不脱模等工艺制成的冷冻饮品。</td></tr><tr><td>73</td><td>绿色食品发酵调味品
+NY/T900-2016</td><td>酱油</td><td>包括高盐稀态发酵酱油和低盐固态发酵酱油</td></tr><tr><td></td><td></td><td>食醋</td><td>包括固态发酵食醋和液态发酵食醋</td></tr><tr><td></td><td></td><td>酿造酱</td><td>包括豆酱（油制型、非油制型）和面酱</td></tr><tr><td></td><td></td><td>腐乳</td><td>包括红腐乳、白腐乳、青腐乳和酱腐乳</td></tr><tr><td></td><td></td><td>豆豉</td><td>包括干豆豉、豆豉和水豆豉</td></tr><tr><td></td><td></td><td>纳豆</td><td></td></tr><tr><td></td><td></td><td>纳豆粉</td><td></td></tr><tr><td>74</td><td>绿色食品淀粉及淀粉制品
+NY/T1039-2014</td><td>米淀粉</td><td>包括糯米淀粉、粳米淀粉和籼米淀粉</td></tr><tr><td></td><td></td><td>玉米淀粉</td><td>包括白玉米淀粉、黄玉米淀粉</td></tr><tr><td></td><td></td><td>高粱淀粉</td><td></td></tr><tr><td></td><td></td><td>麦淀粉</td><td>包括小麦淀粉、大麦淀粉和黑麦淀粉</td></tr><tr><td></td><td></td><td>绿豆淀粉</td><td></td></tr><tr><td></td><td></td><td>蚕豆淀粉</td><td></td></tr><tr><td></td><td></td><td>豌豆淀粉</td><td></td></tr><tr><td></td><td></td><td>豇豆淀粉</td><td></td></tr><tr><td></td><td></td><td>混合豆淀粉</td><td></td></tr><tr><td></td><td></td><td>菱角淀粉</td><td></td></tr><tr><td></td><td></td><td>荸荠淀粉</td><td></td></tr><tr><td></td><td></td><td>橡子淀粉</td><td></td></tr><tr><td></td><td></td><td>百合淀粉</td><td></td></tr><tr><td></td><td></td><td>慈姑淀粉</td><td></td></tr><tr><td></td><td></td><td>西米淀粉</td><td></td></tr><tr><td></td><td></td><td>木薯淀粉</td><td></td></tr><tr><td></td><td></td><td>甘薯淀粉</td><td></td></tr><tr><td></td><td></td><td>马铃薯淀粉</td><td></td></tr><tr><td></td><td></td><td>豆薯淀粉</td><td></td></tr><tr><td></td><td></td><td>竹芋淀粉</td><td></td></tr><tr><td></td><td></td><td>山药淀粉</td><td></td></tr><tr><td></td><td></td><td>蕉芋淀粉</td><td></td></tr><tr><td></td><td></td><td>葛淀粉</td><td></td></tr><tr><td></td><td></td><td>淀粉制品</td><td>如淀粉制成的粉丝、粉条、粉皮等产品</td></tr><tr><td>75</td><td>绿色食品食用盐
+NY/T1040-2021</td><td>精制盐</td><td></td></tr><tr><td></td><td></td><td>粉碎洗涤盐</td><td></td></tr><tr><td></td><td></td><td>日晒盐</td><td></td></tr><tr><td></td><td></td><td>低钠盐</td><td></td></tr><tr><td>76</td><td>绿色食品干果
+NY/T1041-2018</td><td>荔枝干</td><td></td></tr><tr><td></td><td></td><td>桂圆干（桂圆肉）</td><td></td></tr><tr><td></td><td></td><td>葡萄干</td><td></td></tr><tr><td></td><td></td><td>柿饼</td><td></td></tr><tr><td></td><td></td><td>干枣</td><td></td></tr><tr><td></td><td></td><td>杏干</td><td>包括包仁杏干</td></tr><tr><td></td><td></td><td>香蕉片</td><td></td></tr><tr><td></td><td></td><td>无花果干</td><td></td></tr><tr><td></td><td></td><td>酸梅（乌梅）干</td><td></td></tr><tr><td></td><td></td><td>山楂干</td><td></td></tr><tr><td></td><td></td><td>苹果干</td><td></td></tr><tr><td></td><td></td><td>菠萝干</td><td></td></tr><tr><td></td><td></td><td>芒果干</td><td></td></tr><tr><td></td><td></td><td>梅干</td><td></td></tr><tr><td></td><td></td><td>桃干</td><td></td></tr><tr><td></td><td></td><td>猕猴桃干</td><td></td></tr><tr><td></td><td></td><td>草莓干</td><td></td></tr><tr><td></td><td></td><td>酸角干</td><td></td></tr><tr><td>77</td><td>绿色食品藕及其制品
+NY/T1044-2020</td><td>藕</td><td></td></tr><tr><td></td><td></td><td>藕粉</td><td>包括纯藕粉和调制藕粉</td></tr><tr><td></td><td></td><td></td><td>不适用于泡藕带、卤藕和藕罐头</td></tr><tr><td>78</td><td>绿色食品脱水蔬菜
+NY/T1045-2014</td><td>脱水蔬菜</td><td>经洗刷、清洗、切型、漂烫或不漂烫等预处理，采用热风干燥或低温冷冻干燥等工艺制成的蔬菜制品。</td></tr><tr><td></td><td></td><td></td><td>注：本标准也适用干制蔬菜，不适用于干制食用菌、竹笋干和蔬菜粉</td></tr><tr><td>79</td><td>绿色食品焙烤食品
+NY/T1046-2016</td><td>面包</td><td>以小麦粉、酵母和水为主要原料，添加或不添加辅料，经搅拌面团、发酵、整形、醒发、熟制等工艺制成的食品，以及在熟制前或熟制后在产品表面或内部添加奶油、蛋白、可可、果酱等的食品。包括软式面包、硬式面包、起酥面包、调理面包等。</td></tr><tr><td></td><td></td><td>饼干</td><td>以小麦粉（可添加糯米粉、淀粉等）为主要原料，加入（或不加入）糖、油脂及其他原料，经调粉（或调浆）、成型、烘烤（或煎烤）等工艺制成的口感酥松或松脆的食品。包括酥性饼干、韧性饼干、发酵饼干、压缩饼干、曲奇饼干、夹心饼干、威化饼干、蛋圆饼干、蛋卷、煎饼、装饰饼干、水泡饼干等。</td></tr><tr><td></td><td></td><td>烘烤类月饼</td><td></td></tr><tr><td></td><td></td><td>烘烤类糕点</td><td></td></tr><tr><td>80</td><td>绿色食品水果、蔬菜罐头
+NY/T1047-2021</td><td>清渍类蔬菜罐头</td><td></td></tr><tr><td></td><td></td><td>醋渍类蔬菜罐头</td><td></td></tr><tr><td></td><td></td><td>调味类蔬菜罐头</td><td></td></tr><tr><td></td><td></td><td>糖水类水果罐头</td><td></td></tr><tr><td></td><td></td><td>糖浆类水果罐头</td><td></td></tr><tr><td></td><td></td><td></td><td>注：本标准不适用于果酱类、果汁类、蔬菜汁（酱）类罐头和盐渍（酱渍）蔬菜罐头</td></tr><tr><td>81</td><td>绿色食品笋及笋制品
+NY/T1048-2021</td><td>鲜竹笋</td><td></td></tr><tr><td></td><td></td><td>竹笋罐头</td><td>以新鲜竹笋为原料，经去壳、漂洗、煮制等加工处理后，按罐头工艺生产，经包装、密封、灭菌制成的竹笋制品。</td></tr><tr><td></td><td></td><td>即食竹笋</td><td>用竹笋为主要原料经漂洗、切制、配料、腌制或不腌制、发酵或不发酵、调味、包装等加工工艺，可直接食用的除竹笋罐头以外的竹笋制品。</td></tr><tr><td></td><td></td><td>竹笋干</td><td>以新鲜竹笋为原料，经预处理、盐腌发酵后干燥或非发酵直接干燥而成的竹笋干制品</td></tr><tr><td>82</td><td>绿色食品豆制品
+NY/T1052-2014</td><td>熟制豆类</td><td>包括煮大豆、烘焙大豆。</td></tr><tr><td></td><td></td><td>豆腐</td><td>包括豆腐脑、内酯豆腐、南豆腐、北豆腐、冻豆腐、脱水豆腐、油炸豆腐和其他豆腐</td></tr><tr><td></td><td></td><td>豆腐干</td><td>包括白豆腐干、豆腐皮、豆腐丝、蒸煮豆腐干、油炸豆腐干、炸卤豆腐干、卤制豆腐干、熏制豆腐干和其他豆腐干</td></tr><tr><td></td><td></td><td>腐竹</td><td>从熟豆浆静止表面揭起的凝结厚膜折叠成条状，经干燥而成的产品</td></tr><tr><td></td><td></td><td>腐皮</td><td>从熟豆浆静止表面揭起的凝结薄膜，经干燥而成的产品</td></tr><tr><td></td><td></td><td>干燥豆制品</td><td>包括食用豆粕、大豆膳食纤维粉和其他干燥豆制品</td></tr><tr><td></td><td></td><td>豆粉</td><td>包括速溶豆粉和其他豆粉</td></tr><tr><td></td><td></td><td>大豆蛋白</td><td>包括大豆蛋白粉、大豆浓缩蛋白、大豆分离蛋白和大豆肽粉</td></tr><tr><td>83</td><td>绿色食品味精
+NY/T1053-2018</td><td>谷氨酸钠（味精）</td><td>以碳水化合物（如淀粉、玉米、糖蜜等糖质）为原料，经微生物（谷氨酸棒杆菌等）发酵、提取、中和、结晶、分离、干燥而制成的具有特殊鲜味的白色结晶或粉末状调味品。</td></tr><tr><td></td><td></td><td>加盐味精</td><td>在谷氨酸钠（味精）中，定量添加了精制盐的混合物。</td></tr><tr><td></td><td></td><td>增鲜味精</td><td>在谷氨酸钠（味精）中，定量添加了核苷酸二钠[5′-鸟苷酸二钠（GMP）、5′-肌苷酸二钠（IMP）或呈味核苷酸二钠（GMP+IMP）]等增味剂的混合物。</td></tr><tr><td>84</td><td>绿色食品固体饮料
+NY/T1323-2017</td><td>蛋白固体饮料</td><td>包括含乳蛋白固体饮料、植物蛋白固体饮料、复合蛋白固体饮料、其他蛋白固体饮料</td></tr><tr><td></td><td></td><td>调味茶固体饮料</td><td>包括果汁茶固体饮料、奶茶固体饮料、其他调味茶固体饮料</td></tr><tr><td></td><td></td><td>咖啡固体饮料</td><td>包括速溶咖啡、速溶/即溶咖啡饮料、其他咖啡固体饮料</td></tr><tr><td></td><td></td><td>植物固体饮料</td><td>包括谷物固体饮料、草本固体饮料、可可固体饮料、其他植物固体饮料</td></tr><tr><td></td><td></td><td>特殊用途固体饮料</td><td>通过调整饮料中营养成分的种类及其含量，或加入具有特定功能成分适应人体需要的固体饮料，如运动固体饮料、营养素固体饮料、能量固体饮料、电解质固体饮料等。</td></tr><tr><td></td><td></td><td>其他固体饮料</td><td>上述固体饮料以外的固体饮料，如泡腾片、添加可用于食品的菌种的固体饮料等。</td></tr><tr><td></td><td></td><td></td><td>注：不适用于玉米粉、花生蛋白粉、大麦粉、燕麦粉、藕粉、豆粉、大豆蛋白粉、即食谷粉和芝麻糊（粉）。</td></tr><tr><td>85</td><td>绿色食品鱼糜制品
+NY/T1327-2018</td><td>鱼丸</td><td></td></tr><tr><td></td><td></td><td>鱼糕</td><td></td></tr><tr><td></td><td></td><td>烤鱼卷</td><td></td></tr><tr><td></td><td></td><td>虾丸</td><td></td></tr><tr><td></td><td></td><td>虾饼</td><td></td></tr><tr><td></td><td></td><td>墨鱼丸</td><td></td></tr><tr><td></td><td></td><td>贝肉丸</td><td></td></tr><tr><td></td><td></td><td>模拟扇贝柱</td><td></td></tr><tr><td></td><td></td><td>模拟蟹肉</td><td></td></tr><tr><td></td><td></td><td>鱼肉香肠</td><td></td></tr><tr><td></td><td></td><td>其他鱼糜制品</td><td></td></tr><tr><td>86</td><td>绿色食品鱼罐头
+NY/T1328-2018</td><td>油浸鱼罐头</td><td>鱼经预煮后装罐，再加入精炼植物油等工序制成的罐头产品。</td></tr><tr><td></td><td></td><td>调味鱼罐头</td><td>将处理好的鱼经腌渍脱水（或油炸）后装罐，加入调味料等工序制成的罐头产品。包括红烧、茄汁、葱烧、鲜炸、五香、豆豉、酱油等。</td></tr><tr><td></td><td></td><td>清蒸鱼罐头</td><td>将处理好的鱼经预煮脱水（或在柠檬酸水中浸渍）后装罐，再加入精盐、味精而成的罐头产品。</td></tr><tr><td></td><td></td><td></td><td>不适用于烟熏类鱼罐头。</td></tr><tr><td>87</td><td>绿色食品方便主食品
+NY/T1330-2021</td><td>方便主食品</td><td>以小麦、大米、玉米、杂粮或薯类淀粉等为主要原料，经加工处理制成的，配以或不配调味料包，食用时稍作烹调或直接用沸水冲泡即可食用的方便食品。</td></tr><tr><td></td><td></td><td>非油炸方便面</td><td></td></tr><tr><td></td><td></td><td>方便米线（粉）</td><td></td></tr><tr><td></td><td></td><td>方便米饭</td><td></td></tr><tr><td></td><td></td><td>方便粥</td><td></td></tr><tr><td></td><td></td><td>方便粉丝</td><td></td></tr><tr><td></td><td></td><td></td><td>不适用于自热类方便食品</td></tr><tr><td>88</td><td>绿色食品速冻蔬菜
+NY/T1406-2018</td><td>速冻蔬菜</td><td>以新鲜、清洁的蔬菜为原料，经清洗、分割或不分割、漂烫或不漂烫、冷却、沥干或不沥干、速冻等工序生产，在冷链条件下进入销售市场的产品。</td></tr><tr><td>89</td><td>绿色食品速冻水果
+NY/T2983-2016</td><td>速冻水果</td><td></td></tr><tr><td>90</td><td>绿色食品速冻预包装面米食品
+NY/T1407-2018</td><td>速冻饺子</td><td></td></tr><tr><td></td><td></td><td>速冻馄饨</td><td></td></tr><tr><td></td><td></td><td>速冻包子</td><td></td></tr><tr><td></td><td></td><td>速冻烧麦</td><td></td></tr><tr><td></td><td></td><td>速冻汤圆</td><td></td></tr><tr><td></td><td></td><td>速冻元宵</td><td></td></tr><tr><td></td><td></td><td>速冻馒头</td><td></td></tr><tr><td></td><td></td><td>速冻花卷</td><td></td></tr><tr><td></td><td></td><td>速冻粽子</td><td></td></tr><tr><td>90</td><td>绿色食品速冻预包装面米食品
+NY/T1407-2018</td><td>速冻春卷</td><td></td></tr><tr><td></td><td></td><td>速冻南瓜饼</td><td></td></tr><tr><td></td><td></td><td>速冻芝麻球</td><td></td></tr><tr><td></td><td></td><td>其他速冻预包装面米食品</td><td></td></tr><tr><td>91</td><td>绿色食品果酒
+NY/T1508-2017</td><td>干型果酒</td><td>以除葡萄以外的新鲜水果或果汁为原料，经全部或部分发酵酿制而成的果酒，不适用于浸泡、蒸馏和勾兑果酒。</td></tr><tr><td></td><td></td><td>半干型果酒</td><td></td></tr><tr><td></td><td></td><td>半甜型果酒</td><td></td></tr><tr><td></td><td></td><td>甜型果酒</td><td></td></tr><tr><td>92</td><td>绿色食品芝麻及其制品
+NY/T1509-2017</td><td>白芝麻</td><td>包括生、熟白芝麻</td></tr><tr><td></td><td></td><td>黑芝麻</td><td>包括生、熟黑芝麻</td></tr><tr><td></td><td></td><td>其他纯色芝麻</td><td>包括生、熟其他纯色芝麻</td></tr><tr><td></td><td></td><td>其他杂色芝麻</td><td>包括生、熟其他杂色芝麻</td></tr><tr><td></td><td></td><td>脱皮芝麻</td><td>包括生、熟脱皮芝麻</td></tr><tr><td></td><td></td><td>芝麻酱</td><td></td></tr><tr><td></td><td></td><td>芝麻糊（粉）</td><td></td></tr><tr><td></td><td></td><td></td><td>注：不适用于芝麻油和芝麻糖</td></tr><tr><td>93</td><td>绿色食品麦类制品
+NY/T1510-2016</td><td>即食麦类制品</td><td>以麦类为主要原料，经加工制成的冲泡后即可食用的食品，包括麦片和麦糊等</td></tr><tr><td></td><td></td><td>发芽麦类制品</td><td>经发芽处理的大麦（含米大麦（青稞））、燕麦（含莜麦）、小麦、荞麦（含苦荞麦）或以其为主要原料生产的制品，包括大麦麦芽、小麦麦芽、发芽麦粒等</td></tr><tr><td></td><td></td><td>啤酒麦芽</td><td>以小麦及二棱、多棱大麦为原料，经浸麦、发芽、烘干、焙焦所制成的啤酒酿造用麦芽</td></tr><tr><td></td><td></td><td></td><td>注：本标准不适用于麦茶和焙烤类麦类制品</td></tr><tr><td>94</td><td>绿色食品膨化食品
+NY/T1511-2015</td><td>膨化食品</td><td>以谷类、薯类等为主要原料，也可配以各种辅料，采用直接挤压、焙烤、微波等方式膨化而制成的组织疏松或松脆的食品。</td></tr><tr><td></td><td></td><td></td><td>注：不适用于油炸型膨化食品、膨化豆制品。</td></tr><tr><td>95</td><td>绿色食品生面食、米粉制品
+NY/T1512-2021</td><td>生面食制品</td><td>以麦类、杂粮等为主要原料，通过和面、制条、制片等多道工序，经（或不经）干燥处理制成的制品，包括生干面制品(挂面、面叶、通心粉等)和生湿面制品(面条、切面、饺子皮、馄饨皮、烧卖皮等)</td></tr><tr><td></td><td></td><td>米粉制品</td><td>以大米为主要原料，加水浸泡、制浆、压条或挤压等加工工序制成的条状、丝状、块状、片状等不同形状的制品，以及大米仅经粉碎的加工工序制成的粉状制品。包括米粉干制品和湿制品。</td></tr><tr><td></td><td></td><td></td><td>不适用于方便面米制品及婴幼儿辅助食品。</td></tr><tr><td>96</td><td>绿色食品水产调味品
+NY/T1710-2020</td><td>蚝油</td><td>利用牡蛎蒸、煮后的汁液进行浓缩或直接用牡蛎肉酶解，再加入食糖、食盐、淀粉或者改性淀粉等原料，辅以其他配料和食品添加剂制成的调味品</td></tr><tr><td></td><td></td><td>鱼露</td><td>以鱼为原料，在较高的盐分下经酶解制成的鲜味液体调味品</td></tr><tr><td></td><td></td><td>虾酱</td><td>小型虾类经腌制、发酵制成的糊状食品</td></tr><tr><td></td><td></td><td>虾油</td><td>小型虾类发酵液体的浓缩液或虾酱上层的澄清液</td></tr><tr><td></td><td></td><td>海鲜粉调味料</td><td>以海产鱼、海水虾、海水贝、海水蟹类酶解物或其他浓缩抽提物为主原料，以味精、食用盐、香辛料等为辅料，经加工而成具有海鲜味的复合调味料</td></tr><tr><td>97</td><td>绿色食品辣椒制品
+NY/T1711-2020</td><td>干辣椒制品</td><td>以鲜辣椒为主要原料，经干燥、烘焙或炒制等工艺加工制成的制品，如辣椒干、辣椒段（块）、辣椒粉（面）等</td></tr><tr><td></td><td></td><td>油辣椒制品</td><td>可供以鲜辣椒或干辣椒及食用油为主要原料，经加工制成的油和辣椒混合体的制品，如油辣椒、鸡辣椒、肉丝辣椒、豆豉辣椒等</td></tr><tr><td></td><td></td><td>发酵辣椒制品</td><td>以鲜辣椒或干辣椒为主要原料，经破碎、发酵或发酵腌制等工艺加工制成的制品，如剁辣椒、泡椒、辣豆瓣酱、辣椒酱等</td></tr><tr><td></td><td></td><td>其他辣椒制品</td><td>以鲜辣椒或干辣椒为主要原料，经破碎或不破碎、非发酵等工艺加工制成的制品，如香酥辣椒、糍粑辣椒等</td></tr><tr><td></td><td></td><td></td><td>注：不适用于辣椒油</td></tr><tr><td>98</td><td>绿色食品干制水产品
+NY/T1712-2018</td><td>鱼类干制品</td><td>包括生干品（如鱼肚、鳗鲞、银鱼干等）、煮干品、盐干品（如大黄鱼鲞、鳕鱼干等）、调味干鱼制品</td></tr><tr><td></td><td></td><td>虾类干制品</td><td>包括生干品（如虾干）、煮干品（如虾米、虾皮等）、盐干虾制品和调味干虾制品等</td></tr><tr><td></td><td></td><td>贝类干制品</td><td>包括生干品、煮干品、盐干品和调味干制品，如干贝、鲍鱼干、贻贝干、海螺干、牡蛎干等</td></tr><tr><td></td><td></td><td>其他类干制水产品</td><td>包括鱼翅、鱼肚、鱼唇、墨鱼干、鱿鱼干、章鱼干等。</td></tr><tr><td></td><td></td><td></td><td>注：不适用于海参和藻类干制品、即食干制水产品。</td></tr><tr><td>99</td><td>绿色食品茶饮料
+NY/T1713-2018</td><td>红茶饮料</td><td></td></tr><tr><td></td><td></td><td>绿茶饮料</td><td></td></tr><tr><td></td><td></td><td>花茶饮料</td><td></td></tr><tr><td></td><td></td><td>乌龙茶饮料</td><td></td></tr><tr><td></td><td></td><td>其他茶饮料</td><td></td></tr><tr><td></td><td></td><td>奶茶饮料</td><td></td></tr><tr><td></td><td></td><td>奶味茶饮料</td><td></td></tr><tr><td></td><td></td><td>果汁茶饮料</td><td></td></tr><tr><td></td><td></td><td>果味茶饮料</td><td></td></tr><tr><td></td><td></td><td>碳酸茶饮料</td><td></td></tr><tr><td></td><td></td><td>复（混）合茶饮料</td><td>以茶叶和植（谷）物的水提取液或其干燥粉为原料，加工制成的，具有茶与植（谷）物混合风味的液体饮料</td></tr><tr><td>100</td><td>绿色食品即食谷粉
+NY/T1714-2015</td><td>即食谷粉</td><td>以一种或几种谷类（包括大米、小米、玉米、大麦、小麦、燕麦、黑麦、荞麦、高粱和薏仁等）为主要原料（谷物占干物质组成的25%以上），添加（或不添加）其他辅料和（或不添加）适量的营养强化剂，经加工制成的冲调后即可食用的粉状食品。</td></tr><tr><td>101</td><td>绿色食品果蔬粉
+NY/T1884-2021</td><td>水果粉</td><td>以一种或一种以上水果为原料，经筛选（去皮、去核）、清洗、打浆、均质、杀菌、干燥、包装等工序，经过加工制成的粉状蔬菜产品。</td></tr><tr><td></td><td></td><td>蔬菜粉</td><td>以一种或一种以上蔬菜为原料，经筛选、清洗、打浆、均质、杀菌、干燥、包装等工序，经过加工制成的粉状蔬菜产品。</td></tr><tr><td></td><td></td><td>复合果蔬粉</td><td>以一种或一种以上蔬菜粉或水果粉为主要配料，添加或不添加食糖等辅料加工而成的可供直接食用的粉状冲调果蔬食品。</td></tr><tr><td></td><td></td><td></td><td>不适用于固体饮料类水果粉、淀粉类、调味料类蔬菜粉、脱水蔬菜、脱水水果。</td></tr><tr><td>102</td><td>绿色食品米酒
+NY/T1885-2017</td><td>糟米型米酒</td><td>所含的酒糟为米粒状糟米的米酒（包括花色型米酒）。包括普通米酒和无醇米酒</td></tr><tr><td></td><td></td><td>均质型米酒</td><td>经胶磨和均质处理后，呈糊状均质的米酒。包括普通米酒和无醇米酒</td></tr><tr><td></td><td></td><td>清汁型米酒</td><td>经过滤去除酒糟后的米酒。包括普通米酒和无醇米酒</td></tr><tr><td>103</td><td>绿色食品复合调味料
+NY/T1886-2021</td><td>固态复合调味料</td><td>以两种或两种以上调味品为主要原料，添加或不添加辅料，加工而成的呈固态的复合调味料。包括鸡粉调味料、牛肉粉调味料、排骨粉调味料及其他固态调味料。</td></tr><tr><td></td><td></td><td>半固态复合调味料</td><td>以两种或两种以上的调味料为主要原料，添加或不添加其他辅料，加工而成的呈酱状的复合调味料。包括风味酱、沙拉酱及蛋黄酱等。</td></tr><tr><td></td><td></td><td>液态复合调味料</td><td>以两种或两种以上调味料为主要原料，添加或不添加辅料，加工而成的呈液态的复合调味料。包括鸡汁调味料等。</td></tr><tr><td></td><td></td><td></td><td>不含鸡精调味料、调味料酒、配制食醋、配制酱油；不适用于水产调味品。</td></tr><tr><td>104</td><td>绿色食品乳清制品
+NY/T1887-2010</td><td>乳清粉</td><td>包括脱盐乳清粉、非脱盐乳清粉</td></tr><tr><td></td><td></td><td>乳清蛋白粉</td><td>包括乳清浓缩蛋白粉、乳清分离蛋白粉</td></tr><tr><td>105</td><td>绿色食品软体动物休闲食品
+NY/T1888-2021</td><td>头足类休闲食品</td><td>以鲜或冻鱿鱼、墨鱼和章鱼等头足类水产品为原料，经清洗、预处理、水煮、调味、熟制或杀菌等工序制成的即食食品。</td></tr><tr><td></td><td></td><td>贝类休闲食品</td><td>以鲜或冻扇贝、牡蛎、贻贝、蛤、蛏、蚶等贝类水产品为原料，经清洗、水煮、调味、熟制或杀菌等工序制成的即食食品。</td></tr><tr><td></td><td></td><td></td><td>不适用于熏制软体动物休闲食品</td></tr><tr><td>106</td><td>绿色食品烘炒食品
+NY/T1889-2021</td><td>烘炒食品</td><td>以果蔬籽、果仁、坚果、豆类等为主要原料，添加或不添加辅料，经烘烤或炒制而成的食品。不包括以花生和芝麻为原料的烘炒食品。</td></tr><tr><td>107</td><td>绿色食品蒸制类糕点
+NY/T1890-2021</td><td>糕点</td><td>以谷类、豆类、薯类、油脂、糖、蛋等的一种或几种为主要原料，添加(或不添加)适量辅料，经调制、成型、熟制等工序制成的食品。</td></tr><tr><td></td><td></td><td>蒸制糕点</td><td>水蒸熟制的一类糕点。</td></tr><tr><td></td><td></td><td>蒸蛋糕类</td><td>以鸡蛋为主要原料，经打蛋、调糊、注模、蒸制而成的组织松软的制品</td></tr><tr><td></td><td></td><td>印模糕类</td><td>以熟或生的原辅料，经拌合、印模成型、熟制或不熟制而成的口感松软的糕类制品</td></tr><tr><td></td><td></td><td>韧糕类</td><td>以糯米粉、糖为主要原料，经蒸制、成型而成的韧性糕类制品</td></tr><tr><td></td><td></td><td>发糕类</td><td>以小麦粉或米粉为主要原料调制成面团，经发酵、蒸制、成型而成的带有蜂窝状组织的松软糕类制品</td></tr><tr><td></td><td></td><td>松糕类</td><td>以粳米粉、糯米粉为主要原料调制成面团，经成型、蒸制而成的口感松软的糕类制品</td></tr><tr><td></td><td></td><td>其他蒸制类糕点</td><td>包括馒头、花卷产品</td></tr><tr><td>108</td><td>绿色食品配制酒
+NY/T2104-2018</td><td>植物类配制酒</td><td>利用植物的花、叶、根、茎、果为香源及营养源，经再加工制成的、具有明显植物香及有效成分的配制酒</td></tr><tr><td></td><td></td><td>动物类配制酒</td><td>利用食用或药食两用动物及其制品为香源及营养源，经再加工制成的、具有明显动物脂香及有效成分的配制酒</td></tr><tr><td></td><td></td><td>动植物类配制酒</td><td>同时利用动物、植物有效成分制成的配制酒</td></tr><tr><td></td><td></td><td>其他类配制酒</td><td></td></tr><tr><td>109</td><td>绿色食品汤类罐头
+NY/T2105-2021</td><td>汤类罐头</td><td>以畜禽产品、水产品、食用菌和蔬菜类为主要原料，经加水烹调等加工后装罐，或生料加水装罐再加热煮熟而制成的罐头产品。</td></tr><tr><td></td><td></td><td></td><td>不适用于特殊膳食用灌装汤类食品</td></tr><tr><td>110</td><td>绿色食品谷物类罐头
+NY/T2106-2021</td><td>面食罐头</td><td>以谷物面粉为原料，经蒸煮或油炸、调配，配或不配蔬菜、肉类等配菜罐装制成的罐头产品，分为面罐头（含调味面罐头和加菜肴包面罐头）、面筋制品罐头。如茄汁肉沫面罐头、鸡丝炒面罐头、乌冬面罐头、面筋制品罐头等。</td></tr><tr><td></td><td></td><td>饭类罐头</td><td>以大米、糯米、小米等谷物为原料，经蒸煮成熟，配或不配蔬菜、肉类等配菜调配罐装制成的罐头产品；以及经过处理后的谷物、干果及其他原料（桂圆、枸杞等）罐装制成的罐头产品，分为米饭罐头（含调味米饭罐头和加菜肴包的米饭罐头）、八宝饭罐头。如米饭罐头、炒米罐头、八宝饭罐头等。</td></tr><tr><td></td><td></td><td>粥类罐头</td><td>以谷物为原料，配或不配豆类、干果、蔬菜、水果中的一种或几种原料，经处理后罐装制成的内容物为粥状的罐头产品，分为原味粥罐头、咸味粥罐头、甜味粥罐头。如八宝粥罐头、水果粥罐头、蔬菜粥罐头等。</td></tr><tr><td></td><td></td><td></td><td>不适用于玉米罐头</td></tr><tr><td>111</td><td>绿色食品食品馅料
+NY/T2107-2021</td><td>食品馅料</td><td>以植物的果实或块茎、肉与肉制品、蛋及蛋制品、水产制品、食用植物油等为原料，加糖或不加糖，添加或不添加其他辅料，经工业化生产用于食品行业的产品。</td></tr><tr><td></td><td></td><td>蓉沙类馅料</td><td>主要以莲籽、板栗、各种豆类为主要原料加工而成的馅料。</td></tr><tr><td></td><td></td><td>果仁类馅料</td><td>主要以核桃仁、杏仁、橄榄仁、瓜子仁、芝麻等果仁为主要原料加工而成的馅料。</td></tr><tr><td></td><td></td><td>果蔬类馅料</td><td>主要以蔬菜及其制品、水果及其制品为主要原料加工而成的馅料。</td></tr><tr><td></td><td></td><td>肉制品类馅料</td><td>主要以蓉沙类、果仁类等馅料为基料添加火腿、叉烧、牛肉、禽类等肉制品加工而成的馅料。</td></tr><tr><td></td><td></td><td>水产制品类馅料</td><td>主要以蓉沙类、果仁类等馅料为基料添加虾米、鱼翅（水发）、鲍鱼等水产制品加工而成的馅料。</td></tr><tr><td></td><td></td><td>其他类馅料</td><td>以其他原料加工而成的馅料。</td></tr><tr><td>112</td><td>绿色食品熟粉及熟米制糕点
+NY/T2108-2021</td><td>熟粉糕点</td><td>将谷物粉或豆粉预先熟制，然后与其他原辅料混合而成的一类糕点</td></tr><tr><td></td><td></td><td>熟米制糕点</td><td>将米预先熟制，添加（或不添加）适量辅料，加工（黏合）成型的一类糕点</td></tr><tr><td>113</td><td>绿色食品鱼类休闲食品
+NY/T2109-2023</td><td>鱼类休闲食品</td><td>以鲜、冻鱼和鱼肉为主要原料，添加或不添加辅料，经烹调或干制等工艺熟制而成的可直接食用的鱼类制品。如调味鱼干、鱼脯、鱼松、鱼粒、鱼块、鱼片等</td></tr><tr><td></td><td></td><td>注：不适用于即食生制鱼类制品、鱼类罐头食品、鱼糜制品、鱼骨制品、熏烤鱼类制品、明火烤制鱼类制品、油炸鱼类制品等。</td><td></td></tr><tr><td>114</td><td>绿色食品冷藏、速冻调制水产品
+NY/T2976-2016</td><td>裹面调制水产品</td><td>以水产品为主料，配以辅料调味加工，成型后覆以裹面材料（面粉、淀粉、脱脂奶粉或蛋等加水混合调制的裹面浆或面包屑），经油炸或不经油炸，冷藏或速冻贮存、运输和销售的预包装食品，如裹面鱼、裹面虾。</td></tr><tr><td></td><td></td><td>腌制调制水产品</td><td>以水产品为主料，配以辅料调味，经过盐、酒等腌制，冷藏或冷冻贮存、运输和销售的预包装食品，如腌制翘嘴红鮊鱼等。</td></tr><tr><td></td><td></td><td>菜肴调制水产品</td><td>以水产品为主料，配以辅料调味加工，经烹调、冷藏或速冻贮存、运输和销售的预包装食品，如香辣凤尾鱼等。</td></tr><tr><td></td><td></td><td>烧烤（烟熏）调制水产品</td><td>以水产品为主料，配以辅料调味，经修割整形、腌渍、定型、油炸或不经油炸等加工处理，进行烧烤或蒸煮（烟熏），冷藏或速冻贮存、运输和销售的预包装食品，如烤鳗等。</td></tr><tr><td>115</td><td>绿色食品淀粉糖和糖浆
+NY/T2110-2011</td><td>食用葡萄糖</td><td>包括结晶葡萄糖</td></tr><tr><td></td><td></td><td>低聚异麦芽糖</td><td>包括粉状和糖浆状</td></tr><tr><td></td><td></td><td>麦芽糖</td><td>包括粉状和糖浆状</td></tr><tr><td></td><td></td><td>果葡糖浆</td><td></td></tr><tr><td></td><td></td><td>麦芽糊精</td><td>适用于以玉米为原料生产的麦芽糊精产品</td></tr><tr><td></td><td></td><td>葡萄糖浆</td><td></td></tr><tr><td>116</td><td>绿色食品调味油
+NY/T2111-2021</td><td>调味油</td><td>以食用植物油为原料，萃取或添加植物或植物籽粒中呈香、呈味成分加工而成的食用调味品，如花椒油、藤椒油、辣椒油、蒜油、姜油、葱油、芥末油等</td></tr><tr><td>117</td><td>绿色食品啤酒花及其制品
+NY/T2973-2016</td><td>压缩啤酒花</td><td>将采摘的新鲜酒花球果经烘烤、回潮，垫以包装材料，打包成型制得的产品</td></tr><tr><td></td><td></td><td>颗粒啤酒花</td><td>压缩啤酒花经粉碎、筛分、混合、压粒、包装后制得的颗粒产品</td></tr><tr><td></td><td></td><td>二氧化碳啤酒花浸膏</td><td>压缩啤酒花或颗粒啤酒花经二氧化碳萃取酒花中有效成分后制得的浸膏产品</td></tr><tr><td>118</td><td>绿色食品魔芋及其制品
+NY/T2981-2016</td><td>魔芋粉</td><td>包括普通魔芋粉和纯化魔芋粉</td></tr><tr><td></td><td></td><td>魔芋膳食纤维</td><td>包括原味魔芋膳食纤维和复合魔芋膳食纤维</td></tr><tr><td></td><td></td><td>魔芋凝胶食品</td><td>以水、魔芋或魔芋粉为主要原料，经磨浆去杂或加水润胀、加热糊化，添加凝固剂或其他食品添加剂，凝胶后模仿各种植物制成品或动物及其组织的特征特性加工制成的凝胶制品</td></tr><tr><td>119</td><td>绿色食品淀粉类蔬菜粉
+NY/T2984-2023</td><td>马铃薯全粉</td><td></td></tr><tr><td></td><td></td><td>甘薯全粉</td><td></td></tr><tr><td></td><td></td><td>木薯全粉</td><td></td></tr><tr><td></td><td></td><td>葛根全粉</td><td></td></tr><tr><td></td><td></td><td>山药全粉</td><td></td></tr><tr><td></td><td></td><td>芋头全粉</td><td></td></tr><tr><td></td><td></td><td></td><td>注：淀粉类蔬菜粉指以含淀粉较高的蔬菜为原料，经挑拣、清洗、去皮、切片、漂洗、熟化或不熟化、粉碎或研磨、干燥等工艺，使用或不使用食品添加剂，加工而制成的雪花片状、颗粒状或粉状制品。</td></tr><tr><td>120</td><td>绿色食品低聚糖
+NY/T2985-2016</td><td>低聚葡萄糖</td><td></td></tr><tr><td></td><td></td><td>低聚果糖</td><td></td></tr><tr><td></td><td></td><td>低聚麦芽糖</td><td></td></tr><tr><td></td><td></td><td>大豆低聚糖</td><td></td></tr><tr><td></td><td></td><td>棉子低聚糖</td><td></td></tr><tr><td></td><td></td><td></td><td>注：包括上述产品的糖浆型和粉末型产品。本标准不适用于低聚异麦芽糖、麦芽糊精。</td></tr><tr><td>121</td><td>绿色食品糖果
+NY/T2986-2016</td><td>硬质糖果</td><td>以食糖或糖浆或甜味剂为主要原料，经相关工艺加工制成的硬、脆固体糖果。</td></tr><tr><td></td><td></td><td>酥质糖果</td><td>以食糖或糖浆或甜味剂、果仁碎粒（或酱）等为主要原料制成的疏松酥脆的糖果。</td></tr><tr><td></td><td></td><td>焦香糖果</td><td>以食糖或糖浆或甜味剂、油脂和乳制品为主要原料，经相关工艺制成具有焦香味的糖果。</td></tr><tr><td></td><td></td><td>凝胶糖果</td><td>以食糖或糖浆或甜味剂、食用胶（或淀粉）等为主要原料，经相关工艺制成具有弹性和咀嚼性的糖果。</td></tr><tr><td></td><td></td><td>奶糖糖果</td><td>以食糖或糖浆或甜味剂、乳制品为主要原料制成具有乳香味的糖果。</td></tr><tr><td></td><td></td><td>充气糖果</td><td>以食糖或糖浆或甜味剂等为主要原料，经相关工艺制成内有分散细密气泡的糖果。</td></tr><tr><td></td><td></td><td>压片糖果</td><td>以食糖或糖浆（粉剂）或甜味剂等为主要原料，经混合、造粒、压制成型等相关工艺制成的固体糖果。</td></tr><tr><td>122</td><td>绿色食品果醋饮料
+NY/T2987-2016</td><td>果醋饮料</td><td>以水果、水果汁（浆）或浓缩水果汁（浆）为原料，经酒精发酵、醋酸发酵后制成果醋，再添加或不添加其他食品原辅料和（或）食品添加剂，经加工制成的液体饮料。</td></tr><tr><td>123</td><td>绿色食品湘式挤压糕点
+NY/T2988-2016</td><td>湘式挤压糕点</td><td>以粮食为主要原料，辅以食用植物油、食用盐、白砂糖、辣椒干等辅料，经挤压熟化、拌料、包装等工艺加工而成的糕点。</td></tr><tr><td>124</td><td>绿色食品豆类罐头
+NY/T3900-2021</td><td>豆类罐头</td><td>以一种或一种以上完整豆类籽粒为主要原料，经预处理、装罐、密封、杀菌、冷却制成的罐藏食品。包括盐水豆类罐头、糖水豆类罐头和茄汁豆类罐头</td></tr><tr><td></td><td></td><td></td><td>不适用于发酵豆类罐头。</td></tr><tr><td>125</td><td>绿色食品谷物饮料
+NY/T3901-2021</td><td>谷物浓浆</td><td>总固形物和来源于谷物的总膳食纤维含量较多(原料中谷物的添加量不少于4%)的谷物饮料。</td></tr><tr><td></td><td></td><td>谷物淡饮</td><td>总固形物和来源于谷物的总膳食纤维含量较少(原料中谷物的添加量少于4%不少于1%)的谷物饮料。</td></tr><tr><td></td><td></td><td>复合谷物饮料</td><td>含有果蔬汁和（或）乳和（或）植物提取物成分辅料的谷物饮料。</td></tr><tr><td></td><td></td><td></td><td>不适用于以高蛋白含量谷物（如大豆）为主要原料制成的植物蛋白饮料。</td></tr><tr><td>126</td><td>绿色食品可食用鱼副产品及其制品
+NY/T3899-2021</td><td>鱼子酱</td><td>以鱼卵为原料，经搓制、水洗、拌盐等工序加工的鱼籽产品。</td></tr><tr><td></td><td></td><td>粗鱼油</td><td>从鱼粉生产的榨汁或水产品加工副产物中分离获得的油脂。</td></tr><tr><td></td><td></td><td>精制鱼油</td><td>粗鱼油经过脱胶、脱酸、脱色、脱臭等处理后获得的鱼油。</td></tr><tr><td></td><td></td><td>鱼油粉</td><td>以精制鱼油为原料，加入辅料制成的粉状产品。</td></tr><tr><td></td><td></td><td></td><td>适用除鱼肉以外的可食用鱼副产品及其加工品</td></tr><tr><td>127</td><td>绿色食品冲调类方便食品
+NY/T4268-2023</td><td>冲调类果羹方便食品</td><td>以大枣、桂圆、莲子、枸杞等果实为主要原料，添加辅料、调味料，添加或不添加食品添加剂，经部分或完全熟制、杀菌，干燥、包装而成的冲调即可食用的汤羹。</td></tr><tr><td></td><td></td><td>冲调类菜羹方便食品</td><td>以蔬菜及其制品中的一种或多种为主要原料，添加调味料等辅料，添加或不添加水产品及其制品、畜禽产品及其制品，添加或不添加食品添加剂，经部分或完全熟制、杀菌，干燥、包装而成的，冲调即可食用的汤羹。</td></tr><tr><td></td><td></td><td>冲调类荤羹方便食品</td><td>以水产品及其制品、畜禽产品及其制品中的一种或多种为主要原料，添加蔬菜及其制品和调味料等辅料，添加或不添加食品添加剂，经部分或完全熟制、杀菌，干燥、包装而成的，冲调即可食用的羹。</td></tr><tr><td>五、其他产品</td><td></td><td></td><td></td></tr><tr><td>128</td><td>绿色食品天然矿泉水
+NY/T2979-2016</td><td>天然矿泉水</td><td>不适用于NY/T2980-2016所述的包装饮用水</td></tr><tr><td>129</td><td>绿色食品包装饮用水
+NY/T2980-2016</td><td>包装饮用水</td><td>注：不适用于饮用天然矿泉水、饮用纯净水和添加食品添加剂的包装饮用水</td></tr></tbody></table>
+    </script>
+
+    <script>
+        // 搜索产品
+        function searchProduct() {
+            const productName = document.getElementById('productInput').value.trim();
+            
+            if (!productName) {
+                alert('请输入产品名称');
+                return;
+            }
+            
+            const resultSection = document.getElementById('resultSection');
+            const directoryView = document.getElementById('directoryView');
+            
+            resultSection.style.display = 'block';
+            directoryView.style.display = 'none';
+            
+            // 搜索产品（从第2行开始搜索，跳过标题行）
+            const table = document.querySelector('.directory-table');
+            const rows = table.querySelectorAll('tr');
+            const foundProducts = [];
+            
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].querySelectorAll('td');
+                if (cells.length >= 3) {
+                    const productNameInTable = cells[2].textContent.trim();
+                    if (productNameInTable && 
+                        productNameInTable.toLowerCase().includes(productName.toLowerCase())) {
+                        
+                        foundProducts.push({
+                            name: productNameInTable,
+                            standard: cells[1].textContent.trim(),
+                            description: cells[3].textContent.trim(),
+                            rowNumber: i + 1
+                        });
+                    }
+                }
+            }
+            
+            if (foundProducts.length > 0) {
+                let resultsHTML = '<h3>搜索结果：</h3>';
+                foundProducts.forEach(product => {
+                    resultsHTML += `
+                        <div class="result-item">
+                            <div class="result-title">${product.name}</div>
+                            <div class="result-details">
+                                <strong>标准：</strong>${product.standard}<br>
+                                <strong>说明：</strong>${product.description}<br>
+                                <strong>行号：</strong>第${product.rowNumber}行
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('searchResults').innerHTML = resultsHTML;
+            } else {
+                document.getElementById('searchResults').innerHTML = 
+                    '<div class="result-item"><div class="result-title">未找到匹配的产品</div></div>';
+            }
+        }
+
+        // 页面加载完成
+        console.log('模块一页面加载完成，包含{len(df)}行完整Excel数据');
+    </script>
+</body>
+</html>
