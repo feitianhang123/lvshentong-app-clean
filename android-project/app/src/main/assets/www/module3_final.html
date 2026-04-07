@@ -6,7 +6,7 @@
     <title>绿色食品申报 - 材料清单</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
-        body { background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 20px; }
+        body { background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 2%; }
         
         .container { max-width: 95%; width: 900px; margin: 0 auto; background: #fff; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3); }
         
@@ -40,6 +40,12 @@
         @media (max-width: 768px) {
             .cards-grid { grid-template-columns: 1fr; }
             .card { padding: 20px; }
+        }
+        
+        @media (max-width: 600px) {
+            .container { border-radius: 15px; margin: 0 auto; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 20px; }
         }
     </style>
 </head>
