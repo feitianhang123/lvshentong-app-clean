@@ -8,13 +8,13 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
         body { background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 0; margin: 0; }
         
-        .container { width: 100%; height: 100vh; background: #fff; border-radius: 0; overflow: hidden; box-shadow: none; position: relative; }
+        .container { width: 100%; height: 100vh; background: #fff; border-radius: 0; overflow: hidden; box-shadow: none; position: relative; padding-top: 120px; padding-bottom: 60px; }
         
-        .header { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: #fff; padding: 40px 20px; text-align: center; height: 120px; display: flex; flex-direction: column; justify-content: center; }
+        .header { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: #fff; padding: 40px 20px; text-align: center; height: 120px; display: flex; flex-direction: column; justify-content: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
         .header h1 { font-size: 32px; font-weight: bold; margin-bottom: 8px; }
         .header p { font-size: 18px; opacity: 0.9; }
         
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; padding: 40px; height: calc(100vh - 240px); overflow-y: auto; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 15px; padding: 20px; height: calc(100vh - 180px); overflow-y: auto; }
         .card { background: #fff; border-radius: 15px; padding: 30px; cursor: pointer; transition: all 0.3s ease; border-left: 6px solid #43a047; box-shadow: 0 5px 15px rgba(0,0,0,0.1); min-height: 140px; display: flex; flex-direction: column; justify-content: center; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4); }
         .card h3 { color: #1b5e20; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
@@ -317,7 +317,7 @@
         showMain();
     </script>
     
-    <div class="footer" style="background: #f5f5f5; padding: 15px 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee; position: absolute; bottom: 0; width: 100%; height: 60px; display: flex; flex-direction: column; justify-content: center;">
+    <div class="footer" style="background: #f5f5f5; padding: 15px 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee; position: fixed; bottom: 0; left: 0; right: 0; height: 60px; display: flex; flex-direction: column; justify-content: center; z-index: 1000;">
         <div>本软件内容均来源于中国绿色食品发展中心官网</div>
         <div>如果存在问题请联络作者：QQ:10780329</div>
     </div>

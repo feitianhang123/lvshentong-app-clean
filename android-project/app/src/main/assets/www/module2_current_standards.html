@@ -7,9 +7,9 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); min-height: 100vh; padding: 0; margin: 0; color: #333; }
-        .container { width: 100%; height: 100vh; background: white; border-radius: 0; box-shadow: none; overflow: hidden; position: relative; }
+        .container { width: 100%; height: 100vh; background: white; border-radius: 0; box-shadow: none; overflow: hidden; position: relative; padding-top: 120px; padding-bottom: 60px; }
         
-        header { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 40px 20px; text-align: center; height: 120px; display: flex; flex-direction: column; justify-content: center; }
+        header { background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); color: white; padding: 40px 20px; text-align: center; height: 120px; display: flex; flex-direction: column; justify-content: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
         header h1 { font-size: 32px; margin-bottom: 10px; font-weight: bold; }
         header p { opacity: 0.9; font-size: 18px; }
         
@@ -24,7 +24,7 @@
         
         .stats { padding: 15px 20px; background: #e8f5e8; color: #2e7d32; font-size: 14px; border-bottom: 1px solid #d4edda; }
         
-        .standards-container { padding: 30px; height: calc(100vh - 240px); overflow-y: auto; }
+        .standards-container { padding: 20px; height: calc(100vh - 180px); overflow-y: auto; }
         .standard-card { background: white; border: 1px solid #e9ecef; border-radius: 12px; padding: 25px; margin-bottom: 20px; transition: all 0.3s; cursor: pointer; min-height: 120px; display: flex; flex-direction: column; justify-content: center; }
         .standard-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.1); border-color: #4caf50; }
         .standard-name { font-size: 18px; font-weight: 500; color: #2e7d32; margin-bottom: 8px; }
@@ -44,13 +44,15 @@
             font-size: 12px;
             color: #666;
             border-top: 1px solid #eee;
-            position: absolute;
+            position: fixed;
             bottom: 0;
-            width: 100%;
+            left: 0;
+            right: 0;
             height: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            z-index: 1000;
         }
         
         @media (max-width: 600px) {
