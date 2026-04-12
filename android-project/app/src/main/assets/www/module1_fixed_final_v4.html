@@ -26,7 +26,7 @@
         }
         
         .header { 
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); 
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); 
             color: white; 
             padding: 40px 20px; 
             text-align: center;
@@ -48,10 +48,10 @@
         }
         
         .search-section {
-            padding: 20px;
+            padding: 30px;
             background: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
-            height: calc(100vh - 280px);
+            height: calc(100vh - 240px);
             overflow-y: auto;
         }
         
@@ -95,10 +95,14 @@
             background: #f8fff8;
             border: 2px solid #e8f5e8;
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .directory-card:hover {
@@ -155,8 +159,8 @@
         }
         
         .directory-view {
-            padding: 20px;
-            height: calc(100vh - 300px);
+            padding: 30px;
+            height: calc(100vh - 240px);
             overflow-y: auto;
             display: none;
         }

@@ -53,23 +53,27 @@
         }
         
         .modules {
-            padding: 20px;
+            padding: 30px;
             height: calc(100vh - 240px);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 15px;
+            gap: 25px;
         }
         
         .module-card {
             background: #f8fff8;
             border: 2px solid #e8f5e8;
             border-radius: 15px;
-            padding: 20px;
+            padding: 30px;
             margin-bottom: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .module-card:hover {
