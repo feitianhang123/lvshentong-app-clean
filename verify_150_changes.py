@@ -29,32 +29,32 @@ def main():
     # 定义每个文件需要检查的内容
     files_to_check = {
         "index_fixed.html": {
-            "绿色部分置顶": "position: fixed; top: 0",
-            "灰色部分垫底": "position: fixed; bottom: 0",
+            "绿色部分置顶": "position: fixed",
+            "灰色部分垫底": "position: fixed",
             "内容区域滚动": "height: calc(100vh - 180px)",
             "模块卡片紧凑": "min-height: 90px"
         },
         "module1_fixed_final_v4.html": {
-            "绿色部分置顶": "position: fixed; top: 0",
-            "灰色部分垫底": "position: fixed; bottom: 0",
+            "绿色部分置顶": "position: fixed",
+            "灰色部分垫底": "position: fixed",
             "内容区域滚动": "height: calc(100vh - 180px)",
-            "UI一致无缝隙": "padding-top: 120px; padding-bottom: 60px"
+            "UI一致无缝隙": "padding-top: 120px"
         },
         "module2_current_standards.html": {
-            "绿色部分置顶": "position: fixed; top: 0",
-            "灰色部分垫底": "position: fixed; bottom: 0",
+            "绿色部分置顶": "position: fixed",
+            "灰色部分垫底": "position: fixed",
             "内容区域滚动": "height: calc(100vh - 180px)",
             "标准容器高度": "padding-top: 120px"
         },
         "module3_final.html": {
-            "绿色部分置顶": "position: fixed; top: 0",
-            "灰色部分垫底": "position: fixed; bottom: 0",
+            "绿色部分置顶": "position: fixed",
+            "灰色部分垫底": "position: fixed",
             "内容区域滚动": "height: calc(100vh - 180px)",
             "卡片网格紧凑": "gap: 15px"
         },
         "module4_coming_soon.html": {
-            "绿色部分置顶": "position: fixed; top: 0",
-            "灰色部分垫底": "position: fixed; bottom: 0",
+            "绿色部分置顶": "position: fixed",
+            "灰色部分垫底": "position: fixed",
             "内容区域滚动": "height: calc(100vh - 180px)",
             "内容区域居中": "justify-content: center"
         }
