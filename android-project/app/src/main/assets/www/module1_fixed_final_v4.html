@@ -22,6 +22,7 @@
             border-radius: 0; 
             box-shadow: none;
             overflow: hidden;
+            position: relative;
         }
         
         .header { 
@@ -50,7 +51,7 @@
             padding: 20px;
             background: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
-            height: calc(100vh - 240px);
+            height: calc(100vh - 280px);
             overflow-y: auto;
         }
         
@@ -155,7 +156,7 @@
         
         .directory-view {
             padding: 20px;
-            height: calc(100vh - 240px);
+            height: calc(100vh - 300px);
             overflow-y: auto;
             display: none;
         }
@@ -204,6 +205,13 @@
             font-size: 12px;
             color: #666;
             border-top: 1px solid #eee;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         @media (max-width: 600px) {
