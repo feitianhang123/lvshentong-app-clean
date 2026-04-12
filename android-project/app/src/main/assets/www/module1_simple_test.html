@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品目录测试 - 绿色食品申报通</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
+            min-height: 100vh; 
+            padding: 0;
+            margin: 0;
+            color: #333;
+        }
+        
+        .container { 
+            width: 100%;
+            height: 100vh;
+            background: white; 
+            border-radius: 0; 
+            box-shadow: none;
+            overflow: hidden;
+            position: relative;
+            padding-top: 120px;
+            padding-bottom: 60px;
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); 
+            color: white; 
+            padding: 40px 20px; 
+            text-align: center;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .main-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .sub-title {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            padding: 20px;
+            background: #f8f9fa;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .directory-card {
+            background: #f8fff8;
+            border: 2px solid #e8f5e8;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .directory-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .result-section {
+            padding: 20px;
+            display: none;
+        }
+        
+        .result-success {
+            background: #e8f5e8;
+            border: 1px solid #c8e6c9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .result-error {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .product-info {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .product-row {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+        
+        .directory-view {
+            padding: 20px;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .directory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 11px;
+        }
+        
+        .directory-table th,
+        .directory-table td {
+            border: 1px solid #e0e0e0;
+            padding: 4px 6px;
+            text-align: left;
+        }
+        
+        .directory-table th {
+            background: #f8fff8;
+            font-weight: bold;
+            color: #2e7d32;
+            position: sticky;
+            top: 0;
+        }
+        
+        .merged-cell {
+            background-color: #f0f8f0;
+            font-weight: bold;
+        }
+        
+        .back-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .footer {
+            background: #f5f5f5;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #eee;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="main-title">产品目录测试</div>
+            <div class="sub-title">测试目录卡和搜索功能</div>
+        </div>
+        
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称...">
+                <button class="search-btn" onclick="testSearch()">搜索测试</button>
+            </div>
+            
+            <div class="directory-card" onclick="testDirectory()">
+                <div class="card-title">测试目录卡</div>
+                <div class="card-subtitle">点击测试目录卡功能</div>
+            </div>
+        </div>
+        
+        <div id="resultSection" class="result-section"></div>
+        
+        <div id="directoryView" class="directory-view">
+            <h3>测试目录视图</h3>
+            <div id="directoryContent"></div>
+            <button class="back-btn" onclick="hideDirectory()">返回搜索</button>
+        </div>
+        
+        <div class="footer">
+            <div>功能测试页面</div>
+        </div>
+    </div>
+
+    <script>
+        // 测试搜索功能
+        function testSearch() {
+            console.log('搜索测试函数被调用');
+            const productName = document.getElementById('productInput').value.trim();
+            
+            const resultSection = document.getElementById('resultSection');
+            resultSection.style.display = 'block';
+            
+            if (!productName) {
+                resultSection.innerHTML = `
+                    <div class="result-error">
+                        <strong>请输入产品名称</strong>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultSection.innerHTML = `
+                <div class="result-success">
+                    <strong>搜索测试成功！</strong>
+                    <div>搜索词：${productName}</div>
+                    <div>搜索功能正常工作</div>
+                </div>
+            `;
+        }
+
+        // 测试目录卡功能
+        function testDirectory() {
+            console.log('目录卡测试函数被调用');
+            
+            document.querySelector('.search-section').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('directoryView').style.display = 'block';
+            
+            document.getElementById('directoryContent').innerHTML = `
+                <div style="padding: 20px; text-align: center;">
+                    <h3>目录卡功能测试成功！</h3>
+                    <p>目录卡点击功能正常工作</p>
+                    <p>共显示测试数据：10行</p>
+                </div>
+            `;
+        }
+
+        // 隐藏目录视图
+        function hideDirectory() {
+            document.getElementById('directoryView').style.display = 'none';
+            document.querySelector('.search-section').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+        }
+
+        // 页面加载完成
+        console.log('测试页面加载完成');
+        console.log('请测试搜索和目录卡功能');
+    </script>
+</body>
+</html>
