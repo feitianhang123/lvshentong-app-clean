@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 检查模块一内容与原始Excel文件的一致性
 确保975行ABCD列内容完全一致
@@ -39,63 +40,30 @@ def read_module1_content(file_path):
         content = f.read()
     
     # 查找JavaScript中的fullExcelData数组
-    pattern = r'const fullExcelData = \[(.*?)\]'
+    pattern = r'const fullExcelData = (\[.*?\]);'
     match = re.search(pattern, content, re.DOTALL)
     
-    if not match:
+    if match:
+        print("找到fullExcelData数组")
+        array_content = match.group(1)
+        
+        # 使用eval安全地解析数组
+        try:
+            module_data = eval(array_content)
+            print(f"模块一文件行数: {len(module_data)}")
+            
+            # 显示前几行内容
+            print("\n模块一前10行内容:")
+            for i, row in enumerate(module_data[:10], 1):
+                print(f"第{i}行: {row}")
+            
+            return module_data
+        except Exception as e:
+            print(f"解析数组时出错: {e}")
+            return []
+    else:
         print("未找到fullExcelData数组")
         return []
-    
-    # 提取数组内容
-    array_content = match.group(1)
-    
-    # 解析数组
-    module_data = []
-    
-    # 使用简单的解析方法
-    lines = array_content.split('\n')
-    for line in lines:
-        line = line.strip()
-        if line.startswith('[') or line.startswith(','):
-            # 移除开头的[或,
-            if line.startswith('['):
-                line = line[1:]
-            elif line.startswith(','):
-                line = line[1:]
-            
-            # 移除结尾的],
-            if line.endswith('],'):
-                line = line[:-2]
-            elif line.endswith(']'):
-                line = line[:-1]
-            
-            # 解析行内容
-            if line:
-                # 简单的字符串分割
-                row_data = []
-                parts = line.split(',')
-                for part in parts:
-                    part = part.strip()
-                    # 移除引号
-                    if part.startswith("'") and part.endswith("'"):
-                        part = part[1:-1]
-                    elif part.startswith('"') and part.endswith('"'):
-                        part = part[1:-1]
-                    
-                    # 处理转义字符
-                    part = part.replace('\\n', '\n').replace('\\t', '\t')
-                    row_data.append(part)
-                
-                module_data.append(row_data)
-    
-    print(f"模块一文件行数: {len(module_data)}")
-    
-    # 显示前几行内容
-    print("\n模块一前10行内容:")
-    for i, row in enumerate(module_data[:10], 1):
-        print(f"第{i}行: {row}")
-    
-    return module_data
 
 def compare_data(excel_data, module_data):
     """比较两个数据集的差异"""
@@ -105,7 +73,7 @@ def compare_data(excel_data, module_data):
     print(f"Excel行数: {len(excel_data)}, 模块一行数: {len(module_data)}")
     
     if len(excel_data) != len(module_data):
-        print(f"⚠️ 行数不一致! 需要修复")
+        print("警告: 行数不一致! 需要修复")
     
     # 比较前10行的内容
     min_rows = min(10, len(excel_data), len(module_data))
@@ -116,13 +84,17 @@ def compare_data(excel_data, module_data):
         excel_row = excel_data[i]
         module_row = module_data[i]
         
+        # 处理None值
+        excel_row = [str(cell) if cell is not None else '' for cell in excel_row]
+        module_row = [str(cell) if cell is not None else '' for cell in module_row]
+        
         if excel_row != module_row:
             print(f"第{i+1}行不一致:")
             print(f"  Excel: {excel_row}")
             print(f"  模块一: {module_row}")
             differences.append((i+1, excel_row, module_row))
         else:
-            print(f"第{i+1}行: ✅ 一致")
+            print(f"第{i+1}行: 一致")
     
     return differences
 
@@ -138,11 +110,11 @@ def main():
     differences = compare_data(excel_data, module_data)
     
     if differences:
-        print(f"\n⚠️ 发现 {len(differences)} 处不一致")
+        print(f"\n发现 {len(differences)} 处不一致")
         print("需要修复模块一的内容")
         return False
     else:
-        print("\n✅ 模块一内容与Excel文件完全一致")
+        print("\n模块一内容与Excel文件完全一致")
         return True
 
 if __name__ == "__main__":

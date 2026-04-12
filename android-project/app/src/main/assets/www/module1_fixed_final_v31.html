@@ -270,88 +270,10 @@
 
     <script>
         // 基于Excel文件实际内容的完整975行产品目录
-        const fullExcelData = generateFullExcelData();
+        
 
         // 生成完整的975行Excel数据（基于实际文件内容）
-        function generateFullExcelData() {
-            const excelData = [];
-            
-            // 第1行：分类标题（合并单元格）
-            excelData.push(['一、种植业产品标准', '', '', '']);
-            
-            // 第2行：表头
-            excelData.push(['序号', '标准名称', '适用产品名称', '适用产品名称说明']);
-            
-            // 第3行：绿色食品豆类（第一个标准）
-            excelData.push(['1', '绿色食品豆类\nNY/T285-2021', '稻', '籼稻、粳稻、糯稻']);
-            
-            // 第4-15行：豆类标准下的其他产品（合并单元格）
-            excelData.push(['', '', '绿豆', '普通绿豆、明绿豆']);
-            excelData.push(['', '', '小豆', '红小豆、赤豆']);
-            excelData.push(['', '', '豇豆', '长豇豆、饭豇豆']);
-            excelData.push(['', '', '蚕豆', '大粒蚕豆、小粒蚕豆']);
-            excelData.push(['', '', '豌豆', '白豌豆、麻豌豆']);
-            excelData.push(['', '', '扁豆', '白扁豆、红扁豆']);
-            excelData.push(['', '', '菜豆', '芸豆、四季豆']);
-            excelData.push(['', '', '刀豆', '大刀豆、小刀豆']);
-            excelData.push(['', '', '利马豆', '菜豆属利马豆']);
-            excelData.push(['', '', '鹰嘴豆', '鸡豆、桃豆']);
-            excelData.push(['', '', '四棱豆', '翼豆、四角豆']);
-            excelData.push(['', '', '大豆', '黄豆、青豆、黑豆']);
-            excelData.push(['', '', '其他豆类', '木豆、黎豆']);
-            
-            // 第16行：茶叶标准
-            excelData.push(['2', '绿色食品茶叶\nNY/T288-2018', '绿茶', '以茶树Camellia sinensis L.O. kuntze的芽叶为原料']);
-            
-            // 第17-22行：茶叶标准下的其他产品（合并单元格）
-            excelData.push(['', '', '红茶', '']);
-            excelData.push(['', '', '乌龙茶（青茶）', '']);
-            excelData.push(['', '', '白茶', '']);
-            excelData.push(['', '', '黄茶', '']);
-            excelData.push(['', '', '黑茶', '普洱茶、茯砖茶']);
-            excelData.push(['', '', '', '以茶树Camellia sinensis L.O. kuntze的芽叶为原料，经特定工艺加工制作的、不添加任何食品添加剂的、供人们饮用或食用的产品']);
-            
-            // 第23行：代用茶标准
-            excelData.push(['3', '绿色食品代用茶\nNY/T2140-2015', '代用茶', '选用茶树camellia sinensis L.O.Kuntze以外，经国家相关部门公布的可食用植物花果根茎叶等为原料，经加工制作成供人们饮用的产品']);
-            
-            // 第24行：咖啡标准
-            excelData.push(['4', '绿色食品咖啡\nNY/T289-2012', '咖啡豆', '烘焙咖啡豆、咖啡豆制品']);
-            
-            // 第25-27行：咖啡标准下的其他产品（合并单元格）
-            excelData.push(['', '', '咖啡粉', '烘焙咖啡豆磨碎的产品']);
-            excelData.push(['', '', '咖啡粉', '速溶咖啡粉等咖啡制品']);
-            excelData.push(['', '', '', '注：包括咖啡豆、咖啡粉和咖啡饮料']);
-            
-            // 第28行：谷物及制品标准
-            excelData.push(['5', '绿色食品谷物及制品\nNY/T418-2023', '玉米', '普通玉米、甜玉米、糯玉米']);
-            
-            // 第29-32行：谷物制品（合并单元格）
-            excelData.push(['', '', '谷物制品', '玉米粉、玉米片等谷物制品']);
-            excelData.push(['', '', '速冻制品', '速冻玉米、速冻玉米棒等预包装产品']);
-            excelData.push(['', '', '玉米粉', '普通玉米粉、全玉米粉']);
-            excelData.push(['', '', '玉米片', '玉米脆片、玉米早餐片等系列加工产品']);
-            
-            // 继续填充基于Excel文件的实际结构
-            // 这里简化处理，实际应该包含完整的975行数据
-            
-            // 填充更多产品数据直到975行
-            let currentRow = 33;
-            let standardIndex = 6;
-            
-            // 继续添加更多产品数据
-            while (excelData.length < 975) {
-                if (excelData.length % 15 === 0) {
-                    // 每15行添加一个新的标准
-                    excelData.push([standardIndex.toString(), `绿色食品标准${standardIndex}\nNY/T285-2021`, `产品${excelData.length}`, '']);
-                    standardIndex++;
-                } else {
-                    // 添加产品行（合并单元格）
-                    excelData.push(['', '', `产品${excelData.length}`, '']);
-                }
-            }
-            
-            return excelData.slice(0, 975); // 确保正好975行
-        }
+        
 
         // 搜索产品
         function searchProduct() {
