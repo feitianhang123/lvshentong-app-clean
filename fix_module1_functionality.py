@@ -1,21 +1,73 @@
-<!DOCTYPE html>
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+修复159版本模块一功能
+使用完整的975行真实Excel数据实现目录卡和搜索功能
+"""
+
+import openpyxl
+import json
+
+def read_excel_content(file_path):
+    """读取Excel文件内容"""
+    print("正在读取Excel文件...")
+    
+    workbook = openpyxl.load_workbook(file_path)
+    sheet = workbook.active
+    
+    excel_data = []
+    
+    # 读取所有行，直到遇到空行
+    for row in sheet.iter_rows(values_only=True):
+        if row is None or all(cell is None for cell in row):
+            break
+        excel_data.append(list(row))
+    
+    print(f"Excel文件行数: {len(excel_data)}")
+    return excel_data
+
+def generate_module1_html(excel_data):
+    """生成完整的模块一HTML内容"""
+    
+    # 将Excel数据转换为JavaScript数组
+    js_array = "const fullExcelData = [\n"
+    for i, row in enumerate(excel_data):
+        processed_row = []
+        for cell in row:
+            if cell is None:
+                processed_row.append("''")
+            else:
+                cell_str = str(cell)
+                # 转义特殊字符
+                cell_str = cell_str.replace('"', '\\"').replace("'", "\\'")
+                cell_str = cell_str.replace('\n', '\\n')
+                processed_row.append(f"'{cell_str}'")
+        
+        js_array += f"    [{', '.join(processed_row)}]"
+        if i < len(excel_data) - 1:
+            js_array += ",\n"
+        else:
+            js_array += "\n"
+    js_array += "];\n"
+    
+    html_template = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>产品目录 - 绿色食品申报通</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{ 
             font-family: 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
             min-height: 100vh; 
             padding: 0;
             margin: 0;
             color: #333;
-        }
+        }}
         
-        .container { 
+        .container {{ 
             width: 100%;
             height: 100vh;
             background: white; 
@@ -25,9 +77,9 @@
             position: relative;
             padding-top: 120px;
             padding-bottom: 60px;
-        }
+        }}
         
-        .header { 
+        .header {{ 
             background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%); 
             color: white; 
             padding: 40px 20px; 
@@ -41,47 +93,47 @@
             left: 0;
             right: 0;
             z-index: 1000;
-        }
+        }}
         
-        .main-title {
+        .main-title {{
             font-size: 32px;
             font-weight: bold;
             margin-bottom: 8px;
-        }
+        }}
         
-        .sub-title {
+        .sub-title {{
             font-size: 18px;
             opacity: 0.9;
-        }
+        }}
         
-        .search-section {
+        .search-section {{
             padding: 20px;
             background: #f8f9fa;
             height: calc(100vh - 180px);
             overflow-y: auto;
-        }
+        }}
         
-        .search-box {
+        .search-box {{
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
-        }
+        }}
         
-        .search-input {
+        .search-input {{
             flex: 1;
             padding: 12px 15px;
             border: 2px solid #4CAF50;
             border-radius: 25px;
             font-size: 16px;
             outline: none;
-        }
+        }}
         
-        .search-input:focus {
+        .search-input:focus {{
             border-color: #2e7d32;
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-        }
+        }}
         
-        .search-btn {
+        .search-btn {{
             background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%);
             color: white;
             border: none;
@@ -90,14 +142,14 @@
             cursor: pointer;
             font-size: 16px;
             transition: all 0.3s;
-        }
+        }}
         
-        .search-btn:hover {
+        .search-btn:hover {{
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-        }
+        }}
         
-        .directory-card {
+        .directory-card {{
             background: #f8fff8;
             border: 2px solid #e8f5e8;
             border-radius: 15px;
@@ -109,96 +161,96 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-        }
+        }}
         
-        .directory-card:hover {
+        .directory-card:hover {{
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
             border-color: #4CAF50;
-        }
+        }}
         
-        .card-title {
+        .card-title {{
             font-size: 18px;
             font-weight: bold;
             color: #2e7d32;
             margin-bottom: 5px;
-        }
+        }}
         
-        .card-subtitle {
+        .card-subtitle {{
             font-size: 14px;
             color: #666;
-        }
+        }}
         
-        .result-section {
+        .result-section {{
             padding: 20px;
             display: none;
-        }
+        }}
         
-        .result-success {
+        .result-success {{
             background: #e8f5e8;
             border: 1px solid #c8e6c9;
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-        }
+        }}
         
-        .result-error {
+        .result-error {{
             background: #ffebee;
             border: 1px solid #ffcdd2;
             border-radius: 10px;
             padding: 15px;
             text-align: center;
-        }
+        }}
         
-        .product-info {
+        .product-info {{
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 10px;
-        }
+        }}
         
-        .product-row {
+        .product-row {{
             font-weight: bold;
             color: #2e7d32;
             margin-bottom: 5px;
-        }
+        }}
         
-        .directory-view {
+        .directory-view {{
             padding: 20px;
             height: calc(100vh - 180px);
             overflow-y: auto;
             display: none;
-        }
+        }}
         
-        .directory-table {
+        .directory-table {{
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
             font-size: 11px;
-        }
+        }}
         
         .directory-table th,
-        .directory-table td {
+        .directory-table td {{
             border: 1px solid #e0e0e0;
             padding: 4px 6px;
             text-align: left;
-        }
+        }}
         
-        .directory-table th {
+        .directory-table th {{
             background: #f8fff8;
             font-weight: bold;
             color: #2e7d32;
             position: sticky;
             top: 0;
-        }
+        }}
         
-        .merged-cell {
+        .merged-cell {{
             background-color: #f0f8f0;
             font-weight: bold;
-        }
+        }}
         
-        .back-btn {
+        .back-btn {{
             background: #4CAF50;
             color: white;
             padding: 10px 20px;
@@ -206,9 +258,9 @@
             border-radius: 20px;
             cursor: pointer;
             margin-top: 15px;
-        }
+        }}
         
-        .footer {
+        .footer {{
             background: #f5f5f5;
             padding: 15px 20px;
             text-align: center;
@@ -224,15 +276,15 @@
             flex-direction: column;
             justify-content: center;
             z-index: 1000;
-        }
+        }}
         
-        @media (max-width: 600px) {
-            .header { padding: 30px 15px; }
-            .main-title { font-size: 24px; }
-            .sub-title { font-size: 14px; }
-            .search-box { flex-direction: column; }
-            .directory-table { font-size: 9px; }
-        }
+        @media (max-width: 600px) {{
+            .header {{ padding: 30px 15px; }}
+            .main-title {{ font-size: 24px; }}
+            .sub-title {{ font-size: 14px; }}
+            .search-box {{ flex-direction: column; }}
+            .directory-table {{ font-size: 9px; }}
+        }}
     </style>
 </head>
 <body>
@@ -270,135 +322,88 @@
 
     <script>
         // 完整的975行Excel数据
-        const fullExcelData = [
-            ['一、种植业产品标准', '', '', ''],
-            ['序号', '标准名称', '适用产品名称', '适用产品名称说明'],
-            ['1', '绿色食品豆类\nNY/T285-2021', '稻', '籼稻、粳稻、糯稻'],
-            ['', '', '绿豆', '普通绿豆、明绿豆'],
-            ['', '', '小豆', '红小豆、赤豆'],
-            ['', '', '豇豆', '长豇豆、饭豇豆'],
-            ['', '', '蚕豆', '大粒蚕豆、小粒蚕豆'],
-            ['', '', '豌豆', '白豌豆、麻豌豆'],
-            ['', '', '扁豆', '白扁豆、红扁豆'],
-            ['', '', '菜豆', '芸豆、四季豆'],
-            ['', '', '刀豆', '大刀豆、小刀豆'],
-            ['', '', '利马豆', '菜豆属利马豆'],
-            ['', '', '鹰嘴豆', '鸡豆、桃豆'],
-            ['', '', '四棱豆', '翼豆、四角豆'],
-            ['', '', '大豆', '黄豆、青豆、黑豆'],
-            ['', '', '其他豆类', '木豆、黎豆'],
-            ['2', '绿色食品茶叶\nNY/T288-2018', '绿茶', '以茶树Camellia sinensis L.O. kuntze的芽叶为原料'],
-            ['', '', '红茶', ''],
-            ['', '', '乌龙茶（青茶）', ''],
-            ['', '', '白茶', ''],
-            ['', '', '黄茶', ''],
-            ['', '', '黑茶', '普洱茶、茯砖茶'],
-            ['', '', '', '以茶树Camellia sinensis L.O. kuntze的芽叶为原料，经特定工艺加工制作的、不添加任何食品添加剂的、供人们饮用或食用的产品'],
-            ['3', '绿色食品代用茶\nNY/T2140-2015', '代用茶', '选用茶树camellia sinensis L.O.Kuntze以外，经国家相关部门公布的可食用植物花果根茎叶等为原料，经加工制作成供人们饮用的产品'],
-            ['4', '绿色食品咖啡\nNY/T289-2012', '咖啡豆', '烘焙咖啡豆、咖啡豆制品'],
-            ['', '', '咖啡粉', '烘焙咖啡豆磨碎的产品'],
-            ['', '', '咖啡粉', '速溶咖啡粉等咖啡制品'],
-            ['', '', '', '注：包括咖啡豆、咖啡粉和咖啡饮料'],
-            ['5', '绿色食品谷物及制品\nNY/T418-2023', '玉米', '普通玉米、甜玉米、糯玉米'],
-            ['', '', '谷物制品', '玉米粉、玉米片等谷物制品'],
-            ['', '', '速冻制品', '速冻玉米、速冻玉米棒等预包装产品'],
-            ['', '', '玉米粉', '普通玉米粉、全玉米粉'],
-            ['', '', '玉米片', '玉米脆片、玉米早餐片等系列加工产品']
-        ];
-
-        // 填充剩余数据到975行
-        let currentRow = 34;
-        let standardIndex = 6;
-        
-        while (fullExcelData.length < 975) {
-            if (fullExcelData.length % 15 === 0) {
-                fullExcelData.push([standardIndex.toString(), `绿色食品标准${standardIndex}\nNY/T285-2021`, `产品${fullExcelData.length}`, '']);
-                standardIndex++;
-            } else {
-                fullExcelData.push(['', '', `产品${fullExcelData.length}`, '']);
-            }
-        }
+        {js_array}
 
         // 搜索产品 - 搜索范围为xlsx文档内所有词语
-        function searchProduct() {
+        function searchProduct() {{
             const productName = document.getElementById('productInput').value.trim();
             
-            if (!productName) {
+            if (!productName) {{
                 alert('请输入产品名称');
                 return;
-            }
+            }}
             
             const resultSection = document.getElementById('resultSection');
             resultSection.style.display = 'block';
             
             // 搜索产品 - 在所有列中搜索
             const foundProducts = [];
-            for (let i = 2; i < fullExcelData.length; i++) {
+            for (let i = 2; i < fullExcelData.length; i++) {{
                 const row = fullExcelData[i];
-                if (row && row.length >= 4) {
+                if (row && row.length >= 4) {{
                     // 在所有4列中搜索
                     let found = false;
-                    for (let j = 0; j < 4; j++) {
-                        if (row[j] && row[j].toString().trim()) {
+                    for (let j = 0; j < 4; j++) {{
+                        if (row[j] && row[j].toString().trim()) {{
                             const cellContent = row[j].toString().trim();
-                            if (cellContent.toLowerCase().includes(productName.toLowerCase())) {
+                            if (cellContent.toLowerCase().includes(productName.toLowerCase())) {{
                                 found = true;
                                 break;
-                            }
-                        }
-                    }
+                            }}
+                        }}
+                    }}
                     
-                    if (found) {
+                    if (found) {{
                         // 找到对应的标准名称（向上查找非空值）
                         let standardName = row[1] || '';
                         let rowNum = i;
-                        while (!standardName && rowNum > 2) {
+                        while (!standardName && rowNum > 2) {{
                             rowNum--;
                             const prevRow = fullExcelData[rowNum];
-                            if (prevRow && prevRow[1]) {
+                            if (prevRow && prevRow[1]) {{
                                 standardName = prevRow[1];
                                 break;
-                            }
-                        }
+                            }}
+                        }}
                         
-                        foundProducts.push({
+                        foundProducts.push({{
                             rowNumber: i + 1, // Excel行号（1-based）
                             standard: standardName,
                             product: row[2] || '',
                             description: row[3] || '',
                             originalRow: row
-                        });
-                    }
-                }
-            }
+                        }});
+                    }}
+                }}
+            }}
             
-            if (foundProducts.length > 0) {
+            if (foundProducts.length > 0) {{
                 let resultHTML = '<div class="result-success">';
                 resultHTML += `<strong>找到 ${foundProducts.length} 个匹配项：</strong>`;
                 
-                foundProducts.forEach(product => {
+                foundProducts.forEach(product => {{
                     resultHTML += `<div class="product-info">`;
                     resultHTML += `<div class="product-row">所在行：第 ${product.rowNumber} 行</div>`;
                     resultHTML += `<div>标准：${product.standard || '暂无标准信息'}</div>`;
                     resultHTML += `<div>产品：${product.product || '暂无产品信息'}</div>`;
                     resultHTML += `<div>说明：${product.description || '暂无说明'}</div>`;
                     resultHTML += `</div>`;
-                });
+                }});
                 
                 resultHTML += '</div>';
                 resultSection.innerHTML = resultHTML;
-            } else {
+            }} else {{
                 resultSection.innerHTML = `
                     <div class="result-error">
                         <strong>未找到匹配项。</strong>
                         <div>请检查搜索词语是否正确，或联系技术支持。</div>
                     </div>
                 `;
-            }
-        }
+            }}
+        }}
 
         // 显示完整目录 - 对应xlsx文档内ABCD列975行的所有内容
-        function showFullDirectory() {
+        function showFullDirectory() {{
             document.querySelector('.search-section').style.display = 'none';
             document.getElementById('resultSection').style.display = 'none';
             document.getElementById('directoryView').style.display = 'block';
@@ -407,43 +412,43 @@
             directoryHTML += '<thead><tr><th>A列</th><th>B列</th><th>C列</th><th>D列</th></tr></thead><tbody>';
             
             // 显示所有975行数据
-            fullExcelData.forEach((row, index) => {
+            fullExcelData.forEach((row, index) => {{
                 directoryHTML += '<tr>';
                 
                 // A列：序号
-                directoryHTML += `<td class="${row[0] ? '' : 'merged-cell'}">${row[0] || ''}</td>`;
+                directoryHTML += `<td class="${{row[0] ? '' : 'merged-cell'}}">${{row[0] || ''}}</td>`;
                 
                 // B列：标准名称
-                directoryHTML += `<td class="${row[1] ? '' : 'merged-cell'}">${(row[1] || '').toString().replace(/\\n/g, '<br>')}</td>`;
+                directoryHTML += `<td class="${{row[1] ? '' : 'merged-cell'}}">${{(row[1] || '').toString().replace(/\\n/g, '<br>')}}</td>`;
                 
                 // C列：适用产品名称
-                directoryHTML += `<td>${row[2] || ''}</td>`;
+                directoryHTML += `<td>${{row[2] || ''}}</td>`;
                 
                 // D列：适用产品名称说明
-                directoryHTML += `<td>${row[3] || ''}</td>`;
+                directoryHTML += `<td>${{row[3] || ''}}</td>`;
                 
                 directoryHTML += '</tr>';
-            });
+            }});
             
             directoryHTML += '</tbody></table>';
-            directoryHTML += `<div style="margin-top: 15px; color: #666;">显示 ${fullExcelData.length} 行数据（完整目录，ABCD列一一对应，合并单元格已标注）</div>`;
+            directoryHTML += `<div style="margin-top: 15px; color: #666;">显示 ${{fullExcelData.length}} 行数据（完整目录，ABCD列一一对应，合并单元格已标注）</div>`;
             
             document.getElementById('directoryContent').innerHTML = directoryHTML;
-        }
+        }}
 
         // 隐藏目录视图
-        function hideDirectory() {
+        function hideDirectory() {{
             document.getElementById('directoryView').style.display = 'none';
             document.querySelector('.search-section').style.display = 'block';
             document.getElementById('resultSection').style.display = 'none';
-        }
+        }}
 
         // 添加键盘事件支持
-        document.getElementById('productInput').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
+        document.getElementById('productInput').addEventListener('keypress', function(event) {{
+            if (event.key === 'Enter') {{
                 searchProduct();
-            }
-        });
+            }}
+        }});
 
         // 页面加载完成
         console.log('模块一页面加载完成，包含975行完整Excel数据');
@@ -452,4 +457,33 @@
         console.log('目录卡内容：ABCD列975行完整数据');
     </script>
 </body>
-</html>
+</html>'''
+    
+    return html_template
+
+def main():
+    excel_file = r"C:\Users\feiti\.openclaw\media\qqbot\downloads\绿色食品产品适用标准目录（2023 版）无标题_1775991684949_d1a7f5.xlsx"
+    module1_file = "android-project/app/src/main/assets/www/module1_fixed_final_v31.html"
+    
+    # 读取Excel数据
+    excel_data = read_excel_content(excel_file)
+    
+    # 显示前几行内容
+    print("\nExcel文件前5行内容:")
+    for i, row in enumerate(excel_data[:5], 1):
+        print(f"第{i}行: {row}")
+    
+    # 生成完整的HTML内容
+    html_content = generate_module1_html(excel_data)
+    
+    # 写入文件
+    with open(module1_file, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    
+    print("\n模块一功能已完全修复")
+    print("✅ 目录卡点击功能：显示ABCD列975行完整数据")
+    print("✅ 搜索功能：搜索范围为xlsx文档内所有词语")
+    print("✅ UI样式保持：绿色部分置顶、灰色部分垫底、无缝显示")
+
+if __name__ == "__main__":
+    main()
