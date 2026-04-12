@@ -10,35 +10,39 @@
             font-family: 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%); 
             min-height: 100vh; 
-            padding: 2%;
+            padding: 0;
+            margin: 0;
             color: #333;
         }
         
         .container { 
-            max-width: 95%; 
-            width: 900px;
-            margin: 20px auto; 
+            width: 100%;
+            height: 100vh;
             background: white; 
-            border-radius: 25px; 
-            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
+            border-radius: 0; 
+            box-shadow: none;
             overflow: hidden;
         }
         
         .header { 
             background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); 
             color: white; 
-            padding: 30px 20px; 
-            text-align: center; 
+            padding: 40px 20px; 
+            text-align: center;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .main-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             margin-bottom: 8px;
         }
         
         .sub-title {
-            font-size: 16px;
+            font-size: 18px;
             opacity: 0.9;
         }
         
@@ -46,6 +50,8 @@
             padding: 20px;
             background: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
+            height: calc(100vh - 240px);
+            overflow-y: auto;
         }
         
         .search-box {
@@ -149,7 +155,7 @@
         
         .directory-view {
             padding: 20px;
-            max-height: 600px;
+            height: calc(100vh - 240px);
             overflow-y: auto;
             display: none;
         }
@@ -200,16 +206,10 @@
             border-top: 1px solid #eee;
         }
         
-        @media (max-width: 2400px) {
-            .container { max-width: 95%; width: auto; }
-        }
-        @media (max-width: 1200px) {
-            .container { max-width: 98%; }
-        }
         @media (max-width: 600px) {
-            .container { border-radius: 15px; margin: 10px; }
-            .header { padding: 20px; }
+            .header { padding: 30px 15px; }
             .main-title { font-size: 24px; }
+            .sub-title { font-size: 14px; }
             .search-box { flex-direction: column; }
             .directory-table { font-size: 9px; }
         }
