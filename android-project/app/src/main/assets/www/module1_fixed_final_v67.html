@@ -242,9 +242,8 @@
             
             <div class="directory-card" onclick="showFullDirectory()">
                 <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
-                <div class="card-subtitle">点击查看完整产品目录（975行数据，基于最新CSV文件）</div>
+                <div class="card-subtitle">点击查看完整产品目录（基于最新Excel文件的完整975行数据）</div>
             </div>
-        </div>
         
         <div id="resultSection" class="result-section"></div>
         
@@ -937,7 +936,13 @@
         console.log('基于最新Excel文件构建');
         console.log('Excel数据总量:', fullExcelData.length);
         console.log('搜索范围：ABCD列所有词语');
-        console.log('目录卡内容：完整的975行数据');
+        console.log('目录卡内容：完整的' + fullExcelData.length + '行数据');
+        
+        // 验证数据完整性
+        console.log('数据验证：');
+        console.log('第1行:', fullExcelData[0]);
+        console.log('第2行:', fullExcelData[1]);
+        console.log('最后一行:', fullExcelData[fullExcelData.length - 1]);
 
         // 搜索产品函数
         function searchProduct() {
@@ -967,32 +972,49 @@
             
             resultSection.style.display = 'block';
             
-            // 搜索产品（从第2行开始搜索，跳过标题行）
+            // 搜索产品（在所有行中搜索ABCD列）
             var foundProducts = [];
-            for (var i = 2; i < fullExcelData.length; i++) {
+            console.log('开始搜索，数据长度:', fullExcelData.length);
+            
+            for (var i = 0; i < fullExcelData.length; i++) {
                 var row = fullExcelData[i];
-                if (row && row.length >= 3 && row[2]) {
-                    var productNameInExcel = row[2].toString().trim();
-                    if (productNameInExcel && 
-                        productNameInExcel.toLowerCase().includes(productName.toLowerCase())) {
+                if (row && row.length >= 4) {
+                    // 搜索所有列的内容
+                    var searchText = '';
+                    for (var j = 0; j < row.length; j++) {
+                        if (row[j]) {
+                            searchText += row[j].toString().toLowerCase() + ' ';
+                        }
+                    }
+                    
+                    if (searchText.toLowerCase().includes(productName.toLowerCase())) {
+                        console.log('找到匹配行:', i, row);
                         
-                        // 找到对应的标准名称（向上查找非空值）
-                        var standardName = row[1] || '';
-                        var rowNum = i;
-                        while (!standardName && rowNum > 2) {
-                            rowNum--;
-                            var prevRow = fullExcelData[rowNum];
-                            if (prevRow && prevRow[1]) {
-                                standardName = prevRow[1];
+                        // 查找对应的标准名称（向上查找第一个非空的标准名称）
+                        var standardName = '';
+                        var standardRowNum = i;
+                        
+                        // 向上查找直到找到标准名称
+                        while (standardRowNum >= 0 && !standardName) {
+                            var currentRow = fullExcelData[standardRowNum];
+                            if (currentRow && currentRow[1] && currentRow[1].toString().trim()) {
+                                standardName = currentRow[1].toString().trim();
                                 break;
                             }
+                            standardRowNum--;
+                        }
+                        
+                        // 如果没找到标准名称，使用默认值
+                        if (!standardName) {
+                            standardName = '标准名称未找到';
                         }
                         
                         foundProducts.push({
-                            name: productNameInExcel,
+                            name: row[2] || row[0] || row[1] || row[3] || '未命名产品',
                             rowNumber: i + 1,
                             standard: standardName,
-                            description: row[3] || ''
+                            description: row[3] || '',
+                            fullRow: row
                         });
                     }
                 }
@@ -1006,10 +1028,10 @@
                 
                 foundProducts.forEach(function(product) {
                     resultHTML += '<div class="product-info">';
-                    resultHTML += '<div class="product-row">产品：' + product.name + '</div>';
-                    resultHTML += '<div>所在行：第 ' + product.rowNumber + ' 行</div>';
-                    resultHTML += '<div>标准：' + (product.standard || '暂无标准信息') + '</div>';
-                    resultHTML += '<div>说明：' + (product.description || '暂无说明') + '</div>';
+                    resultHTML += '<div class="product-row"><strong>产品：</strong>' + product.name + '</div>';
+                    resultHTML += '<div><strong>所在行：</strong>第 ' + product.rowNumber + ' 行</div>';
+                    resultHTML += '<div><strong>适用标准：</strong>' + (product.standard || '暂无标准信息') + '</div>';
+                    resultHTML += '<div><strong>产品说明：</strong>' + (product.description || '暂无说明') + '</div>';
                     resultHTML += '</div>';
                 });
                 
@@ -1065,6 +1087,7 @@
             
             directoryHTML += '</tbody></table>';
             directoryHTML += '<div style="margin-top: 15px; color: #666;">显示 ' + fullExcelData.length + ' 行数据（完整目录，基于最新Excel文件）</div>';
+            directoryHTML += '<div style="margin-top: 10px; color: #666;">数据总量：' + fullExcelData.length + ' 行，包含ABCD列完整内容</div>';
             
             directoryContent.innerHTML = directoryHTML;
             console.log('目录内容已更新');
