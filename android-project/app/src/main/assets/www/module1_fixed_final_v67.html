@@ -169,6 +169,18 @@
             height: calc(100vh - 180px);
             overflow-y: auto;
             display: none;
+            background: white;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .directory-view h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            font-size: 18px;
         }
         
         .directory-table {
@@ -176,26 +188,67 @@
             border-collapse: collapse;
             margin-top: 15px;
             font-size: 11px;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed;
         }
         
         .directory-table th,
         .directory-table td {
             border: 1px solid #e0e0e0;
-            padding: 4px 6px;
+            padding: 6px 8px;
             text-align: left;
+            word-wrap: break-word;
+            vertical-align: top;
+            min-width: 50px;
         }
         
         .directory-table th {
-            background: #f8fff8;
+            background: #4CAF50;
+            color: white;
             font-weight: bold;
-            color: #2e7d32;
             position: sticky;
             top: 0;
+            z-index: 10;
+        }
+        
+        .directory-table td {
+            background: #ffffff;
+        }
+        
+        .directory-table tr:hover td {
+            background: #f8fff8;
         }
         
         .merged-cell {
             background-color: #f0f8f0;
             font-weight: bold;
+        }
+        
+        .directory-table {
+            width: 100% !important;
+            display: table !important;
+            visibility: visible !important;
+        }
+        
+        .back-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 14px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .back-btn:hover {
+            background: #2e7d32;
         }
         
         .back-btn {
@@ -943,6 +996,60 @@
         console.log('第1行:', fullExcelData[0]);
         console.log('第2行:', fullExcelData[1]);
         console.log('最后一行:', fullExcelData[fullExcelData.length - 1]);
+        
+        // 检查"饮用水"是否存在
+        var hasDrinkingWater = false;
+        for (var i = 0; i < fullExcelData.length; i++) {
+            var row = fullExcelData[i];
+            if (row && row.length >= 4) {
+                var searchText = row.join(' ').toLowerCase();
+                if (searchText.includes('饮用水')) {
+                    hasDrinkingWater = true;
+                    console.log('找到饮用水在第', i + 1, '行:', row);
+                    break;
+                }
+            }
+        }
+        console.log('饮用水存在:', hasDrinkingWater);
+        
+        // 测试搜索功能
+        console.log('测试搜索饮用水:');
+        var testProduct = '饮用水';
+        var foundProducts = [];
+        for (var i = 0; i < fullExcelData.length; i++) {
+            var row = fullExcelData[i];
+            if (row && row.length >= 4) {
+                var searchText = '';
+                for (var j = 0; j < row.length; j++) {
+                    if (row[j]) {
+                        searchText += row[j].toString().toLowerCase() + ' ';
+                    }
+                }
+                
+                if (searchText.toLowerCase().includes(testProduct.toLowerCase())) {
+                    console.log('找到饮用水在第', i + 1, '行:', row);
+                    foundProducts.push({row: i + 1, data: row});
+                }
+            }
+        }
+        console.log('找到饮用水数量:', foundProducts.length);
+        
+        // 检查数据完整性
+        console.log('=== 数据完整性检查 ===');
+        console.log('数据总行数:', fullExcelData.length);
+        console.log('第1行:', fullExcelData[0]);
+        console.log('第2行:', fullExcelData[1]);
+        console.log('第692行:', fullExcelData[691]); // 饮用水所在行
+        console.log('第974行:', fullExcelData[973]); // 最后一行
+        console.log('第975行:', fullExcelData[974]); // 最后一行
+        
+        // 检查数据是否完整
+        var hasAllData = fullExcelData.length === 975;
+        console.log('数据是否完整(975行):', hasAllData);
+        
+        if (!hasAllData) {
+            console.error('数据不完整！实际行数:', fullExcelData.length, '期望行数: 975');
+        }
 
         // 搜索产品函数
         function searchProduct() {
@@ -1091,6 +1198,18 @@
             
             directoryContent.innerHTML = directoryHTML;
             console.log('目录内容已更新');
+            console.log('目录HTML长度:', directoryHTML.length);
+            console.log('目录内容元素:', directoryContent);
+            console.log('目录视图元素:', directoryView);
+            console.log('目录视图display属性:', directoryView.style.display);
+            console.log('目录内容子元素数量:', directoryContent.children.length);
+            
+            // 强制显示调试信息
+            setTimeout(function() {
+                console.log('延迟检查目录内容:');
+                console.log('目录内容innerHTML长度:', directoryContent.innerHTML.length);
+                console.log('目录内容子元素:', directoryContent.children);
+            }, 100);
         }
 
         // 隐藏目录视图函数
