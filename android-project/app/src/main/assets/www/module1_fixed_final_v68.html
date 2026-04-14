@@ -2041,6 +2041,28 @@
         }
         console.log('找到饮用水数量:', foundProducts.length);
         
+        // 测试搜索矿泉水
+        console.log('测试搜索矿泉水:');
+        var testProduct2 = '矿泉水';
+        var foundProducts2 = [];
+        for (var i = 0; i < fullExcelData.length; i++) {
+            var row = fullExcelData[i];
+            if (row && row.length >= 4) {
+                var searchText = '';
+                for (var j = 0; j < row.length; j++) {
+                    if (row[j]) {
+                        searchText += row[j].toString().toLowerCase() + ' ';
+                    }
+                }
+                
+                if (searchText.toLowerCase().includes(testProduct2.toLowerCase())) {
+                    console.log('找到矿泉水在第', i + 1, '行:', row);
+                    foundProducts2.push({row: i + 1, data: row});
+                }
+            }
+        }
+        console.log('找到矿泉水数量:', foundProducts2.length);
+        
         // 检查数据完整性
         console.log('=== 数据完整性检查 ===');
         console.log('数据总行数:', fullExcelData.length);
@@ -2200,7 +2222,7 @@
             });
             
             directoryHTML += '</tbody></table>';
-            directoryHTML += '<div style="margin-top: 15px; color: #666;">显示 ' + fullExcelData.length + ' 行数据（完整目录，基于最新Excel文件）</div>';
+            directoryHTML += '<div style="margin-top: 15px; color: #666;">显示 ' + fullExcelData.length + ' 行数据（完整目录，基于最新CSV文件）</div>';
             directoryHTML += '<div style="margin-top: 10px; color: #666;">数据总量：' + fullExcelData.length + ' 行，包含ABCD列完整内容</div>';
             
             directoryContent.innerHTML = directoryHTML;
