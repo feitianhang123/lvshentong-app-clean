@@ -295,7 +295,7 @@
             
             <div class="directory-card" onclick="showFullDirectory()">
                 <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
-                <div class="card-subtitle">点击查看完整产品目录（基于最新CSV文件的完整974行数据）</div>
+                <div class="card-subtitle">点击查看完整产品目录（基于最新CSV文件的完整975行数据）</div>
             </div>
         
         <div id="resultSection" class="result-section"></div>
@@ -313,8 +313,40 @@
     </div>
 
     <script>
-        // 基于最新CSV文件的完整974行数据
+        // 页面加载完成后绑定事件
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，绑定事件');
+            
+            // 绑定目录卡点击事件
+            var directoryCard = document.querySelector('.directory-card');
+            if (directoryCard) {
+                directoryCard.addEventListener('click', showFullDirectory);
+                console.log('目录卡点击事件绑定成功');
+            }
+            
+            // 绑定搜索按钮点击事件
+            var searchBtn = document.querySelector('.search-btn');
+            if (searchBtn) {
+                searchBtn.addEventListener('click', searchProduct);
+                console.log('搜索按钮点击事件绑定成功');
+            }
+            
+            // 绑定回车键搜索
+            var searchInput = document.getElementById('productInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        searchProduct();
+                    }
+                });
+                console.log('回车键搜索事件绑定成功');
+            }
+        });
+        
+        // 基于最新CSV文件的完整975行数据
         var fullExcelData = [
+    ["一、种植业产品标准", "", "", ""],
+    ["序号", "标准名称", "适用产品名称", "适用产品别名及说明"],
     ["序号", "标准名称", "适用产品名称", "适用产品别名及说明"],
     ["1", "绿色食品豆类\\nNY/T285-2021", "大豆", "黄豆、黄大豆、黑豆、黑大豆、乌豆、青豆等"],
     [, , "蚕豆", "胡豆、佛豆、罗汉豆"],
