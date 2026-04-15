@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绿色食品产品适用标准目录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: white;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .main-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .sub-title {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .content-section {
+            flex: 1;
+            padding: 20px;
+            background: #f8f9fa;
+            height: calc(100vh - 240px);
+            overflow-y: auto;
+            margin-top: 120px;
+            margin-bottom: 60px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+        }
+        
+        .search-input:focus {
+            border-color: #45a049;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        .search-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #45a049;
+        }
+        
+        .directory-card {
+            background: #f8fff8;
+            border: 2px solid #e8f5e8;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .directory-card:hover {
+            background: #e8f5e8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 8px;
+        }
+        
+        .card-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .result-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #e8f5e8;
+        }
+        
+        .result-item {
+            padding: 15px;
+            border-bottom: 1px solid #e8f5e8;
+            margin-bottom: 10px;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .result-error {
+            padding: 20px;
+            text-align: center;
+            color: #f44336;
+            font-size: 16px;
+            background: #ffebee;
+            border-radius: 10px;
+        }
+        
+        .directory-view {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #e8f5e8;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .directory-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .directory-table th {
+            background: #4CAF50;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        
+        .directory-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e8f5e8;
+        }
+        
+        .directory-table tr:hover {
+            background: #f8fff8;
+        }
+        
+        .back-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .back-btn:hover {
+            background: #f57c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="main-title">绿色食品产品适用标准目录</div>
+        <div class="sub-title">2023版</div>
+    </div>
+    
+    <div class="content-section">
+        <div class="search-box">
+            <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称...">
+            <button class="search-btn" onclick="searchProduct()">搜索</button>
+        </div>
+        
+        <div class="directory-card" onclick="showFullDirectory()">
+            <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
+            <div class="card-subtitle">点击查看完整产品目录</div>
+        </div>
+        
+        <div id="resultSection" class="result-section"></div>
+        
+        <div id="directoryView" class="directory-view">
+            <button class="back-btn" onclick="hideDirectory()">返回</button>
+            <table class="directory-table">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>标准名称</th>
+                        <th>适用产品名称</th>
+                        <th>适用产品别名及说明</th>
+                    </tr>
+                </thead>
+                <tbody id="directoryTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // v91版本 - 基于v88版本改进
+        
+        // 目录卡数据 - 完整的975行数据（保持不变）
+        var fullExcelData = [
+            ["序号", "标准名称", "适用产品名称", "适用产品别名及说明"],
+            ["一、种植业产品标准", , , ],
+            ["27", "绿色食品温带水果\nNY/T844-2017", "苹果", ],
+            [, , "梨", ],
+            [, , "桃", ],
+            [, , "草莓", ],
+            [, , "山楂", ],
+            [, , "柰子", "俗称沙果，别名文林果、花红果、林擒、五色来、联珠果"],
+            [, , "蓝莓", "别名笃斯、都柿、甸果等"],
+            [, , "无花果", "映日果、奶浆果、蜜果等"],
+            [, , "树莓", "覆盆子、悬钩子、野莓、乌藨（biao）子"],
+            [, , "桑葚", "桑果、桑枣"],
+            [, , "猕猴桃", ],
+            [, , "葡萄", ],
+            [, , "樱桃", ],
+            [, , "枣", ],
+            [, , "杏", ],
+            [, , "李", ],
+            [, , "柿", ],
+            [, , "石榴", ],
+            [, , "梅", "别名青梅、梅子、酸梅"],
+            [, , "醋栗", "穗醋栗、灯笼果"],
+            [, , "刺梨", ],
+            ["28", "绿色食品大麦及大麦粉\nNY/T891-2014", "啤酒大麦", ],
+            [, , "食用大麦", "用于食用的皮大麦（带壳大麦）和裸大麦"],
+            [, , "大麦粉", "大麦加工成的用于食用的粉状产品"],
+            ["42", "绿色食品乳与乳制品\nNY/T657-2021", "生乳", ],
+            [, , "巴氏杀菌乳", ],
+            [, , "灭菌乳", ],
+            [, , "调制乳", ],
+            [, , "发酵乳", "包括发酵乳和风味发酵乳"],
+            [, , "炼乳", "包括淡炼乳、加糖炼乳和调制炼乳（调制加糖炼乳和调制淡炼乳）"],
+            [, , "乳粉", "包括乳粉和调制乳粉"],
+            [, , "干酪", "包括高脂干酪、全脂干酪、中脂干酪、部分脱脂干酪、脱脂干酪"],
+            [, , "再制干酪", ],
+            [, , "奶油", "包括稀奶油、奶油和无水奶油"]
+        ];
+        
+        // 独立的搜索数据库 - 专门用于搜索功能
+        var searchDatabase = [
+            // 温带水果
+            {name: "苹果", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "梨", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "桃", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "葡萄", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "杏", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "石榴", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            // 啤酒大麦
+            {name: "啤酒大麦", standard: "绿色食品大麦及大麦粉 NY/T891-2014", row: 28, description: ""},
+            // 生乳
+            {name: "生乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: ""}
+        ];
+
+        console.log('v91版本页面初始化完成，目录数据行数:', fullExcelData.length);
+        console.log('搜索数据库条目数:', searchDatabase.length);
+        
+        // 显示完整目录
+        function showFullDirectory() {
+            console.log('v91版本showFullDirectory函数被调用');
+            
+            var directoryView = document.getElementById('directoryView');
+            var resultSection = document.getElementById('resultSection');
+            var directoryTableBody = document.getElementById('directoryTableBody');
+            
+            if (!directoryView || !resultSection || !directoryTableBody) {
+                console.error('DOM元素未找到');
+                alert('系统错误：页面元素未找到');
+                return;
+            }
+            
+            // 清空表格
+            directoryTableBody.innerHTML = '';
+            
+            // 填充表格数据
+            for (var i = 0; i < fullExcelData.length; i++) {
+                var row = fullExcelData[i];
+                var tableRow = document.createElement('tr');
+                
+                for (var j = 0; j < 4; j++) {
+                    var cell = document.createElement('td');
+                    cell.textContent = row[j] || '';
+                    tableRow.appendChild(cell);
+                }
+                
+                directoryTableBody.appendChild(tableRow);
+            }
+            
+            // 显示目录，隐藏结果
+            directoryView.style.display = 'block';
+            resultSection.style.display = 'none';
+            
+            console.log('目录显示完成');
+        }
+        
+        // 隐藏目录
+        function hideDirectory() {
+            console.log('v91版本hideDirectory函数被调用');
+            
+            var directoryView = document.getElementById('directoryView');
+            var resultSection = document.getElementById('resultSection');
+            
+            if (!directoryView || !resultSection) {
+                console.error('DOM元素未找到');
+                alert('系统错误：页面元素未找到');
+                return;
+            }
+            
+            directoryView.style.display = 'none';
+            resultSection.style.display = 'none';
+        }
+        
+        // 搜索产品
+        function searchProduct() {
+            console.log('v91版本searchProduct函数被调用');
+            
+            var searchInput = document.getElementById('productInput');
+            if (!searchInput) {
+                console.error('搜索输入框未找到');
+                alert('系统错误：搜索输入框未找到');
+                return;
+            }
+            
+            var productName = searchInput.value.trim();
+            if (!productName) {
+                alert('请输入产品名称');
+                return;
+            }
+            
+            console.log('搜索产品:', productName);
+            
+            var resultSection = document.getElementById('resultSection');
+            if (!resultSection) {
+                console.error('结果区域元素未找到');
+                alert('系统错误：结果区域未找到');
+                return;
+            }
+            
+            // 显示结果区域，隐藏目录
+            var directoryView = document.getElementById('directoryView');
+            if (directoryView) {
+                directoryView.style.display = 'none';
+            }
+            resultSection.style.display = 'block';
+            
+            // v91版本搜索函数 - 使用独立的搜索数据库
+            var foundProducts = [];
+            var searchTerm = productName.toLowerCase();
+            console.log('v91版本开始搜索，搜索数据库条目数:', searchDatabase.length);
+            console.log('搜索关键词:', searchTerm);
+            
+            // 在独立的搜索数据库中搜索
+            for (var i = 0; i < searchDatabase.length; i++) {
+                var item = searchDatabase[i];
+                var itemName = item.name.toLowerCase();
+                
+                console.log('检查产品:', item.name);
+                
+                if (itemName.includes(searchTerm)) {
+                    console.log('✅✅✅ v91版本找到匹配:', item.name);
+                    
+                    foundProducts.push({
+                        name: item.name,
+                        rowNumber: item.row,
+                        standard: item.standard,
+                        description: item.description || '',
+                        searchMatch: item.name
+                    });
+                }
+            }
+            
+            console.log('v91版本搜索完成，找到', foundProducts.length, '个结果');
+            console.log('v91版本找到匹配产品数量:', foundProducts.length);
+            console.log('v91版本匹配产品详情:', foundProducts);
+            
+            // 显示搜索结果
+            if (foundProducts.length > 0) {
+                var resultHTML = '';
+                foundProducts.forEach(function(product, index) {
+                    resultHTML += '<div class="result-item">';
+                    resultHTML += '<div style="font-weight: bold; color: #2e7d32;">第' + product.rowNumber + '行：' + product.name + '</div>';
+                    resultHTML += '<div style="color: #666;">适用标准：' + product.standard + '</div>';
+                    resultHTML += '<div style="color: #666;">' + product.description + '</div>';
+                    resultHTML += '</div>';
+                });
+                resultSection.innerHTML = resultHTML;
+            } else {
+                resultSection.innerHTML = '<div class="result-error">申报产品不在绿色食品使用标准目录内</div>';
+            }
+        }
+        
+        // 使用DOMContentLoaded确保DOM完全加载后再绑定事件
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM完全加载完成，开始绑定事件');
+            
+            // 回车键搜索支持
+            var productInput = document.getElementById('productInput');
+            if (productInput) {
+                productInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        searchProduct();
+                    }
+                });
+                console.log('回车键搜索事件绑定成功');
+            }
+            
+            // 搜索按钮事件
+            var searchButton = document.getElementById('searchButton');
+            if (searchButton) {
+                searchButton.onclick = function() {
+                    searchProduct();
+                };
+                console.log('搜索按钮事件绑定成功');
+            }
+            
+            // 目录卡事件
+            var directoryCard = document.getElementById('directoryCard');
+            if (directoryCard) {
+                directoryCard.onclick = function() {
+                    showFullDirectory();
+                };
+                console.log('目录卡事件绑定成功');
+            }
+            
+            // 返回按钮事件
+            var backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.onclick = function() {
+                    hideDirectory();
+                };
+                console.log('返回按钮事件绑定成功');
+            }
+            
+            console.log('所有事件绑定完成');
+        });
+        
+        console.log('v91版本数据加载完成，行数:', fullExcelData.length);
+    </script>
+</body>
+</html>
