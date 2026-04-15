@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直接搜索测试</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .result { padding: 10px; margin: 5px; background: #f0f0f0; }
+        .success { background: #d4edda; }
+        .failure { background: #f8d7da; }
+        .debug { background: #e3f2fd; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>直接搜索测试 - 使用模块一实际数据</h1>
+    <div id="debug"></div>
+    <div id="results"></div>
+
+    <script>
+        // 从模块一v85版本复制实际数据
+        var fullExcelData = [
+            ["序号", "标准名称", "适用产品名称", "适用产品别名及说明"],
+            ["一、种植业产品标准", , , ],
+            ["27", "绿色食品温带水果\nNY/T844-2017", "苹果", ],
+            [, , "梨", ],
+            [, , "桃", ],
+            [, , "草莓", ],
+            [, , "山楂", ],
+            [, , "柰子", "俗称沙果，别名文林果、花红果、林擒、五色来、联珠果"],
+            [, , "蓝莓", "别名笃斯、都柿、甸果等"],
+            [, , "无花果", "映日果、奶浆果、蜜果等"],
+            [, , "树莓", "覆盆子、悬钩子、野莓、乌藨（biao）子"],
+            [, , "桑葚", "桑果、桑枣"],
+            [, , "猕猴桃", ],
+            [, , "葡萄", ],
+            [, , "樱桃", ],
+            [, , "枣", ],
+            [, , "杏", ],
+            [, , "李", ],
+            [, , "柿", ],
+            [, , "石榴", ],
+            [, , "梅", "别名青梅、梅子、酸梅"],
+            [, , "醋栗", "穗醋栗、灯笼果"],
+            [, , "刺梨", ],
+            ["28", "绿色食品大麦及大麦粉\nNY/T891-2014", "啤酒大麦", ],
+            [, , "食用大麦", "用于食用的皮大麦（带壳大麦）和裸大麦"],
+            [, , "大麦粉", "大麦加工成的用于食用的粉状产品"],
+            ["42", "绿色食品乳与乳制品\nNY/T657-2021", "生乳", ],
+            [, , "巴氏杀菌乳", ],
+            [, , "灭菌乳", ],
+            [, , "调制乳", ],
+            [, , "发酵乳", "包括发酵乳和风味发酵乳"],
+            [, , "炼乳", "包括淡炼乳、加糖炼乳和调制炼乳（调制加糖炼乳和调制淡炼乳）"],
+            [, , "乳粉", "包括乳粉和调制乳粉"],
+            [, , "干酪", "包括高脂干酪、全脂干酪、中脂干酪、部分脱脂干酪、脱脂干酪"],
+            [, , "再制干酪", ],
+            [, , "奶油", "包括稀奶油、奶油和无水奶油"]
+        ];
+
+        // 直接测试搜索
+        function directSearch(productName) {
+            var debug = document.getElementById('debug');
+            var results = document.getElementById('results');
+            
+            debug.innerHTML = '<h3>搜索关键词: "' + productName + '"</h3>';
+            debug.innerHTML += '<p>数据总行数: ' + fullExcelData.length + '</p>';
+            
+            var found = false;
+            var foundRows = [];
+            
+            for (var i = 0; i < fullExcelData.length; i++) {
+                var row = fullExcelData[i];
+                debug.innerHTML += '<div style="border: 1px solid #ccc; margin: 5px; padding: 5px;">';
+                debug.innerHTML += '<strong>第' + (i+1) + '行:</strong> ' + JSON.stringify(row) + '<br>';
+                
+                for (var j = 0; j < row.length; j++) {
+                    var cell = row[j];
+                    if (cell && cell.toString().toLowerCase().includes(productName.toLowerCase())) {
+                        debug.innerHTML += '<span style="color: green; font-weight: bold;">✅ 匹配! 第' + (j+1) + '列: ' + cell + '</span><br>';
+                        found = true;
+                        foundRows.push({
+                            row: i+1,
+                            column: j+1,
+                            value: cell,
+                            fullRow: row
+                        });
+                    }
+                }
+                debug.innerHTML += '</div>';
+            }
+            
+            var resultDiv = document.createElement('div');
+            resultDiv.className = 'result ' + (found ? 'success' : 'failure');
+            
+            if (found) {
+                resultDiv.innerHTML = '<strong>✅ ' + productName + ' - 找到 ' + foundRows.length + ' 个结果</strong><br>';
+                foundRows.forEach(function(item) {
+                    resultDiv.innerHTML += '第' + item.row + '行第' + item.column + '列: ' + item.value + '<br>';
+                    
+                    // 查找标准名称
+                    var standardName = '';
+                    for (var k = item.row-1; k >= 0; k--) {
+                        var standardRow = fullExcelData[k];
+                        if (standardRow && standardRow[1] && standardRow[1].toString().trim()) {
+                            standardName = standardRow[1].toString().trim();
+                            break;
+                        }
+                    }
+                    resultDiv.innerHTML += '适用标准: ' + standardName + '<hr>';
+                });
+            } else {
+                resultDiv.innerHTML = '<strong>❌ ' + productName + ' - 未找到结果</strong>';
+            }
+            
+            results.appendChild(resultDiv);
+        }
+
+        // 测试所有产品
+        var products = ["苹果", "梨", "桃", "葡萄", "杏", "石榴", "啤酒大麦", "生乳"];
+        products.forEach(function(product) {
+            directSearch(product);
+        });
+    </script>
+</body>
+</html>
