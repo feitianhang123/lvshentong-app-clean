@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            background: #e8f5e8;
+            border-color: #4CAF50;
+        }
+        .failure {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>搜索功能测试</h1>
+    <div id="results"></div>
+
+    <script>
+        // 测试数据（从模块一v83版本复制）
+        var fullExcelData = [
+            ["一、种植业产品标准", , , ],
+            ["27", "绿色食品温带水果\nNY/T844-2017", "苹果", ],
+            [, , "梨", ],
+            [, , "桃", ],
+            [, , "草莓", ],
+            [, , "山楂", ],
+            [, , "柰子", "俗称沙果，别名文林果、花红果、林擒、五色来、联珠果"],
+            [, , "蓝莓", "别名笃斯、都柿、甸果等"],
+            [, , "无花果", "映日果、奶浆果、蜜果等"],
+            [, , "树莓", "覆盆子、悬钩子、野莓、乌藨（biao）子"],
+            [, , "桑葚", "桑果、桑枣"],
+            [, , "猕猴桃", ],
+            [, , "葡萄", ],
+            [, , "樱桃", ],
+            [, , "枣", ],
+            [, , "杏", ],
+            [, , "李", ],
+            [, , "柿", ],
+            [, , "石榴", ],
+            [, , "梅", "别名青梅、梅子、酸梅"],
+            [, , "醋栗", "穗醋栗、灯笼果"],
+            [, , "刺梨", ],
+            ["28", "绿色食品大麦及大麦粉\nNY/T891-2014", "啤酒大麦", ],
+            ["42", "绿色食品乳与乳制品\nNY/T657-2021", "生乳", ]
+        ];
+
+        // 搜索函数（与模块一相同）
+        function searchProduct(productName) {
+            var foundProducts = [];
+            console.log('开始搜索，数据长度:', fullExcelData.length);
+            console.log('搜索关键词:', productName);
+            
+            for (var i = 0; i < fullExcelData.length; i++) {
+                var row = fullExcelData[i];
+                if (row && row.length >= 4) {
+                    var foundInRow = false;
+                    var searchResult = '';
+                    
+                    for (var j = 0; j < row.length; j++) {
+                        if (row[j] && row[j].toString().toLowerCase().includes(productName.toLowerCase())) {
+                            foundInRow = true;
+                            searchResult = row[j].toString();
+                            break;
+                        }
+                    }
+                    
+                    if (foundInRow) {
+                        console.log('找到匹配产品在第', i + 1, '行:', row);
+                        console.log('匹配内容:', searchResult);
+                        
+                        var standardName = '';
+                        var standardRowNum = i;
+                        
+                        while (standardRowNum >= 0 && !standardName) {
+                            var currentRow = fullExcelData[standardRowNum];
+                            if (currentRow && currentRow[1] && currentRow[1].toString().trim()) {
+                                standardName = currentRow[1].toString().trim();
+                                break;
+                            }
+                            standardRowNum--;
+                        }
+                        
+                        if (!standardName) {
+                            standardName = '标准名称未找到';
+                        }
+                        
+                        var productDisplayName = row[2] || row[0] || row[1] || row[3] || '未命名产品';
+                        
+                        foundProducts.push({
+                            name: productDisplayName,
+                            rowNumber: i + 1,
+                            standard: standardName,
+                            description: row[3] || '',
+                            fullRow: row,
+                            searchMatch: searchResult
+                        });
+                    }
+                }
+            }
+            
+            console.log('找到匹配产品数量:', foundProducts.length);
+            console.log('匹配产品详情:', foundProducts);
+            return foundProducts;
+        }
+
+        // 测试函数
+        function runTests() {
+            var testProducts = ["苹果", "梨", "桃", "葡萄", "杏", "石榴", "啤酒大麦", "生乳"];
+            var results = document.getElementById('results');
+            
+            testProducts.forEach(function(product) {
+                var found = searchProduct(product);
+                var testItem = document.createElement('div');
+                testItem.className = 'test-item ' + (found.length > 0 ? 'success' : 'failure');
+                
+                if (found.length > 0) {
+                    testItem.innerHTML = '<strong>✅ ' + product + '</strong> - 找到 ' + found.length + ' 个结果<br>';
+                    found.forEach(function(item) {
+                        testItem.innerHTML += '第' + item.rowNumber + '行: ' + item.name + ' (' + item.standard + ')<br>';
+                    });
+                } else {
+                    testItem.innerHTML = '<strong>❌ ' + product + '</strong> - 未找到结果';
+                }
+                
+                results.appendChild(testItem);
+            });
+        }
+
+        // 运行测试
+        runTests();
+    </script>
+</body>
+</html>
