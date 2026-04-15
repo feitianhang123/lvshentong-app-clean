@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>产品目录 - 绿色食品申报通</title>
+    <title>产品目录 - 绿色食品申报通 v92</title>
     <style>
         * {
             margin: 0;
@@ -39,13 +39,13 @@
         }
         
         .main-title {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             margin-bottom: 8px;
         }
         
         .sub-title {
-            font-size: 18px;
+            font-size: 16px;
             opacity: 0.9;
         }
         
@@ -409,29 +409,49 @@
             }
             resultSection.style.display = 'block';
             
-            // v92版本搜索函数 - 使用独立的搜索数据库
+            // v92版本搜索函数 - 按照搜索规则：在目录卡数据中搜索
             var foundProducts = [];
-            var searchTerm = productName.toLowerCase();
-            console.log('v92版本开始搜索，搜索数据库条目数:', searchDatabase.length);
-            console.log('搜索关键词:', searchTerm);
+            console.log('v92版本开始搜索，数据长度:', fullExcelData.length);
+            console.log('搜索关键词:', productName);
             
-            // 在独立的搜索数据库中搜索
-            for (var i = 0; i < searchDatabase.length; i++) {
-                var item = searchDatabase[i];
-                var itemName = item.name.toLowerCase();
+            // 在目录卡数据中搜索所有内容
+            for (var i = 0; i < fullExcelData.length; i++) {
+                var row = fullExcelData[i];
                 
-                console.log('检查产品:', item.name);
+                if (!row || row.length < 4) continue;
                 
-                if (itemName.includes(searchTerm)) {
-                    console.log('✅✅✅ v92版本找到匹配:', item.name);
+                // 检查每一列
+                for (var j = 0; j < row.length; j++) {
+                    var cellValue = row[j];
+                    if (!cellValue) continue;
                     
-                    foundProducts.push({
-                        name: item.name,
-                        rowNumber: item.row,
-                        standard: item.standard,
-                        description: item.description || '',
-                        searchMatch: item.name
-                    });
+                    var cellString = cellValue.toString().toLowerCase();
+                    if (cellString.includes(productName.toLowerCase())) {
+                        console.log('✅✅✅ v92版本找到匹配: 第' + (i+1) + '行第' + (j+1) + '列 =', cellValue);
+                        
+                        // 查找标准名称 - 向上查找第一个非空标准名称
+                        var standardName = '';
+                        for (var k = i; k >= 0; k--) {
+                            var standardRow = fullExcelData[k];
+                            if (standardRow && standardRow[1] && standardRow[1].toString().trim()) {
+                                standardName = standardRow[1].toString().trim();
+                                break;
+                            }
+                        }
+                        
+                        // 确定产品显示名称
+                        var productDisplayName = row[2] || row[0] || row[1] || row[3] || cellValue;
+                        
+                        foundProducts.push({
+                            name: productDisplayName,
+                            rowNumber: i + 1,
+                            standard: standardName || '标准名称未找到',
+                            description: row[3] || '',
+                            fullRow: row,
+                            searchMatch: cellValue
+                        });
+                        break; // 找到匹配就跳出内层循环
+                    }
                 }
             }
             
@@ -518,19 +538,127 @@
             console.log('所有事件绑定完成');
         });
         
-        // 独立的搜索数据库 - 专门用于搜索功能
+        // 独立的搜索数据库 - 包含CSV文档所有内容
         var searchDatabase = [
-            // 温带水果
+            // 豆类
+            {name: "大豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "黄豆、黄大豆、黑豆、黑大豆、乌豆、青豆等"},
+            {name: "蚕豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "胡豆、佛豆、罗汉豆"},
+            {name: "绿豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "菉豆、植豆、青小豆"},
+            {name: "小豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "赤豆、红小豆、米赤豆、朱豆"},
+            {name: "芸豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "普通菜豆、干菜豆、腰豆"},
+            {name: "豇豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "长豆、角豆"},
+            {name: "豌豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "雪豆、毕豆、寒豆、荷兰豆"},
+            {name: "饭豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "米豆、精米豆、爬山豆"},
+            {name: "小扁豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "兵豆、滨豆、洋扁豆、鸡眼豆"},
+            {name: "鹰嘴豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "鹰咀豆、鸡豆、桃豆、回鹘豆、回回豆、脑核豆"},
+            {name: "木豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "树豆、扭豆、豆蓉"},
+            {name: "羽扇豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "鲁冰花"},
+            {name: "利马豆", standard: "绿色食品豆类 NY/T285-2021", row: 1, description: "棉豆、懒人豆、荷包豆、白豆"},
+            
+            // 茶叶
+            {name: "绿茶", standard: "绿色食品茶叶 NY/T288-2018", row: 2, description: "包括各种绿茶及以绿茶为原料的窨制花茶"},
+            {name: "红茶", standard: "绿色食品茶叶 NY/T288-2018", row: 2, description: ""},
+            {name: "青茶", standard: "绿色食品茶叶 NY/T288-2018", row: 2, description: "乌龙茶"},
+            {name: "黄茶", standard: "绿色食品茶叶 NY/T288-2018", row: 2, description: ""},
+            {name: "白茶", standard: "绿色食品茶叶 NY/T288-2018", row: 2, description: ""},
+            {name: "黑茶", standard: "绿色食品茶叶 NY/T288-2018", row: 2, description: "普洱茶、紧压茶"},
+            {name: "代用茶", standard: "绿色食品代用茶 NY/T2140-2015", row: 3, description: "选用除茶以外，由国家行政主管部门公布的可用于食品的植物花及花蕾、芽叶、果（实）、根茎等为原料"},
+            
+            // 咖啡
+            {name: "生咖啡", standard: "绿色食品咖啡 NY/T289-2012", row: 4, description: "咖啡鲜果经干燥脱壳处理所得产品"},
+            {name: "焙炒咖啡豆", standard: "绿色食品咖啡 NY/T289-2012", row: 4, description: "生咖啡经焙炒所得产品"},
+            {name: "咖啡粉", standard: "绿色食品咖啡 NY/T289-2012", row: 4, description: "焙炒咖啡豆磨碎后的产品"},
+            
+            // 玉米及其制品
+            {name: "玉米", standard: "绿色食品玉米及其制品 NY/T418-2023", row: 5, description: "普通玉米、高淀粉玉米、高蛋白玉米、高油玉米"},
+            {name: "鲜食玉米", standard: "绿色食品玉米及其制品 NY/T418-2023", row: 5, description: "包括甜玉米、糯玉米、甜加糯玉米。同时适用于生、熟产品"},
+            {name: "速冻玉米", standard: "绿色食品玉米及其制品 NY/T418-2023", row: 5, description: "速冻糯玉米、速冻甜玉米、速冻甜加糯玉米的熟制预包装产品"},
+            {name: "玉米粉", standard: "绿色食品玉米及其制品 NY/T418-2023", row: 5, description: "脱胚玉米粉、全玉米粉"},
+            {name: "玉米糁", standard: "绿色食品玉米及其制品 NY/T418-2023", row: 5, description: "玉米粒经除杂、脱胚、研磨和筛分等系列工序加工而成的颗粒状产品"},
+            
+            // 稻米
+            {name: "稻谷", standard: "绿色食品稻米 NY/T419-2021", row: 6, description: ""},
+            {name: "大米", standard: "绿色食品稻米 NY/T419-2021", row: 6, description: "含糯米"},
+            {name: "糙米", standard: "绿色食品稻米 NY/T419-2021", row: 6, description: "稻谷脱壳后保留着皮层和胚芽的米"},
+            {name: "胚芽米", standard: "绿色食品稻米 NY/T419-2021", row: 6, description: "胚芽保留率达75%以上的精米"},
+            {name: "蒸谷米", standard: "绿色食品稻米 NY/T419-2021", row: 6, description: "稻谷经清理、浸泡、蒸煮、干燥等处理后，再按常规稻谷碾米加工方法生产的稻米"},
+            {name: "紫（黑）米", standard: "绿色食品稻米 NY/T419-2021", row: 6, description: ""},
+            {name: "红米", standard: "绿色食品稻米 NY/T419-2021", row: 6, description: "糙米天然色泽为棕红色的稻米"},
+            
+            // 花生及制品
+            {name: "食用花生", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "果、仁"},
+            {name: "油用花生", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "果、仁"},
+            {name: "水煮花生", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "果、仁"},
+            {name: "烤花生", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "包括原味烤花生、调味花生"},
+            {name: "烤花生仁", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "包括红衣型、脱红衣型"},
+            {name: "烤花生碎", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: ""},
+            {name: "乳白花生", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: ""},
+            {name: "乳白花生碎", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: ""},
+            {name: "炒花生仁", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "包括红衣型、脱红衣型"},
+            {name: "炒花生果", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: ""},
+            {name: "油炸花生仁", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: ""},
+            {name: "裹衣花生", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "包括淀粉型、糖衣型、混合型"},
+            {name: "花生蛋白粉", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: ""},
+            {name: "花生组织蛋白", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: ""},
+            {name: "花生酱", standard: "绿色食品花生及制品 NY/T420-2017", row: 7, description: "包括纯花生酱、稳定型花生酱、复合型花生酱"},
+            
+            // 小麦及小麦粉
+            {name: "小麦", standard: "绿色食品小麦及小麦粉 NY/T421-2021", row: 8, description: "禾本科小麦属普通小麦种"},
+            {name: "小麦粉", standard: "绿色食品小麦及小麦粉 NY/T421-2021", row: 8, description: "以小麦为原料，经清理、水分调节、研磨、筛理等工艺加工而成的粉状产品"},
+            {name: "全麦粉", standard: "绿色食品小麦及小麦粉 NY/T421-2021", row: 8, description: "以整粒小麦为原料，经制粉工艺制成的，且小麦胚乳、胚芽与麸皮的相对比例与天然完整颖果基本一致的小麦全粉"},
+            
+            // 柑橘类水果
+            {name: "宽皮柑橘类鲜果", standard: "绿色食品柑橘类水果 NY/T426-2021", row: 9, description: ""},
+            {name: "甜橙类鲜果", standard: "绿色食品柑橘类水果 NY/T426-2021", row: 9, description: ""},
+            {name: "柚类鲜果", standard: "绿色食品柑橘类水果 NY/T426-2021", row: 9, description: ""},
+            {name: "柠檬类鲜果", standard: "绿色食品柑橘类水果 NY/T426-2021", row: 9, description: ""},
+            {name: "金柑类鲜果", standard: "绿色食品柑橘类水果 NY/T426-2021", row: 9, description: ""},
+            {name: "杂交柑橘类鲜果", standard: "绿色食品柑橘类水果 NY/T426-2021", row: 9, description: ""},
+            
+            // 西甜瓜
+            {name: "薄皮甜瓜", standard: "绿色食品西甜瓜 NY/T427-2016", row: 10, description: "果肉厚度一般不大于2.5cm的甜瓜"},
+            {name: "厚皮甜瓜", standard: "绿色食品西甜瓜 NY/T427-2016", row: 10, description: "果肉厚度一般大于2.5cm的甜瓜"},
+            {name: "西瓜", standard: "绿色食品西甜瓜 NY/T427-2016", row: 10, description: "包括普通西瓜、籽用西瓜（打瓜）、无籽西瓜及用于腌制或育种的小西瓜等"},
+            
+            // 温带水果 - 苹果、梨、桃等
             {name: "苹果", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
             {name: "梨", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
             {name: "桃", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "草莓", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "山楂", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "柰子", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: "俗称沙果，别名文林果、花红果、林擒、五色来、联珠果"},
+            {name: "蓝莓", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: "别名笃斯、都柿、甸果等"},
+            {name: "无花果", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: "映日果、奶浆果、蜜果等"},
+            {name: "树莓", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: "覆盆子、悬钩子、野莓、乌藨（biao）子"},
+            {name: "桑葚", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: "桑果、桑枣"},
+            {name: "猕猴桃", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
             {name: "葡萄", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "樱桃", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "枣", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
             {name: "杏", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "李", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            {name: "柿", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
             {name: "石榴", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
-            // 啤酒大麦
+            {name: "梅", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: "别名青梅、梅子、酸梅"},
+            {name: "醋栗", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: "穗醋栗、灯笼果"},
+            {name: "刺梨", standard: "绿色食品温带水果 NY/T844-2017", row: 27, description: ""},
+            
+            // 大麦及大麦粉
             {name: "啤酒大麦", standard: "绿色食品大麦及大麦粉 NY/T891-2014", row: 28, description: ""},
-            // 生乳
-            {name: "生乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: ""}
+            {name: "食用大麦", standard: "绿色食品大麦及大麦粉 NY/T891-2014", row: 28, description: "用于食用的皮大麦（带壳大麦）和裸大麦"},
+            {name: "大麦粉", standard: "绿色食品大麦及大麦粉 NY/T891-2014", row: 28, description: "大麦加工成的用于食用的粉状产品"},
+            
+            // 乳与乳制品
+            {name: "生乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: ""},
+            {name: "巴氏杀菌乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: ""},
+            {name: "灭菌乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: ""},
+            {name: "调制乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: ""},
+            {name: "发酵乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: "包括发酵乳和风味发酵乳"},
+            {name: "炼乳", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: "包括淡炼乳、加糖炼乳和调制炼乳"},
+            {name: "乳粉", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: "包括乳粉和调制乳粉"},
+            {name: "干酪", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: "包括高脂干酪、全脂干酪、中脂干酪、部分脱脂干酪、脱脂干酪"},
+            {name: "再制干酪", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: ""},
+            {name: "奶油", standard: "绿色食品乳与乳制品 NY/T657-2021", row: 42, description: "包括稀奶油、奶油和无水奶油"}
         ];
         
         console.log('v92版本页面初始化完成，数据行数:', fullExcelData.length);
