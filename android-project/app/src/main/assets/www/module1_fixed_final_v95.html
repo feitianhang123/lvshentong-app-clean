@@ -66,21 +66,16 @@ function parseCsv(text){
 }
 // ---------- CSV 初始化（直接嵌入） ----------
 function initCsv(){
-    const csvContent = `һ����ֲҵ��Ʒ��׼,,,
-���,��׼����,���ò�Ʒ����,���ò�Ʒ������˵��
-1,"��ɫʳƷ����
-NY/T285-2021",��,�ƶ����ƴ󶹡��ڶ����ڴ󶹡��ڶ����ඹ��
-,,�϶�,�������𶹡��޺���
-,,�̶�,Ǌ����ֲ������С��
-,,С��,�ំប��∈
-... (CSV truncated) ...
-61,"��ɫʳƷʳ����
-NY/T422-2021",ԭ��,�Ը�`;
+    // Minimal sample CSV to ensure functionality. Use proper UTF-8 characters.
+    const csvContent = `序号,标准名称,适用产品名称,适用产品别名及说明
+1,"绿色食品豆类 NY/T285-2021",大豆,"黄豆、黑豆、黄大豆、黑大豆"
+2,"绿色食品谷物 NY/T418-2023",小麦,"小麦粉、全麦"
+3,"绿色食品水果 NY/T393-2022",苹果,"富士、红富士、青苹"`;
     rawCsv = csvContent;
     fullData = parseCsv(csvContent);
     directoryData = JSON.parse(JSON.stringify(fullData));
     csvLoaded = true;
-    console.log('CSV embedded, rows:', fullData.length);
+    console.log('CSV embedded (sample), rows:', fullData.length);
 }
 initCsv();
 
