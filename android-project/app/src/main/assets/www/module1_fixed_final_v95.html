@@ -241,5 +241,43 @@
         }
         console.log('页面脚本初始化完成');
 </script>
+<script>
+// New robust implementation
+let fullExcelData = [];
+let dataLoaded = false;
+const btn = document.getElementById('searchBtn');
+if(btn) btn.disabled = true;
+function loadData(){
+    fetch('complete_excel.json')
+        .then(r=>r.json())
+        .then(d=>{fullExcelData = d.map(row=>[row.col1||'',row.col2||'',row.col3||'',row.col4||'']); dataLoaded=true; console.log('数据加载完毕',fullExcelData.length); if(btn) btn.disabled=false;})
+        .catch(e=>{console.error('加载数据失败',e); fullExcelData=[]; dataLoaded=true; if(btn) btn.disabled=false;});
+}
+loadData();
+function searchProduct(){
+    const input=document.getElementById('productInput'); if(!input){alert('输入框未找到');return;}
+    const name=input.value.trim(); if(!name){alert('请输入产品名称');return;}
+    const result=document.getElementById('resultSection'); const dir=document.getElementById('directoryView'); if(dir) dir.style.display='none'; result.style.display='block';
+    if(!dataLoaded){result.innerHTML='<div class="result-error">数据加载中，请稍候。</div>'; return;}
+    const term=name.toLowerCase(); const found=[];
+    for(let i=0;i<fullExcelData.length;i++){
+        const row=fullExcelData[i];
+        for(let j=0;j<row.length;j++){
+            const cell=row[j]; if(cell && cell.toString().toLowerCase().includes(term)){
+                let std=''; for(let k=i;k>=0;k--){ const r=fullExcelData[k]; if(r && r[1]){std=r[1]; break;}}
+                found.push({name: row[2]||row[0]||row[1]||row[3]||cell, rowNumber:i+1, standard:std||'未找到标准', description:row[3]||''});
+                break;
+            }
+        }
+    }
+    if(found.length){ let html=''; found.forEach(p=>{html+=`<div class="result-item"><div style="font-weight:bold;color:#2e7d32;">第 ${p.rowNumber} 行：${p.name}</div><div>适用标准：${p.standard}</div><div>${p.description}</div></div>`;}); result.innerHTML=html; }
+    else{ result.innerHTML='<div class="result-error">未找到匹配产品</div>'; }
+}
+function showFullDirectory(){
+    const dir=document.getElementById('directoryView'); const res=document.getElementById('resultSection'); const cont=document.getElementById('directoryContent'); if(res) res.style.display='none'; if(!dir||!cont) return; if(!dataLoaded){cont.innerHTML='<div class="result-error">数据加载中，请稍后。</div>'; dir.style.display='block'; return;}
+    dir.style.display='block'; let html='<table class="directory-table"><thead><tr><th>序号</th><th>标准名称</th><th>适用产品名称</th><th>适用产品别名及说明</th></tr></thead><tbody>'; fullExcelData.forEach(row=>{html+= '<tr>'+row.map(c=>`<td>${c}</td>`).join('')+'</tr>';}); html+='</tbody></table>'; cont.innerHTML=html; }
+function hideDirectory(){ const dir=document.getElementById('directoryView'); if(dir) dir.style.display='none'; }
+console.log('新脚本初始化完成');
+</script>
 </body>
 </html>
