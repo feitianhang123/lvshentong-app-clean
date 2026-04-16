@@ -64,23 +64,28 @@ function parseCsv(text){
     }
     return rows;
 }
-// Embed CSV data directly to avoid loading issues
-const csvContent = `һ����ֲҵ��Ʒ��׼,,,
-���,��׼����,���ò�Ʒ����,���ò�Ʒ������˵��
-1,"��ɫʳƷ����
-NY/T285-2021",��,�ƶ����ƴ󶹡��ڶ����ڴ󶹡��ڶ����ඹ��
-,,�϶�,�������𶹡��޺���
-,,�̶�,Ǌ����ֲ������С��
-,,С��,�ំប��∈
-... (full CSV content truncated for brevity) ...
-61,"��ɫʳƷʳ����
-NY/T422-2021",ԭ��,�Ը�
-`;
-fullData = parseCsv(csvContent);
-// clone for independent use
-directoryData = JSON.parse(JSON.stringify(fullData));
-csvLoaded = true;
-console.log('CSV embedded, rows:', fullData.length);
+// ---------- CSV 加载（同步 XHR） ----------
+function loadCsvSync(){
+    try {
+        const xhr = new XMLHttpRequest();
+        // In Android assets/webview, relative path works
+        xhr.open('GET', 'search_data.csv', false); // false = synchronous
+        xhr.send(null);
+        if (xhr.status === 200 || xhr.status === 0) {
+            const t = xhr.responseText;
+            rawCsv = t;
+            fullData = parseCsv(t);
+            directoryData = JSON.parse(JSON.stringify(fullData));
+            csvLoaded = true;
+            console.log('CSV loaded via sync XHR, rows:', fullData.length);
+        } else {
+            console.error('XHR load CSV failed, status', xhr.status);
+        }
+    } catch(err) {
+        console.error('加载 CSV 失败', err);
+    }
+}
+loadCsvSync();
 
 // ---------- 搜索功能 ----------
 function searchProduct(){
