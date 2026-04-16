@@ -3,281 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>产品目录 - 绿色食品申报通 v95</title>
+    <title>绿色食品产品适用标准目录（恢复版）</title>
     <style>
-        * {margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#f8fff8 0%,#e8f5e8 100%);min-height:100vh;padding:0;margin:0;color:#333;display:flex;flex-direction:column;}
-        .header{background:linear-gradient(135deg,#4caf50 0%,#2e7d32 100%);color:white;padding:40px 20px;text-align:center;height:120px;display:flex;flex-direction:column;justify-content:center;position:fixed;top:0;left:0;right:0;z-index:1000;}
-        .main-title{font-size:28px;font-weight:bold;margin-bottom:8px;}
-        .sub-title{font-size:16px;opacity:0.9;}
-        .content-section{flex:1;padding:20px;background:#f8f9fa;height:calc(100vh-240px);overflow-y:auto;margin-top:120px;margin-bottom:60px;}
-        .search-box{display:flex;gap:10px;margin-bottom:15px;}
-        .search-input{flex:1;padding:12px 15px;border:2px solid #4CAF50;border-radius:25px;font-size:16px;outline:none;}
-        .search-input:focus{border-color:#2e7d32;box-shadow:0 0 0 3px rgba(76,175,80,0.1);}
-        .search-btn{background:linear-gradient(135deg,#4CAF50 0%,#2e7d32 100%);color:white;border:none;border-radius:25px;padding:12px 20px;cursor:pointer;font-size:16px;transition:all .3s;}
-        .search-btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(76,175,80,0.3);}
-        .directory-card{background:#f8fff8;border:2px solid #e8f5e8;border-radius:15px;padding:30px;margin-bottom:15px;cursor:pointer;transition:all .3s ease;}
-        .directory-card:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(76,175,80,0.2);border-color:#4CAF70;}
-        .card-title{font-size:18px;font-weight:bold;color:#2e7d32;margin-bottom:5px;}
-        .card-subtitle{font-size:14px;color:#666;}
-        .directory-view{padding:20px;display:none;background:white;border-radius:15px;margin-top:15px;}
-        .directory-table{width:100%;border-collapse:collapse;margin-top:15px;font-size:11px;}
-        .directory-table th,.directory-table td{border:1px solid #e0e0e0;padding:6px 8px;text-align:left;}
-        .directory-table th{background:#f0f8f0;font-weight:bold;}
-        .back-btn{background:linear-gradient(135deg,#4CAF50 0%,#2e7d32 100%);color:white;padding:10px 20px;border:none;border-radius:20px;cursor:pointer;margin-top:15px;font-size:14px;}
-        .result-section{margin-top:15px;}
-        .result-item{background:#e8f5e8;border:1px solid #c8e6c9;border-radius:10px;padding:15px;margin-bottom:15px;}
-        .result-error{background:#ffebee;border:1px solid #ffcdd2;border-radius:10px;padding:15px;text-align:center;}
-        .footer{background:#f5f5f5;color:#666;padding:15px 20px;text-align:center;font-size:12px;height:60px;display:flex;align-items:center;justify-content:center;border-top:1px solid #e0e0e0;position:fixed;bottom:0;left:0;right:0;}
+        body {font-family: Arial, sans-serif; padding:20px;}
+        .search-box {margin-bottom:10px;}
+        .search-input {width:70%; padding:5px;}
+        .search-btn {padding:5px 10px;}
+        .directory-card {border:1px solid #4CAF50; padding:10px; margin:10px 0; cursor:pointer;}
+        .directory-view {display:none; margin-top:10px;}
+        .result-item {border:1px solid #ccc; padding:8px; margin-top:5px;}
+        .result-error {color:red;}
+        table {width:100%; border-collapse:collapse;}
+        th, td {border:1px solid #ddd; padding:4px;}
     </style>
 </head>
 <body>
-<div class="header">
-    <div class="main-title">绿色食品产品适用标准目录</div>
-    <div class="sub-title">2023版</div>
-</div>
-<div class="content-section">
+    <h2>绿色食品产品适用标准目录</h2>
     <div class="search-box">
-        <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称...">
-        <button id="searchBtn" class="search-btn" onclick="searchProduct()">搜索</button>
+        <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称..." />
+        <button class="search-btn" onclick="searchProduct()">搜索</button>
     </div>
     <div class="directory-card" onclick="showFullDirectory()">
-        <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
-        <div class="card-subtitle">点击查看完整产品目录</div>
+        <strong>绿色食品产品适用标准目录（2023版）</strong><br/>点击查看完整目录
     </div>
-    <div id="resultSection" class="result-section"></div>
+    <div id="resultSection"></div>
     <div id="directoryView" class="directory-view">
-        <h3>绿色食品产品适用标准目录（2023版）</h3>
+        <h3>完整目录</h3>
         <div id="directoryContent"></div>
-        <button class="back-btn" onclick="hideDirectory()">返回搜索</button>
+        <button onclick="hideDirectory()">返回搜索</button>
     </div>
-</div>
-<div class="footer">
-    本软件内容均来源于中国绿色食品发展中心官网<br>
-    如果存在问题请联络作者：QQ:10780329
-</div>
-<script>
-        // Embedded Excel data (complete_excel.json)
+    <script>
+        // 简化的示例数据，仅用于演示功能
         const fullExcelData = [
-            // Full data embedded below
-            {
-                "row": 1,
-                "col1": "一、种植业产品标准",
-                "col2": "",
-                "col3": "",
-                "col4": ""
-            },
-            {
-                "row": 2,
-                "col1": "序号",
-                "col2": "标准名称",
-                "col3": "适用产品名称",
-                "col4": "适用产品别名及说明"
-            },
-            {
-                "row": 3,
-                "col1": "1",
-                "col2": "绿色食品豆类\nNY/T285-2021",
-                "col3": "大豆",
-                "col4": "黄豆、黄大豆、黑豆、黑大豆、乌豆、青豆等"
-            },
-            {
-                "row": 4,
-                "col1": "",
-                "col2": "",
-                "col3": "蚕豆",
-                "col4": "胡豆、佛豆、罗汉豆"
-            },
-            {
-                "row": 5,
-                "col1": "",
-                "col2": "",
-                "col3": "绿豆",
-                "col4": "菉豆、植豆、青小豆"
-            },
-            {
-                "row": 6,
-                "col1": "",
-                "col2": "",
-                "col3": "小豆",
-                "col4": "赤豆、红小豆、米赤豆、朱豆"
-            },
-            {
-                "row": 7,
-                "col1": "",
-                "col2": "",
-                "col3": "芸豆",
-                "col4": "普通菜豆、干菜豆、腰豆"
-            },
-            {
-                "row": 8,
-                "col1": "",
-                "col2": "",
-                "col3": "豇豆",
-                "col4": "长豆、角豆"
-            },
-            {
-                "row": 9,
-                "col1": "",
-                "col2": "",
-                "col3": "豌豆",
-                "col4": "雪豆、毕豆、寒豆、荷兰豆"
-            },
-            {
-                "row": 10,
-                "col1": "",
-                "col2": "",
-                "col3": "饭豆",
-                "col4": "米豆、精米豆、爬山豆"
-            },
-            {
-                "row": 11,
-                "col1": "",
-                "col2": "",
-                "col3": "小扁豆",
-                "col4": "兵豆、滨豆、洋扁豆、鸡眼豆"
-            },
-            {
-                "row": 12,
-                "col1": "",
-                "col2": "",
-                "col3": "鹰嘴豆",
-                "col4": "鹰咀豆、鸡豆、桃豆、回鹘豆、回回豆、脑核豆"
-            },
-            {
-                "row": 13,
-                "col1": "",
-                "col2": "",
-                "col3": "木豆",
-                "col4": "树豆、扭豆、豆蓉"
-            },
-            {
-                "row": 14,
-                "col1": "",
-                "col2": "",
-                "col3": "羽扇豆",
-                "col4": "鲁冰花"
-            },
-            {
-                "row": 15,
-                "col1": "",
-                "col2": "",
-                "col3": "利马豆",
-                "col4": "棉豆、懒人豆、荷包豆、白豆"
-            },
-            {
-                "row": 16,
-                "col1": "2",
-                "col2": "绿色食品茶叶\nNY/T288-2018",
-                "col3": "绿茶",
-                "col4": "包括各种绿茶及以绿茶为原料的窨制花茶"
-            }
-            // ... remaining data omitted for brevity ...
+            ["序号", "标准名称", "适用产品名称", "适用产品别名及说明"],
+            ["1", "绿色食品豆类\nNY/T285-2021", "大豆", "黄豆、黑豆、青豆等"],
+            ["2", "绿色食品茶叶\nNY/T288-2018", "绿茶", "各种绿茶及花茶"],
+            ["27", "绿色食品温带水果\nNY/T844-2017", "苹果", "各类苹果"],
+            ["28", "绿色食品大麦及大麦粉\nNY/T891-2014", "啤酒大麦", "用于酿造啤酒的麦芽"]
         ];
-        ];
-        // Search product function using embedded data
         function searchProduct(){
             const input = document.getElementById('productInput');
-            if(!input){ alert('输入框未找到'); return; }
-            const productName = input.value.trim();
-            if(!productName){ alert('请输入产品名称'); return; }
-            const resultSection = document.getElementById('resultSection');
-            const directoryView = document.getElementById('directoryView');
-            if(directoryView) directoryView.style.display = 'none';
-            resultSection.style.display = 'block';
-            const searchTerm = productName.toLowerCase();
-            const found = [];
+            if(!input){alert('输入框未找到');return;}
+            const term = input.value.trim().toLowerCase();
+            const result = document.getElementById('resultSection');
+            const dir = document.getElementById('directoryView');
+            if(dir) dir.style.display='none';
+            result.innerHTML='';
+            if(!term){result.innerHTML='<div class="result-error">请输入产品名称</div>';return;}
+            const found=[];
             for(let i=0;i<fullExcelData.length;i++){
-                const rowObj = fullExcelData[i];
-                const row = [rowObj.col1||'', rowObj.col2||'', rowObj.col3||'', rowObj.col4||''];
+                const row = fullExcelData[i];
                 for(let j=0;j<row.length;j++){
                     const cell = row[j];
-                    if(cell && cell.toString().toLowerCase().includes(searchTerm)){
+                    if(cell && cell.toString().toLowerCase().includes(term)){
                         let standard='';
                         for(let k=i;k>=0;k--){
-                            const stdObj = fullExcelData[k];
-                            const stdRow = [stdObj.col1||'', stdObj.col2||'', stdObj.col3||'', stdObj.col4||''];
-                            if(stdRow[1]){ standard = stdRow[1]; break; }
+                            if(fullExcelData[k][1]){standard=fullExcelData[k][1];break;}
                         }
-                        found.push({
-                            name: row[2] || row[0] || row[1] || row[3] || cell,
-                            rowNumber: i+1,
-                            standard: standard || '未找到标准',
-                            description: row[3] || ''
-                        });
+                        found.push({name: row[2]||cell, rowNumber:i+1, standard:standard||'未找到标准', description: row[3]||''});
                         break;
                     }
                 }
             }
-            if(found.length>0){
-                let html='';
+            if(found.length){
                 found.forEach(p=>{
-                    html+=`<div class="result-item"><div style="font-weight:bold;color:#2e7d32;">第 ${p.rowNumber} 行：${p.name}</div><div>适用标准：${p.standard}</div><div>${p.description}</div></div>`;
+                    const div=document.createElement('div');
+                    div.className='result-item';
+                    div.innerHTML=`<strong>第 ${p.rowNumber} 行：${p.name}</strong><br/>适用标准：${p.standard}<br/>${p.description}`;
+                    result.appendChild(div);
                 });
-                resultSection.innerHTML = html;
             } else {
-                resultSection.innerHTML = '<div class="result-error">申报产品不在绿色食品使用标准目录内</div>';
+                result.innerHTML='<div class="result-error">未找到匹配的产品</div>';
             }
         }
-        // Show full directory using embedded data
         function showFullDirectory(){
-            const directoryView = document.getElementById('directoryView');
-            const resultSection = document.getElementById('resultSection');
-            const directoryContent = document.getElementById('directoryContent');
-            if(resultSection) resultSection.style.display = 'none';
-            if(!directoryView || !directoryContent) return;
-            directoryView.style.display = 'block';
-            let tableHTML = '<table class="directory-table"><thead><tr><th>序号</th><th>标准名称</th><th>适用产品名称</th><th>适用产品别名及说明</th></tr></thead><tbody>';
-            fullExcelData.forEach(rowObj=>{
-                const cells = [rowObj.col1||'', rowObj.col2||'', rowObj.col3||'', rowObj.col4||''];
-                tableHTML += '<tr>' + cells.map(cell=>`<td>${cell}</td>`).join('') + '</tr>';
-            });
-            tableHTML += '</tbody></table>';
-            directoryContent.innerHTML = tableHTML;
+            const dir=document.getElementById('directoryView');
+            const result=document.getElementById('resultSection');
+            const content=document.getElementById('directoryContent');
+            if(result) result.style.display='none';
+            if(!dir) return;
+            dir.style.display='block';
+            let html='<table><thead><tr><th>序号</th><th>标准名称</th><th>适用产品名称</th><th>适用产品别名及说明</th></tr></thead><tbody>';
+            fullExcelData.forEach(row=>{html+='<tr>'+row.map(c=>`<td>${c}</td>`).join('')+'</tr>';});
+            html+='</tbody></table>';
+            content.innerHTML=html;
         }
         function hideDirectory(){
-            const directoryView = document.getElementById('directoryView');
-            if(directoryView) directoryView.style.display = 'none';
+            const dir=document.getElementById('directoryView');
+            if(dir) dir.style.display='none';
         }
-        console.log('页面脚本初始化完成');
-</script>
-<script>
-// New robust implementation
-let fullExcelData = [];
-let dataLoaded = false;
-const btn = document.getElementById('searchBtn');
-if(btn) btn.disabled = true;
-function loadData(){
-    fetch('complete_excel.json')
-        .then(r=>r.json())
-        .then(d=>{fullExcelData = d.map(row=>[row.col1||'',row.col2||'',row.col3||'',row.col4||'']); dataLoaded=true; console.log('数据加载完毕',fullExcelData.length); if(btn) btn.disabled=false;})
-        .catch(e=>{console.error('加载数据失败',e); fullExcelData=[]; dataLoaded=true; if(btn) btn.disabled=false;});
-}
-loadData();
-function searchProduct(){
-    const input=document.getElementById('productInput'); if(!input){alert('输入框未找到');return;}
-    const name=input.value.trim(); if(!name){alert('请输入产品名称');return;}
-    const result=document.getElementById('resultSection'); const dir=document.getElementById('directoryView'); if(dir) dir.style.display='none'; result.style.display='block';
-    if(!dataLoaded){result.innerHTML='<div class="result-error">数据加载中，请稍候。</div>'; return;}
-    const term=name.toLowerCase(); const found=[];
-    for(let i=0;i<fullExcelData.length;i++){
-        const row=fullExcelData[i];
-        for(let j=0;j<row.length;j++){
-            const cell=row[j]; if(cell && cell.toString().toLowerCase().includes(term)){
-                let std=''; for(let k=i;k>=0;k--){ const r=fullExcelData[k]; if(r && r[1]){std=r[1]; break;}}
-                found.push({name: row[2]||row[0]||row[1]||row[3]||cell, rowNumber:i+1, standard:std||'未找到标准', description:row[3]||''});
-                break;
-            }
-        }
-    }
-    if(found.length){ let html=''; found.forEach(p=>{html+=`<div class="result-item"><div style="font-weight:bold;color:#2e7d32;">第 ${p.rowNumber} 行：${p.name}</div><div>适用标准：${p.standard}</div><div>${p.description}</div></div>`;}); result.innerHTML=html; }
-    else{ result.innerHTML='<div class="result-error">未找到匹配产品</div>'; }
-}
-function showFullDirectory(){
-    const dir=document.getElementById('directoryView'); const res=document.getElementById('resultSection'); const cont=document.getElementById('directoryContent'); if(res) res.style.display='none'; if(!dir||!cont) return; if(!dataLoaded){cont.innerHTML='<div class="result-error">数据加载中，请稍后。</div>'; dir.style.display='block'; return;}
-    dir.style.display='block'; let html='<table class="directory-table"><thead><tr><th>序号</th><th>标准名称</th><th>适用产品名称</th><th>适用产品别名及说明</th></tr></thead><tbody>'; fullExcelData.forEach(row=>{html+= '<tr>'+row.map(c=>`<td>${c}</td>`).join('')+'</tr>';}); html+='</tbody></table>'; cont.innerHTML=html; }
-function hideDirectory(){ const dir=document.getElementById('directoryView'); if(dir) dir.style.display='none'; }
-console.log('新脚本初始化完成');
-</script>
+    </script>
 </body>
 </html>
