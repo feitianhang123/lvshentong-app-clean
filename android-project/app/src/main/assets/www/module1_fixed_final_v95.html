@@ -1,97 +1,159 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>绿色食品产品适用标准目录（恢复版）</title>
-    <style>
-        body {font-family: Arial, sans-serif; padding:20px;}
-        .search-box {margin-bottom:10px;}
-        .search-input {width:70%; padding:5px;}
-        .search-btn {padding:5px 10px;}
-        .directory-card {border:1px solid #4CAF50; padding:10px; margin:10px 0; cursor:pointer;}
-        .directory-view {display:none; margin-top:10px;}
-        .result-item {border:1px solid #ccc; padding:8px; margin-top:5px;}
-        .result-error {color:red;}
-        table {width:100%; border-collapse:collapse;}
-        th, td {border:1px solid #ddd; padding:4px;}
-    </style>
+<meta charset="UTF-8">
+<title>绿色食品产品适用标准目录（全新构建）</title>
+<style>
+body {font-family: Arial, sans-serif; padding:10px;}
+.search-box {margin-bottom:10px;}
+.search-input {width:70%; padding:6px;}
+.search-btn {padding:6px 12px;}
+.directory-card {border:1px solid #4CAF50; padding:10px; margin:10px 0; cursor:pointer;}
+.directory-view {display:none; margin-top:10px; overflow:auto; max-height:400px;}
+.result-item {border:1px solid #ddd; padding:8px; margin:5px 0;}
+.result-error {color:red;}
+table {width:100%; border-collapse:collapse;}
+th, td {border:1px solid #ccc; padding:4px;}
+</style>
 </head>
 <body>
-    <h2>绿色食品产品适用标准目录</h2>
-    <div class="search-box">
-        <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称..." />
-        <button class="search-btn" onclick="searchProduct()">搜索</button>
-    </div>
-    <div class="directory-card" onclick="showFullDirectory()">
-        <strong>绿色食品产品适用标准目录（2023版）</strong><br/>点击查看完整目录
-    </div>
-    <div id="resultSection"></div>
-    <div id="directoryView" class="directory-view">
-        <h3>完整目录</h3>
-        <div id="directoryContent"></div>
-        <button onclick="hideDirectory()">返回搜索</button>
-    </div>
-    <script>
-        // 简化的示例数据，仅用于演示功能
-        const fullExcelData = [
-            ["序号", "标准名称", "适用产品名称", "适用产品别名及说明"],
-            ["1", "绿色食品豆类\nNY/T285-2021", "大豆", "黄豆、黑豆、青豆等"],
-            ["2", "绿色食品茶叶\nNY/T288-2018", "绿茶", "各种绿茶及花茶"],
-            ["27", "绿色食品温带水果\nNY/T844-2017", "苹果", "各类苹果"],
-            ["28", "绿色食品大麦及大麦粉\nNY/T891-2014", "啤酒大麦", "用于酿造啤酒的麦芽"]
-        ];
-        function searchProduct(){
-            const input = document.getElementById('productInput');
-            if(!input){alert('输入框未找到');return;}
-            const term = input.value.trim().toLowerCase();
-            const result = document.getElementById('resultSection');
-            const dir = document.getElementById('directoryView');
-            if(dir) dir.style.display='none';
-            result.innerHTML='';
-            if(!term){result.innerHTML='<div class="result-error">请输入产品名称</div>';return;}
-            const found=[];
-            for(let i=0;i<fullExcelData.length;i++){
-                const row = fullExcelData[i];
-                for(let j=0;j<row.length;j++){
-                    const cell = row[j];
-                    if(cell && cell.toString().toLowerCase().includes(term)){
-                        let standard='';
-                        for(let k=i;k>=0;k--){
-                            if(fullExcelData[k][1]){standard=fullExcelData[k][1];break;}
-                        }
-                        found.push({name: row[2]||cell, rowNumber:i+1, standard:standard||'未找到标准', description: row[3]||''});
-                        break;
-                    }
-                }
+<h2>绿色食品产品适用标准目录</h2>
+<div class="search-box">
+    <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称..." />
+    <button class="search-btn" onclick="searchProduct()">搜索</button>
+</div>
+<div class="directory-card" onclick="showFullDirectory()">
+    <strong>点击查看完整目录（ABCD 975 行）</strong>
+</div>
+<div id="resultSection"></div>
+<div id="directoryView" class="directory-view">
+    <h3>完整目录</h3>
+    <div id="directoryContent"></div>
+    <button onclick="hideDirectory()">返回搜索</button>
+</div>
+
+<script>
+// ---------- CSV 读取与解析 ----------
+let rawCsv = '';
+let fullData = [];
+let directoryData = [];
+let csvLoaded = false;
+function parseCsv(text){
+    const rows = [];
+    const lines = text.split(/\r?\n/);
+    for(let line of lines){
+        // split on commas not inside quotes
+        const cells = [];
+        let cur = '';
+        let inQuotes = false;
+        for(let i=0;i<line.length;i++){
+            const ch = line[i];
+            if(ch==='"'){
+                inQuotes = !inQuotes;
+                continue; // drop quote
             }
-            if(found.length){
-                found.forEach(p=>{
-                    const div=document.createElement('div');
-                    div.className='result-item';
-                    div.innerHTML=`<strong>第 ${p.rowNumber} 行：${p.name}</strong><br/>适用标准：${p.standard}<br/>${p.description}`;
-                    result.appendChild(div);
-                });
+            if(ch===',' && !inQuotes){
+                cells.push(cur.trim());
+                cur='';
             } else {
-                result.innerHTML='<div class="result-error">未找到匹配的产品</div>';
+                cur+=ch;
             }
         }
-        function showFullDirectory(){
-            const dir=document.getElementById('directoryView');
-            const result=document.getElementById('resultSection');
-            const content=document.getElementById('directoryContent');
-            if(result) result.style.display='none';
-            if(!dir) return;
-            dir.style.display='block';
-            let html='<table><thead><tr><th>序号</th><th>标准名称</th><th>适用产品名称</th><th>适用产品别名及说明</th></tr></thead><tbody>';
-            fullExcelData.forEach(row=>{html+='<tr>'+row.map(c=>`<td>${c}</td>`).join('')+'</tr>';});
-            html+='</tbody></table>';
-            content.innerHTML=html;
+        cells.push(cur.trim());
+        rows.push(cells);
+    }
+    return rows;
+}
+function loadCsv(){
+    fetch('search_data.csv')
+        .then(r=>r.text())
+        .then(t=>{
+            rawCsv = t;
+            fullData = parseCsv(t);
+            // clone for independent use
+            directoryData = JSON.parse(JSON.stringify(fullData));
+            csvLoaded = true;
+            console.log('CSV loaded, rows:', fullData.length);
+        })
+        .catch(e=>{console.error('加载 CSV 失败',e);});
+}
+loadCsv();
+
+// ---------- 搜索功能 ----------
+function searchProduct(){
+    const input = document.getElementById('productInput');
+    if(!input){alert('输入框未找到');return;}
+    const term = input.value.trim().toLowerCase();
+    const resultDiv = document.getElementById('resultSection');
+    const dirView = document.getElementById('directoryView');
+    if(dirView) dirView.style.display='none';
+    resultDiv.innerHTML='';
+    if(!csvLoaded){resultDiv.innerHTML='<div class="result-error">数据加载中，请稍后再试。</div>';return;}
+    if(!term){resultDiv.innerHTML='<div class="result-error">请输入搜索词</div>';return;}
+    const found = [];
+    for(let i=0;i<fullData.length;i++){
+        const row = fullData[i];
+        for(let j=0;j<row.length;j++){
+            const cell = row[j];
+            if(cell && cell.toLowerCase().includes(term)){
+                // 向上查找 B 列（索引 1）最近的非空标准名称
+                let standard='';
+                for(let k=i;k>=0;k--){
+                    const stdCell = fullData[k][1];
+                    if(stdCell && stdCell.trim()!=='') {standard=stdCell;break;}
+                }
+                found.push({rowNumber:i+1, row, standard});
+                break; // 当前行已匹配
+            }
         }
-        function hideDirectory(){
-            const dir=document.getElementById('directoryView');
-            if(dir) dir.style.display='none';
+    }
+    if(found.length===0){
+        resultDiv.innerHTML='<div class="result-error">未找到匹配的产品</div>';
+        return;
+    }
+    // 展示结果
+    for(const f of found){
+        const item = document.createElement('div');
+        item.className='result-item';
+        const cols = f.row.map((c,idx)=>`<td>${c}</td>`).join('');
+        item.innerHTML = `
+            <div><strong>第 ${f.rowNumber} 行</strong></div>
+            <div>标准名称/号: ${f.standard}</div>
+            <table><tr>${cols}</tr></table>
+        `;
+        resultDiv.appendChild(item);
+    }
+}
+
+// ---------- 目录展示 ----------
+function showFullDirectory(){
+    const dirView = document.getElementById('directoryView');
+    const resultDiv = document.getElementById('resultSection');
+    if(resultDiv) resultDiv.style.display='none';
+    if(!csvLoaded){
+        dirView.innerHTML='<div class="result-error">数据加载中，请稍后再试。</div>';return;
+    }
+    dirView.style.display='block';
+    const content = document.getElementById('directoryContent');
+    let html = '<table><thead><tr>';
+    // use first row as header if you like, otherwise just A-D
+    html += '<th>序号</th><th>标准名称</th><th>适用产品名称</th><th>适用产品别名及说明</th>';
+    html+='</tr></thead><tbody>';
+    for(const row of directoryData){
+        html += '<tr>';
+        for(let i=0;i<4;i++){
+            const cell = row[i]||'';
+            html += `<td>${cell}</td>`;
         }
-    </script>
+        html+='</tr>';
+    }
+    html+='</tbody></table>';
+    content.innerHTML=html;
+}
+function hideDirectory(){
+    const dirView=document.getElementById('directoryView');
+    if(dirView) dirView.style.display='none';
+}
+</script>
 </body>
 </html>
