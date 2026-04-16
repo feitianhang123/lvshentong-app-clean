@@ -57,23 +57,29 @@
     如果存在问题请联络作者：QQ:10780329
 </div>
 <script>
-        // Load full Excel data from JSON file (complete_excel.json)
+        // 同步加载完整Excel数据（complete_excel.json）
         let fullExcelData = [];
-        // Fetch the JSON data and transform into array of rows
-        fetch('complete_excel.json')
-            .then(response => response.json())
-            .then(data => {
-                fullExcelData = data.map(row => [
-                    row.col1 || '',
-                    row.col2 || '',
-                    row.col3 || '',
-                    row.col4 || ''
-                ]);
-                console.log('完整数据加载完成，行数:', fullExcelData.length);
-            })
-            .catch(error => {
-                console.error('加载完整数据失败:', error);
-            });
+        (function(){
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'complete_excel.json', false); // 同步请求
+                xhr.send(null);
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    fullExcelData = data.map(row => [
+                        row.col1 || '',
+                        row.col2 || '',
+                        row.col3 || '',
+                        row.col4 || ''
+                    ]);
+                    console.log('完整数据同步加载完成，行数:', fullExcelData.length);
+                } else {
+                    console.error('加载完整数据失败，状态码:', xhr.status);
+                }
+            } catch (e) {
+                console.error('加载完整数据异常:', e);
+            }
+        })();
 
         // 搜索产品函数（基于完整数据）
         function searchProduct() {
@@ -90,7 +96,6 @@
             for (let i = 0; i < fullExcelData.length; i++) {
                 const row = fullExcelData[i];
                 if (!row) continue;
-                // 检查每一列是否包含搜索词
                 for (let j = 0; j < row.length; j++) {
                     const cell = row[j];
                     if (cell && cell.toString().toLowerCase().includes(searchTerm)) {
@@ -125,7 +130,7 @@
             }
         }
 
-        // 显示完整目录表格
+        // 显示完整目录表格（同步加载已完成）
         function showFullDirectory() {
             const directoryView = document.getElementById('directoryView');
             const resultSection = document.getElementById('resultSection');
