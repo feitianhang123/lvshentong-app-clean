@@ -39,7 +39,7 @@
 <div class="content-section">
     <div class="search-box">
         <input type="text" id="productInput" class="search-input" placeholder="请输入产品名称...">
-        <button class="search-btn" onclick="searchProduct()">搜索</button>
+        <button id="searchBtn" class="search-btn" onclick="searchProduct()" disabled>搜索</button>
     </div>
     <div class="directory-card" onclick="showFullDirectory()">
         <div class="card-title">绿色食品产品适用标准目录（2023版）</div>
@@ -57,72 +57,73 @@
     如果存在问题请联络作者：QQ:10780329
 </div>
 <script>
-        // 同步加载完整Excel数据（complete_excel.json）
-        let fullExcelData = [];
-        (function(){
-            try {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', 'complete_excel.json', false); // 同步请求
-                xhr.send(null);
-                if (xhr.status === 200) {
-                    const data = JSON.parse(xhr.responseText);
-                    fullExcelData = data.map(row => [
+        // 异步加载完整Excel数据（complete_excel.json）
+        let fullExcelData = null;
+        let dataLoaded = false;
+        function loadData(){
+            fetch('complete_excel.json')
+                .then(r=>r.json())
+                .then(d=>{
+                    fullExcelData = d.map(row => [
                         row.col1 || '',
                         row.col2 || '',
                         row.col3 || '',
                         row.col4 || ''
                     ]);
-                    console.log('完整数据同步加载完成，行数:', fullExcelData.length);
-                } else {
-                    console.error('加载完整数据失败，状态码:', xhr.status);
-                }
-            } catch (e) {
-                console.error('加载完整数据异常:', e);
-            }
-        })();
+                    dataLoaded = true;
+                    console.log('完整数据加载成功，行数:', fullExcelData.length);
+                    const btn = document.getElementById('searchBtn');
+                    if(btn) btn.disabled = false;
+                })
+                .catch(e=>{
+                    console.error('加载完整数据失败', e);
+                    fullExcelData = [];
+                    dataLoaded = true;
+                });
+        }
+        loadData();
 
         // 搜索产品函数（基于完整数据）
-        function searchProduct() {
+        function searchProduct(){
             const input = document.getElementById('productInput');
-            if (!input) { alert('输入框未找到'); return; }
+            if(!input){ alert('输入框未找到'); return; }
             const productName = input.value.trim();
-            if (!productName) { alert('请输入产品名称'); return; }
+            if(!productName){ alert('请输入产品名称'); return; }
             const resultSection = document.getElementById('resultSection');
             const directoryView = document.getElementById('directoryView');
-            if (directoryView) directoryView.style.display = 'none';
+            if(directoryView) directoryView.style.display = 'none';
             resultSection.style.display = 'block';
+            if(!dataLoaded){
+                resultSection.innerHTML = '<div class="result-error">数据尚未加载，请稍后再试。</div>';
+                return;
+            }
             const searchTerm = productName.toLowerCase();
             const found = [];
-            for (let i = 0; i < fullExcelData.length; i++) {
+            for(let i=0;i<fullExcelData.length;i++){
                 const row = fullExcelData[i];
-                if (!row) continue;
-                for (let j = 0; j < row.length; j++) {
+                if(!row) continue;
+                for(let j=0;j<row.length;j++){
                     const cell = row[j];
-                    if (cell && cell.toString().toLowerCase().includes(searchTerm)) {
-                        // 向上寻找最近的标准名称（第2列）
-                        let standard = '';
-                        for (let k = i; k >= 0; k--) {
+                    if(cell && cell.toString().toLowerCase().includes(searchTerm)){
+                        let standard='';
+                        for(let k=i;k>=0;k--){
                             const stdRow = fullExcelData[k];
-                            if (stdRow && stdRow[1]) { standard = stdRow[1]; break; }
+                            if(stdRow && stdRow[1]){standard = stdRow[1]; break;}
                         }
                         found.push({
                             name: row[2] || row[0] || row[1] || row[3] || cell,
-                            rowNumber: i + 1,
+                            rowNumber: i+1,
                             standard: standard || '未找到标准',
                             description: row[3] || ''
                         });
-                        break; // 当前行已匹配，跳到下一行
+                        break;
                     }
                 }
             }
-            if (found.length > 0) {
-                let html = '';
-                found.forEach(p => {
-                    html += `<div class="result-item">
-                        <div style="font-weight:bold;color:#2e7d32;">第 ${p.rowNumber} 行：${p.name}</div>
-                        <div>适用标准：${p.standard}</div>
-                        <div>${p.description}</div>
-                    </div>`;
+            if(found.length>0){
+                let html='';
+                found.forEach(p=>{
+                    html+=`<div class="result-item"><div style="font-weight:bold;color:#2e7d32;">第 ${p.rowNumber} 行：${p.name}</div><div>适用标准：${p.standard}</div><div>${p.description}</div></div>`;
                 });
                 resultSection.innerHTML = html;
             } else {
@@ -130,25 +131,30 @@
             }
         }
 
-        // 显示完整目录表格（同步加载已完成）
-        function showFullDirectory() {
+        // 显示完整目录表格（等待数据加载）
+        function showFullDirectory(){
             const directoryView = document.getElementById('directoryView');
             const resultSection = document.getElementById('resultSection');
             const directoryContent = document.getElementById('directoryContent');
-            if (resultSection) resultSection.style.display = 'none';
-            if (!directoryView || !directoryContent) return;
+            if(resultSection) resultSection.style.display = 'none';
+            if(!directoryView || !directoryContent) return;
+            if(!dataLoaded){
+                directoryContent.innerHTML = '<div class="result-error">数据尚未加载，请稍后再试。</div>';
+                directoryView.style.display = 'block';
+                return;
+            }
             directoryView.style.display = 'block';
             let tableHTML = '<table class="directory-table"><thead><tr><th>序号</th><th>标准名称</th><th>适用产品名称</th><th>适用产品别名及说明</th></tr></thead><tbody>';
-            fullExcelData.forEach(row => {
-                tableHTML += '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+            fullExcelData.forEach(row=>{
+                tableHTML += '<tr>' + row.map(cell=>`<td>${cell}</td>`).join('') + '</tr>';
             });
             tableHTML += '</tbody></table>';
             directoryContent.innerHTML = tableHTML;
         }
 
-        function hideDirectory() {
+        function hideDirectory(){
             const directoryView = document.getElementById('directoryView');
-            if (directoryView) directoryView.style.display = 'none';
+            if(directoryView) directoryView.style.display = 'none';
         }
 
         console.log('页面脚本初始化完成');
